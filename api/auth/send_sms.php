@@ -1,0 +1,166 @@
+<?php
+header('Content-Type: application/json');
+include('../../database/db.php');
+
+// ============================================
+// SEMAPHORE CONFIGURATION
+// ============================================
+define('SEMAPHORE_API_KEY', '597ad0ae040c16997f25cbfd49ae0b7f'); // Replace with your Semaphore API Key
+define('SEMAPHORE_SENDER_NAME', 'LITODA'); // Alphanumeric sender (no number needed)
+
+/**
+ * Format phone number for Philippines
+ */
+function formatPhoneNumber($phone) {
+    $phone = preg_replace('/[\s\-\(\)]/', '', $phone);
+
+    if (substr($phone, 0, 1) == '0') return '+63' . substr($phone, 1);
+    if (substr($phone, 0, 2) == '63') return '+' . $phone;
+    if (substr($phone, 0, 3) == '+63') return $phone;
+    if (strlen($phone) == 10 && substr($phone, 0, 1) == '9') return '+63' . $phone;
+
+    return $phone;
+}
+
+/**
+ * Send SMS using Semaphore API
+ */
+function sendSemaphoreSMS($toNumber, $message) {
+    $apiKey = SEMAPHORE_API_KEY;
+    $sender = SEMAPHORE_SENDER_NAME;
+
+    $url = "https://api.semaphore.co/api/v4/messages";
+    $data = [
+        'apikey' => $apiKey,
+        'number' => $toNumber,
+        'message' => $message,
+        'sendername' => $sender
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $responseData = json_decode($response, true);
+
+    return [
+        'success' => ($httpCode == 200 || $httpCode == 201),
+        'http_code' => $httpCode,
+        'response' => $responseData
+    ];
+}
+
+/**
+ * Log SMS to database
+ */
+function logSMS($conn, $driverId, $phoneNumber, $message, $status, $response) {
+    $sql = "INSERT INTO sms_logs (driver_id, phone_number, message, status, response, sent_at) 
+            VALUES (?, ?, ?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("issss", $driverId, $phoneNumber, $message, $status, json_encode($response));
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
+/**
+ * Check if SMS was recently sent to prevent duplicates
+ */
+function wasRecentlySent($conn, $driverId, $minutes = 5) {
+    $sql = "SELECT id FROM sms_logs 
+            WHERE driver_id = ? 
+            AND status = 'sent' 
+            AND sent_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)
+            ORDER BY sent_at DESC 
+            LIMIT 1";
+    
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("ii", $driverId, $minutes);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $exists = $result->num_rows > 0;
+        $stmt->close();
+        return $exists;
+    }
+    return false;
+}
+
+// ============================================
+// MAIN SMS SENDING LOGIC
+// ============================================
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method');
+    }
+
+    $driverId = isset($_POST['driver_id']) ? intval($_POST['driver_id']) : 0;
+    $driverName = isset($_POST['driver_name']) ? trim($_POST['driver_name']) : '';
+    $tricycleNumber = isset($_POST['tricycle_number']) ? trim($_POST['tricycle_number']) : '';
+    $contactNo = isset($_POST['contact_no']) ? trim($_POST['contact_no']) : '';
+
+    if (empty($driverId) || empty($driverName) || empty($contactNo)) {
+        throw new Exception('Missing required information');
+    }
+
+    if (wasRecentlySent($conn, $driverId, 5)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'SMS already sent to this driver recently',
+            'duplicate' => true
+        ]);
+        exit;
+    }
+
+    $formattedPhone = formatPhoneNumber($contactNo);
+
+    if (strlen($formattedPhone) < 10) {
+        throw new Exception('Invalid phone number format');
+    }
+
+    $message = "Hello {$driverName}! You are NEXT in line";
+    if (!empty($tricycleNumber)) $message .= " (Tricycle #{$tricycleNumber})";
+    $message .= ". Please be ready at the queue area. - LITODA System";
+
+    $result = sendSemaphoreSMS($formattedPhone, $message);
+    $status = $result['success'] ? 'sent' : 'failed';
+
+    logSMS($conn, $driverId, $formattedPhone, $message, $status, $result['response']);
+
+    if ($result['success']) {
+        $response = [
+            'success' => true,
+            'message' => 'SMS sent successfully',
+            'driver_name' => $driverName,
+            'phone_number' => $formattedPhone,
+            'sms_message' => $message,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+    } else {
+        $response = [
+            'success' => false,
+            'message' => isset($result['response']['message']) ? $result['response']['message'] : 'Failed to send SMS',
+            'http_code' => $result['http_code'],
+            'error_details' => $result['response']
+        ];
+    }
+
+    echo json_encode($response);
+
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'error' => true
+    ]);
+}
+
+$conn->close();
+?>
