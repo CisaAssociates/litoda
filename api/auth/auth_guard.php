@@ -54,21 +54,35 @@ function forceLogout($reason = 'Please log in to continue.') {
     $_SESSION = array();
     
     // Destroy the session cookie
-    if (isset($_COOKIE[session_name()])) {
-        setcookie(session_name(), '', time() - 3600, '/');
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
     }
     
     // Destroy the session
-    session_destroy();
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_destroy();
+    }
     
     // Start new session for error message
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     $_SESSION['login_error'] = $reason;
     $_SESSION['redirect_after_login'] = $current_page;
     
     // Redirect to login page - adjust path based on your structure
-    header('Location: ../../pages/login/login.php');
-    exit();
+    // Ensure no output has been sent
+    if (!headers_sent()) {
+        header('Location: ../../pages/login/login.php');
+        exit();
+    } else {
+        echo "<script>window.location.href='../../pages/login/login.php';</script>";
+        exit();
+    }
 }
 
 /**

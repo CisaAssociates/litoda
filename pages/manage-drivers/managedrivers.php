@@ -1,4 +1,4 @@
-    <?php
+<?php
     require_once '../../api/auth/auth_guard.php';
     include '../../database/db.php';
 
