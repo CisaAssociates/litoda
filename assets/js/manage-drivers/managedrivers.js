@@ -103,9 +103,11 @@ async function capturePhoto() {
     captureBtn.textContent = "Validating...";
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/validate_single_face", {
+        const response = await fetch(`${FLASK_API_URL}/validate_single_face`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({ image: imageData })
         });
         

@@ -30,10 +30,11 @@ class FaceRecognitionSystem:
 
         # Database configuration
         self.db_config = {
-            'host': 'localhost',
-            'user': 'root',
-            'password': '',
-            'database': 'dispatch_system'
+            'host': os.environ.get('DB_HOST', 'mysql.railway.internal'),
+            'user': os.environ.get('DB_USER', 'root'),
+            'password': os.environ.get('DB_PASSWORD', 'eIKUyoNeEeMStYONTCowvZAzNHJbrFkv'),
+            'database': os.environ.get('DB_NAME', 'litoda_db'),
+            'port': int(os.environ.get('DB_PORT', 3306))
         }
 
         # Recognition settings
@@ -609,5 +610,6 @@ def health():
 
 if __name__ == "__main__":
     print(f"[Info] Loaded {len(face_system.known_faces)} driver embeddings")
-    print("[Info] Server running at: http://127.0.0.1:5000")
-    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"[Info] Server running at: http://0.0.0.0:{port}")
+    app.run(host="0.0.0.0", port=port, debug=False)

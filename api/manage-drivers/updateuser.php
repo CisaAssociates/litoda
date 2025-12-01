@@ -89,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 🔹 STEP 1: Validate that exactly ONE face is present (no hands, multiple faces, etc.)
-            $flask_validate_url = "http://127.0.0.1:5000/validate_single_face";
+            $flask_api_url = getenv('FLASK_API_URL') ?: 'http://127.0.0.1:5000';
+            $flask_validate_url = $flask_api_url . "/validate_single_face";
             $validate_payload = json_encode([
                 "image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
             ]);
