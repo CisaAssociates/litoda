@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     default-mysql-client \
     && docker-php-ext-install mysqli pdo pdo_mysql \
