@@ -1,1 +1,0 @@
-web: gunicorn face_recognition_system:app --timeout 120

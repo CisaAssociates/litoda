@@ -18,7 +18,7 @@ from deepface import DeepFace
 
 
 class FaceRecognitionSystem:
-    def __init__(self, data_file="face_data.json", uploads_dir="uploads"):
+    def __init__(self, data_file="uploads/face_data.json", uploads_dir="uploads"):
         self.data_file = data_file
         self.uploads_dir = uploads_dir
         self.known_faces = {}
