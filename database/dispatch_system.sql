@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `dispatch_system`
+-- Database: `litoda_db`
 --
 
 -- --------------------------------------------------------
@@ -26,6 +26,8 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `admins`
 --
+
+CREATE DATABASE IF NOT EXISTS `litoda_db`;
 
 CREATE TABLE `admins` (
   `id` int(11) NOT NULL,
