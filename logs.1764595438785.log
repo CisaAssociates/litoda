@@ -1,0 +1,2152 @@
+2025-12-01T13:20:09.654050846Z [inf]  
+2025-12-01T13:20:11.231295359Z [inf]  [35m[Region: us-east4][0m
+2025-12-01T13:20:11.234733455Z [inf]  [35m=========================
+2025-12-01T13:20:11.234760001Z [inf]  Using Detected Dockerfile
+2025-12-01T13:20:11.234765745Z [inf]  =========================
+2025-12-01T13:20:11.234770517Z [inf]  [0m
+2025-12-01T13:20:11.234783685Z [inf]  context: z7nz-TdSc
+2025-12-01T13:20:11.403538236Z [inf]  [internal] load build definition from Dockerfile
+2025-12-01T13:20:11.403618444Z [inf]  [internal] load build definition from Dockerfile
+2025-12-01T13:20:11.403641285Z [inf]  [internal] load build definition from Dockerfile
+2025-12-01T13:20:11.403657957Z [inf]  [internal] load build definition from Dockerfile
+2025-12-01T13:20:11.419866854Z [inf]  [internal] load build definition from Dockerfile
+2025-12-01T13:20:11.422340031Z [inf]  [internal] load metadata for docker.io/library/php:8.2-apache
+2025-12-01T13:20:11.464605704Z [inf]  [auth] library/php:pull token for registry-1.docker.io
+2025-12-01T13:20:11.464659723Z [inf]  [auth] library/php:pull token for registry-1.docker.io
+2025-12-01T13:20:11.723859195Z [inf]  [internal] load metadata for docker.io/library/php:8.2-apache
+2025-12-01T13:20:11.724529436Z [inf]  [internal] load .dockerignore
+2025-12-01T13:20:11.724566509Z [inf]  [internal] load .dockerignore
+2025-12-01T13:20:11.724585761Z [inf]  [internal] load .dockerignore
+2025-12-01T13:20:11.734933488Z [inf]  [internal] load .dockerignore
+2025-12-01T13:20:11.742119516Z [inf]  [11/12] COPY start.sh /start.sh
+2025-12-01T13:20:11.742171450Z [inf]  [10/12] RUN mkdir -p /var/www/html/uploads &&     chown -R www-data:www-data /var/www/html/uploads &&     chmod -R 755 /var/www/html/uploads
+2025-12-01T13:20:11.742188843Z [inf]  [ 9/12] COPY . /var/www/html/
+2025-12-01T13:20:11.742211904Z [inf]  [ 8/12] COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+2025-12-01T13:20:11.742223872Z [inf]  [ 7/12] RUN a2enmod rewrite proxy proxy_http
+2025-12-01T13:20:11.742235059Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.742246246Z [inf]  [ 5/12] RUN pip install --no-cache-dir -r /tmp/requirements.txt
+2025-12-01T13:20:11.742258281Z [inf]  [ 4/12] COPY requirements.txt /tmp/requirements.txt
+2025-12-01T13:20:11.742266179Z [inf]  [internal] load build context
+2025-12-01T13:20:11.742273125Z [inf]  [ 3/12] RUN python3 -m venv /opt/venv
+2025-12-01T13:20:11.742280906Z [inf]  [ 2/12] RUN apt-get update && apt-get install -y     python3     python3-pip     python3-venv     libgl1     libglib2.0-0     default-mysql-client     && docker-php-ext-install mysqli pdo pdo_mysql     && apt-get clean && rm -rf /var/lib/apt/lists/*
+2025-12-01T13:20:11.742294691Z [inf]  [12/12] RUN chmod +x /start.sh
+2025-12-01T13:20:11.742308890Z [inf]  [ 6/12] RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+2025-12-01T13:20:11.742330029Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.742338551Z [inf]  [internal] load build context
+2025-12-01T13:20:11.750702763Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.751117352Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.751378737Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.751453239Z [inf]  [internal] load build context
+2025-12-01T13:20:11.832631682Z [inf]  [internal] load build context
+2025-12-01T13:20:11.840488413Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:11.842148810Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:13.887440330Z [inf]  [ 1/12] FROM docker.io/library/php:8.2-apache@sha256:b8c8cd2be5690fcc2a6d0a44fee6c319052ee961148236f6a62a03f2b65e439f
+2025-12-01T13:20:16.868054166Z [inf]  [ 2/12] RUN apt-get update && apt-get install -y     python3     python3-pip     python3-venv     libgl1     libglib2.0-0     default-mysql-client     && docker-php-ext-install mysqli pdo pdo_mysql     && apt-get clean && rm -rf /var/lib/apt/lists/*
+2025-12-01T13:20:17.008655154Z [inf]  Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+
+2025-12-01T13:20:17.010955449Z [inf]  Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+
+2025-12-01T13:20:17.025974841Z [inf]  Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9670 kB]
+
+2025-12-01T13:20:17.092718435Z [inf]  Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+
+2025-12-01T13:20:17.093057735Z [inf]  Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [76.0 kB]
+
+2025-12-01T13:20:17.954128614Z [inf]  Fetched 9842 kB in 1s (10.0 MB/s)
+Reading package lists...
+2025-12-01T13:20:18.615680358Z [inf]  
+
+2025-12-01T13:20:18.635372144Z [inf]  Reading package lists...
+2025-12-01T13:20:19.290773747Z [inf]  
+
+2025-12-01T13:20:19.333776086Z [inf]  Building dependency tree...
+2025-12-01T13:20:19.515063203Z [inf]  
+Reading state information...
+2025-12-01T13:20:19.515158716Z [inf]  
+
+2025-12-01T13:20:19.807057385Z [inf]  The following additional packages will be installed:
+
+2025-12-01T13:20:19.807481449Z [inf]    build-essential javascript-common libconfig-inifiles-perl
+  libdbd-mariadb-perl libdbi-perl libdrm-amdgpu1 libdrm-common libdrm-intel1
+
+2025-12-01T13:20:19.807628223Z [inf]    libdrm2 libedit2 libelf1t64 libexpat1-dev libgbm1 libgl1-mesa-dri
+
+2025-12-01T13:20:19.807686007Z [inf]    libglib2.0-data libglvnd0 libglx-mesa0 libglx0 libgpm2 libjs-jquery
+
+2025-12-01T13:20:19.80783316Z [inf]    libjs-sphinxdoc libjs-underscore libllvm19 libmariadb3 libncurses6
+
+2025-12-01T13:20:19.80786146Z [inf]    libpciaccess0 libpcre2-posix3 libpython3-dev libpython3-stdlib libpython3.13
+
+2025-12-01T13:20:19.808493232Z [inf]    libpython3.13-dev libpython3.13-minimal libpython3.13-stdlib
+
+2025-12-01T13:20:19.808595994Z [inf]    libsensors-config libsensors5 libterm-readkey-perl liburing2 libvulkan1
+  libwayland-client0 libwayland-server0 libx11-6 libx11-data libx11-xcb1
+  libxau6 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shm0
+  libxcb-sync1 libxcb-xfixes0 libxcb1 libxdmcp6 libxext6 libxshmfence1
+
+2025-12-01T13:20:19.808668694Z [inf]    libxxf86vm1 libz3-4 mariadb-client mariadb-client-compat mariadb-client-core
+
+2025-12-01T13:20:19.809030869Z [inf]    mariadb-common mesa-libgallium mesa-vulkan-drivers mysql-common netbase
+
+2025-12-01T13:20:19.809113391Z [inf]    python3-dev python3-minimal python3-packaging python3-pip-whl
+
+2025-12-01T13:20:19.809150979Z [inf]    python3-setuptools-whl python3-wheel python3.13 python3.13-dev
+
+2025-12-01T13:20:19.809488047Z [inf]    python3.13-minimal python3.13-venv shared-mime-info xdg-user-dirs zlib1g-dev
+
+2025-12-01T13:20:19.811855354Z [inf]  Suggested packages:
+  libclone-perl libmldbm-perl libnet-daemon-perl libsql-statement-perl
+  low-memory-monitor gpm pciutils lm-sensors python3-doc python3-tk
+  python3-setuptools python3.13-doc binfmt-support
+
+2025-12-01T13:20:20.441960342Z [inf]  The following NEW packages will be installed:
+
+2025-12-01T13:20:20.442309775Z [inf]    build-essential default-mysql-client javascript-common
+
+2025-12-01T13:20:20.442322813Z [inf]    libconfig-inifiles-perl libdbd-mariadb-perl libdbi-perl libdrm-amdgpu1
+
+2025-12-01T13:20:20.442375425Z [inf]    libdrm-common libdrm-intel1 libdrm2 libedit2 libelf1t64 libexpat1-dev
+
+2025-12-01T13:20:20.442450033Z [inf]    libgbm1 libgl1 libgl1-mesa-dri libglib2.0-0t64 libglib2.0-data libglvnd0
+
+2025-12-01T13:20:20.442619047Z [inf]    libglx-mesa0 libglx0 libgpm2 libjs-jquery libjs-sphinxdoc libjs-underscore
+
+2025-12-01T13:20:20.442687462Z [inf]    libllvm19 libmariadb3 libncurses6 libpciaccess0 libpcre2-posix3
+  libpython3-dev libpython3-stdlib libpython3.13 libpython3.13-dev
+
+2025-12-01T13:20:20.443385628Z [inf]    libpython3.13-minimal libpython3.13-stdlib libsensors-config libsensors5
+
+2025-12-01T13:20:20.443427682Z [inf]    libterm-readkey-perl liburing2 libvulkan1 libwayland-client0
+  libwayland-server0 libx11-6 libx11-data libx11-xcb1 libxau6 libxcb-dri3-0
+  libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shm0 libxcb-sync1
+
+2025-12-01T13:20:20.443506289Z [inf]    libxcb-xfixes0 libxcb1 libxdmcp6 libxext6 libxshmfence1 libxxf86vm1 libz3-4
+  mariadb-client mariadb-client-compat mariadb-client-core mariadb-common
+
+2025-12-01T13:20:20.443859239Z [inf]    mesa-libgallium mesa-vulkan-drivers mysql-common netbase python3 python3-dev
+
+2025-12-01T13:20:20.443900681Z [inf]    python3-minimal python3-packaging python3-pip python3-pip-whl
+
+2025-12-01T13:20:20.443924348Z [inf]    python3-setuptools-whl python3-venv python3-wheel python3.13 python3.13-dev
+
+2025-12-01T13:20:20.444164257Z [inf]    python3.13-minimal python3.13-venv shared-mime-info xdg-user-dirs zlib1g-dev
+
+2025-12-01T13:20:20.483612547Z [inf]  0 upgraded, 84 newly installed, 0 to remove and 0 not upgraded.
+Need to get 90.9 MB of archives.
+After this operation, 476 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian trixie/main amd64 libpython3.13-minimal amd64 3.13.5-2 [862 kB]
+
+2025-12-01T13:20:20.498395522Z [inf]  Get:2 http://deb.debian.org/debian trixie/main amd64 python3.13-minimal amd64 3.13.5-2 [2224 kB]
+
+2025-12-01T13:20:20.511414831Z [inf]  Get:3 http://deb.debian.org/debian trixie/main amd64 python3-minimal amd64 3.13.5-1 [27.2 kB]
+
+2025-12-01T13:20:20.511718111Z [inf]  Get:4 http://deb.debian.org/debian trixie/main amd64 netbase all 6.5 [12.4 kB]
+
+2025-12-01T13:20:20.512175496Z [inf]  Get:5 http://deb.debian.org/debian trixie/main amd64 libpython3.13-stdlib amd64 3.13.5-2 [1956 kB]
+
+2025-12-01T13:20:20.522952331Z [inf]  Get:6 http://deb.debian.org/debian trixie/main amd64 python3.13 amd64 3.13.5-2 [757 kB]
+
+2025-12-01T13:20:20.527311547Z [inf]  Get:7 http://deb.debian.org/debian trixie/main amd64 libpython3-stdlib amd64 3.13.5-1 [10.2 kB]
+
+2025-12-01T13:20:20.527440808Z [inf]  Get:8 http://deb.debian.org/debian trixie/main amd64 python3 amd64 3.13.5-1 [28.2 kB]
+
+2025-12-01T13:20:20.527940713Z [inf]  Get:9 http://deb.debian.org/debian trixie/main amd64 build-essential amd64 12.12 [4624 B]
+
+2025-12-01T13:20:20.527971466Z [inf]  Get:10 http://deb.debian.org/debian trixie/main amd64 libconfig-inifiles-perl all 3.000003-3 [44.8 kB]
+
+2025-12-01T13:20:20.528426237Z [inf]  Get:11 http://deb.debian.org/debian trixie/main amd64 mysql-common all 5.8+1.1.1 [6784 B]
+
+2025-12-01T13:20:20.528571237Z [inf]  Get:12 http://deb.debian.org/debian trixie/main amd64 mariadb-common all 1:11.8.3-0+deb13u1 [28.8 kB]
+
+2025-12-01T13:20:20.528880626Z [inf]  Get:13 http://deb.debian.org/debian trixie/main amd64 libmariadb3 amd64 1:11.8.3-0+deb13u1 [187 kB]
+
+2025-12-01T13:20:20.530311562Z [inf]  Get:14 http://deb.debian.org/debian trixie/main amd64 libedit2 amd64 3.1-20250104-1 [93.8 kB]
+
+2025-12-01T13:20:20.531480723Z [inf]  Get:15 http://deb.debian.org/debian trixie/main amd64 libncurses6 amd64 6.5+20250216-2 [105 kB]
+
+2025-12-01T13:20:20.532156607Z [inf]  Get:16 http://deb.debian.org/debian trixie/main amd64 mariadb-client-core amd64 1:11.8.3-0+deb13u1 [919 kB]
+
+2025-12-01T13:20:20.537325131Z [inf]  Get:17 http://deb.debian.org/debian trixie/main amd64 libpcre2-posix3 amd64 10.46-1~deb13u1 [63.9 kB]
+
+2025-12-01T13:20:20.537836702Z [inf]  Get:18 http://deb.debian.org/debian trixie/main amd64 liburing2 amd64 2.9-1 [26.4 kB]
+
+2025-12-01T13:20:20.538437195Z [inf]  Get:19 http://deb.debian.org/debian trixie/main amd64 mariadb-client amd64 1:11.8.3-0+deb13u1 [3160 kB]
+
+2025-12-01T13:20:20.555834936Z [inf]  Get:20 http://deb.debian.org/debian trixie/main amd64 mariadb-client-compat all 1:11.8.3-0+deb13u1 [28.9 kB]
+
+2025-12-01T13:20:20.556061954Z [inf]  Get:21 http://deb.debian.org/debian trixie/main amd64 default-mysql-client all 1.1.1 [3028 B]
+
+2025-12-01T13:20:20.556302398Z [inf]  Get:22 http://deb.debian.org/debian trixie/main amd64 javascript-common all 12+nmu1 [4864 B]
+
+2025-12-01T13:20:20.556460748Z [inf]  Get:23 http://deb.debian.org/debian trixie/main amd64 libdbi-perl amd64 1.647-1 [861 kB]
+
+2025-12-01T13:20:20.561405939Z [inf]  Get:24 http://deb.debian.org/debian trixie/main amd64 libdbd-mariadb-perl amd64 1.22-1+b4 [93.6 kB]
+
+2025-12-01T13:20:20.561989953Z [inf]  Get:25 http://deb.debian.org/debian trixie/main amd64 libdrm-common all 2.4.124-2 [8288 B]
+
+2025-12-01T13:20:20.56227675Z [inf]  Get:26 http://deb.debian.org/debian trixie/main amd64 libdrm2 amd64 2.4.124-2 [39.0 kB]
+
+2025-12-01T13:20:20.562700051Z [inf]  Get:27 http://deb.debian.org/debian trixie/main amd64 libdrm-amdgpu1 amd64 2.4.124-2 [22.6 kB]
+
+2025-12-01T13:20:20.563157491Z [inf]  Get:28 http://deb.debian.org/debian trixie/main amd64 libpciaccess0 amd64 0.17-3+b3 [51.9 kB]
+
+2025-12-01T13:20:20.563592621Z [inf]  Get:29 http://deb.debian.org/debian trixie/main amd64 libdrm-intel1 amd64 2.4.124-2 [64.1 kB]
+
+2025-12-01T13:20:20.564076926Z [inf]  Get:30 http://deb.debian.org/debian trixie/main amd64 libelf1t64 amd64 0.192-4 [189 kB]
+
+2025-12-01T13:20:20.565265533Z [inf]  Get:31 http://deb.debian.org/debian trixie/main amd64 libexpat1-dev amd64 2.7.1-2 [161 kB]
+
+2025-12-01T13:20:20.566570661Z [inf]  Get:32 http://deb.debian.org/debian trixie/main amd64 libwayland-server0 amd64 1.23.1-3 [34.4 kB]
+
+2025-12-01T13:20:20.566918219Z [inf]  Get:33 http://deb.debian.org/debian trixie/main amd64 libz3-4 amd64 4.13.3-1 [8560 kB]
+
+2025-12-01T13:20:20.614034613Z [inf]  Get:34 http://deb.debian.org/debian trixie/main amd64 libllvm19 amd64 1:19.1.7-3+b1 [26.0 MB]
+
+2025-12-01T13:20:20.750523462Z [inf]  Get:35 http://deb.debian.org/debian trixie/main amd64 libsensors-config all 1:3.6.2-2 [16.2 kB]
+
+2025-12-01T13:20:20.750620079Z [inf]  Get:36 http://deb.debian.org/debian trixie/main amd64 libsensors5 amd64 1:3.6.2-2 [37.5 kB]
+
+2025-12-01T13:20:20.751047358Z [inf]  Get:37 http://deb.debian.org/debian trixie/main amd64 libxau6 amd64 1:1.0.11-1 [20.4 kB]
+
+2025-12-01T13:20:20.751290045Z [inf]  Get:38 http://deb.debian.org/debian trixie/main amd64 libxdmcp6 amd64 1:1.1.5-1 [27.8 kB]
+
+2025-12-01T13:20:20.751574954Z [inf]  Get:39 http://deb.debian.org/debian trixie/main amd64 libxcb1 amd64 1.17.0-2+b1 [144 kB]
+
+2025-12-01T13:20:20.752401553Z [inf]  Get:40 http://deb.debian.org/debian trixie/main amd64 libx11-data all 2:1.8.12-1 [343 kB]
+
+2025-12-01T13:20:20.754626529Z [inf]  Get:41 http://deb.debian.org/debian trixie/main amd64 libx11-6 amd64 2:1.8.12-1 [815 kB]
+
+2025-12-01T13:20:20.75940629Z [inf]  Get:42 http://deb.debian.org/debian trixie/main amd64 libx11-xcb1 amd64 2:1.8.12-1 [247 kB]
+
+2025-12-01T13:20:20.764095159Z [inf]  Get:46 http://deb.debian.org/debian trixie/main amd64 libxcb-sync1 amd64 1.17.0-2+b1 [109 kB]
+
+2025-12-01T13:20:20.764830589Z [inf]  Get:47 http://deb.debian.org/debian trixie/main amd64 libxcb-xfixes0 amd64 1.17.0-2+b1 [109 kB]
+
+2025-12-01T13:20:20.765711954Z [inf]  Get:48 http://deb.debian.org/debian trixie/main amd64 libxshmfence1 amd64 1.3.3-1 [10.9 kB]
+
+2025-12-01T13:20:20.765895498Z [inf]  Get:49 http://deb.debian.org/debian trixie/main amd64 mesa-libgallium amd64 25.0.7-2 [9629 kB]
+
+2025-12-01T13:20:20.816658169Z [inf]  Get:50 http://deb.debian.org/debian trixie/main amd64 libgbm1 amd64 25.0.7-2 [44.4 kB]
+
+2025-12-01T13:20:20.816927147Z [inf]  Get:51 http://deb.debian.org/debian trixie/main amd64 libglvnd0 amd64 1.7.0-1+b2 [52.0 kB]
+
+2025-12-01T13:20:20.817421296Z [inf]  Get:52 http://deb.debian.org/debian trixie/main amd64 libxcb-glx0 amd64 1.17.0-2+b1 [122 kB]
+
+2025-12-01T13:20:20.81825088Z [inf]  Get:53 http://deb.debian.org/debian trixie/main amd64 libxcb-shm0 amd64 1.17.0-2+b1 [105 kB]
+
+2025-12-01T13:20:20.818978618Z [inf]  Get:54 http://deb.debian.org/debian trixie/main amd64 libxext6 amd64 2:1.3.4-1+b3 [50.4 kB]
+
+2025-12-01T13:20:20.819636047Z [inf]  Get:55 http://deb.debian.org/debian trixie/main amd64 libxxf86vm1 amd64 1:1.1.4-1+b4 [19.3 kB]
+
+2025-12-01T13:20:20.819991365Z [inf]  Get:56 http://deb.debian.org/debian trixie/main amd64 libvulkan1 amd64 1.4.309.0-1 [130 kB]
+
+2025-12-01T13:20:20.821332229Z [inf]  Get:57 http://deb.debian.org/debian trixie/main amd64 libgl1-mesa-dri amd64 25.0.7-2 [46.1 kB]
+
+2025-12-01T13:20:20.821697998Z [inf]  Get:58 http://deb.debian.org/debian trixie/main amd64 libglx-mesa0 amd64 25.0.7-2 [143 kB]
+
+2025-12-01T13:20:20.822663943Z [inf]  Get:59 http://deb.debian.org/debian trixie/main amd64 libglx0 amd64 1.7.0-1+b2 [34.9 kB]
+
+2025-12-01T13:20:20.822991176Z [inf]  Get:60 http://deb.debian.org/debian trixie/main amd64 libgl1 amd64 1.7.0-1+b2 [89.5 kB]
+
+2025-12-01T13:20:20.823858531Z [inf]  Get:61 http://deb.debian.org/debian trixie/main amd64 libglib2.0-0t64 amd64 2.84.4-3~deb13u1 [1519 kB]
+
+2025-12-01T13:20:20.832154723Z [inf]  Get:62 http://deb.debian.org/debian trixie/main amd64 libglib2.0-data all 2.84.4-3~deb13u1 [1286 kB]
+
+2025-12-01T13:20:20.83973567Z [inf]  Get:63 http://deb.debian.org/debian trixie/main amd64 libgpm2 amd64 1.20.7-11+b2 [14.4 kB]
+
+2025-12-01T13:20:20.839923275Z [inf]  Get:64 http://deb.debian.org/debian trixie/main amd64 libjs-jquery all 3.6.1+dfsg+~3.5.14-1 [326 kB]
+
+2025-12-01T13:20:20.8420266Z [inf]  Get:65 http://deb.debian.org/debian trixie/main amd64 libjs-underscore all 1.13.4~dfsg+~1.11.4-3 [116 kB]
+
+2025-12-01T13:20:20.842792051Z [inf]  Get:66 http://deb.debian.org/debian trixie/main amd64 libjs-sphinxdoc all 8.1.3-5 [30.5 kB]
+
+2025-12-01T13:20:20.843194825Z [inf]  Get:67 http://deb.debian.org/debian trixie/main amd64 libpython3.13 amd64 3.13.5-2 [2160 kB]
+
+2025-12-01T13:20:20.855745597Z [inf]  Get:68 http://deb.debian.org/debian trixie/main amd64 zlib1g-dev amd64 1:1.3.dfsg+really1.3.1-1+b1 [920 kB]
+
+2025-12-01T13:20:20.861363107Z [inf]  Get:69 http://deb.debian.org/debian trixie/main amd64 libpython3.13-dev amd64 3.13.5-2 [5291 kB]
+
+2025-12-01T13:20:20.889563889Z [inf]  Get:70 http://deb.debian.org/debian trixie/main amd64 libpython3-dev amd64 3.13.5-1 [10.4 kB]
+
+2025-12-01T13:20:20.88968563Z [inf]  Get:71 http://deb.debian.org/debian trixie/main amd64 libterm-readkey-perl amd64 2.38-2+b4 [24.6 kB]
+
+2025-12-01T13:20:20.890038725Z [inf]  Get:72 http://deb.debian.org/debian trixie/main amd64 libwayland-client0 amd64 1.23.1-3 [26.8 kB]
+
+2025-12-01T13:20:20.890356747Z [inf]  Get:73 http://deb.debian.org/debian trixie/main amd64 mesa-vulkan-drivers amd64 25.0.7-2 [14.2 MB]
+
+2025-12-01T13:20:20.965494798Z [inf]  Get:74 http://deb.debian.org/debian trixie/main amd64 python3.13-dev amd64 3.13.5-2 [504 kB]
+
+2025-12-01T13:20:20.968805092Z [inf]  Get:75 http://deb.debian.org/debian trixie/main amd64 python3-dev amd64 3.13.5-1 [26.1 kB]
+
+2025-12-01T13:20:20.969029195Z [inf]  Get:76 http://deb.debian.org/debian trixie/main amd64 python3-packaging all 25.0-1 [56.6 kB]
+
+2025-12-01T13:20:20.969627005Z [inf]  Get:77 http://deb.debian.org/debian trixie/main amd64 python3-wheel all 0.46.1-2 [21.7 kB]
+
+2025-12-01T13:20:20.970064754Z [inf]  Get:78 http://deb.debian.org/debian trixie/main amd64 python3-pip all 25.1.1+dfsg-1 [1457 kB]
+
+2025-12-01T13:20:20.978250308Z [inf]  Get:79 http://deb.debian.org/debian trixie/main amd64 python3-pip-whl all 25.1.1+dfsg-1 [1507 kB]
+
+2025-12-01T13:20:20.986794364Z [inf]  Get:80 http://deb.debian.org/debian trixie/main amd64 python3-setuptools-whl all 78.1.1-0.1 [1268 kB]
+
+2025-12-01T13:20:20.993543238Z [inf]  Get:81 http://deb.debian.org/debian trixie/main amd64 python3.13-venv amd64 3.13.5-2 [5472 B]
+
+2025-12-01T13:20:20.993647827Z [inf]  Get:82 http://deb.debian.org/debian trixie/main amd64 python3-venv amd64 3.13.5-1 [1180 B]
+
+2025-12-01T13:20:20.993923205Z [inf]  Get:83 http://deb.debian.org/debian trixie/main amd64 shared-mime-info amd64 2.4-5+b2 [760 kB]
+
+2025-12-01T13:20:20.998606951Z [inf]  Get:84 http://deb.debian.org/debian trixie/main amd64 xdg-user-dirs amd64 0.18-2 [53.2 kB]
+
+2025-12-01T13:20:21.159583472Z [inf]  debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+
+2025-12-01T13:20:21.166310325Z [inf]  debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+2025-12-01T13:20:21.170371654Z [inf]  debconf: unable to initialize frontend: Teletype
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Noninteractive
+
+2025-12-01T13:20:22.906015244Z [inf]  Fetched 90.9 MB in 1s (170 MB/s)
+
+2025-12-01T13:20:22.922359671Z [inf]  Selecting previously unselected package libpython3.13-minimal:amd64.
+(Reading database ... 
+2025-12-01T13:20:22.924965419Z [inf]  (Reading database ... 5%
+2025-12-01T13:20:22.925167564Z [inf]  (Reading database ... 10%
+2025-12-01T13:20:22.925344547Z [inf]  (Reading database ... 15%
+2025-12-01T13:20:22.925401073Z [inf]  (Reading database ... 20%
+2025-12-01T13:20:22.925620546Z [inf]  (Reading database ... 25%
+2025-12-01T13:20:22.926532001Z [inf]  (Reading database ... 30%
+2025-12-01T13:20:22.926676401Z [inf]  (Reading database ... 35%
+2025-12-01T13:20:22.92684767Z [inf]  (Reading database ... 40%
+2025-12-01T13:20:22.927262752Z [inf]  (Reading database ... 45%
+2025-12-01T13:20:22.927815114Z [inf]  (Reading database ... 50%
+2025-12-01T13:20:22.927825321Z [inf]  (Reading database ... 55%
+2025-12-01T13:20:22.927999186Z [inf]  (Reading database ... 60%
+2025-12-01T13:20:22.928220237Z [inf]  (Reading database ... 65%
+2025-12-01T13:20:22.92853797Z [inf]  (Reading database ... 70%
+2025-12-01T13:20:22.929171477Z [inf]  (Reading database ... 75%
+2025-12-01T13:20:22.929262164Z [inf]  (Reading database ... 80%
+2025-12-01T13:20:22.929793216Z [inf]  (Reading database ... 85%
+2025-12-01T13:20:22.929993332Z [inf]  (Reading database ... 90%
+2025-12-01T13:20:22.930553088Z [inf]  (Reading database ... 95%
+2025-12-01T13:20:22.930666652Z [inf]  (Reading database ... 100%(Reading database ... 15584 files and directories currently installed.)
+
+2025-12-01T13:20:22.931468386Z [inf]  Preparing to unpack .../libpython3.13-minimal_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:22.93287743Z [inf]  Unpacking libpython3.13-minimal:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:22.990559859Z [inf]  Selecting previously unselected package python3.13-minimal.
+
+2025-12-01T13:20:22.993688504Z [inf]  Preparing to unpack .../python3.13-minimal_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:22.997634386Z [inf]  Unpacking python3.13-minimal (3.13.5-2) ...
+
+2025-12-01T13:20:23.114073156Z [inf]  Setting up libpython3.13-minimal:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:23.119555815Z [inf]  Setting up python3.13-minimal (3.13.5-2) ...
+
+2025-12-01T13:20:23.844708093Z [inf]  Selecting previously unselected package python3-minimal.
+(Reading database ... 
+2025-12-01T13:20:23.846574679Z [inf]  (Reading database ... 5%
+2025-12-01T13:20:23.847263431Z [inf]  (Reading database ... 10%
+2025-12-01T13:20:23.847575366Z [inf]  (Reading database ... 15%
+2025-12-01T13:20:23.847831617Z [inf]  (Reading database ... 20%
+2025-12-01T13:20:23.848084864Z [inf]  (Reading database ... 25%
+2025-12-01T13:20:23.848336458Z [inf]  (Reading database ... 30%
+2025-12-01T13:20:23.84919374Z [inf]  (Reading database ... 35%
+2025-12-01T13:20:23.849314464Z [inf]  (Reading database ... 40%
+2025-12-01T13:20:23.849703005Z [inf]  (Reading database ... 45%
+2025-12-01T13:20:23.850270955Z [inf]  (Reading database ... 50%
+2025-12-01T13:20:23.850299884Z [inf]  (Reading database ... 55%
+2025-12-01T13:20:23.850500358Z [inf]  (Reading database ... 60%
+2025-12-01T13:20:23.850668235Z [inf]  (Reading database ... 65%
+2025-12-01T13:20:23.85106169Z [inf]  (Reading database ... 70%
+2025-12-01T13:20:23.851652484Z [inf]  (Reading database ... 75%
+2025-12-01T13:20:23.851773926Z [inf]  (Reading database ... 80%
+2025-12-01T13:20:23.852280618Z [inf]  (Reading database ... 85%
+2025-12-01T13:20:23.852504728Z [inf]  (Reading database ... 90%
+2025-12-01T13:20:23.852933637Z [inf]  (Reading database ... 95%
+2025-12-01T13:20:23.853116487Z [inf]  (Reading database ... 100%(Reading database ... 15909 files and directories currently installed.)
+
+2025-12-01T13:20:23.853709625Z [inf]  Preparing to unpack .../python3-minimal_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:23.854900302Z [inf]  Unpacking python3-minimal (3.13.5-1) ...
+
+2025-12-01T13:20:23.871999633Z [inf]  Selecting previously unselected package netbase.
+
+2025-12-01T13:20:23.874305917Z [inf]  Preparing to unpack .../archives/netbase_6.5_all.deb ...
+
+2025-12-01T13:20:23.875589472Z [inf]  Unpacking netbase (6.5) ...
+
+2025-12-01T13:20:23.891674616Z [inf]  Selecting previously unselected package libpython3.13-stdlib:amd64.
+
+2025-12-01T13:20:23.894522681Z [inf]  Preparing to unpack .../libpython3.13-stdlib_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:23.895858968Z [inf]  Unpacking libpython3.13-stdlib:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:24.005388267Z [inf]  Selecting previously unselected package python3.13.
+
+2025-12-01T13:20:24.008723499Z [inf]  Preparing to unpack .../python3.13_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:24.009980823Z [inf]  Unpacking python3.13 (3.13.5-2) ...
+
+2025-12-01T13:20:24.030474504Z [inf]  Selecting previously unselected package libpython3-stdlib:amd64.
+
+2025-12-01T13:20:24.033778246Z [inf]  Preparing to unpack .../libpython3-stdlib_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:24.035080974Z [inf]  Unpacking libpython3-stdlib:amd64 (3.13.5-1) ...
+
+2025-12-01T13:20:24.054168401Z [inf]  Setting up python3-minimal (3.13.5-1) ...
+
+2025-12-01T13:20:24.193793849Z [inf]  Selecting previously unselected package python3.
+(Reading database ... 
+2025-12-01T13:20:24.195743908Z [inf]  (Reading database ... 5%
+2025-12-01T13:20:24.196312014Z [inf]  (Reading database ... 10%
+2025-12-01T13:20:24.196590997Z [inf]  (Reading database ... 15%
+2025-12-01T13:20:24.196760654Z [inf]  (Reading database ... 20%
+2025-12-01T13:20:24.19703407Z [inf]  (Reading database ... 25%
+2025-12-01T13:20:24.197972255Z [inf]  (Reading database ... 30%
+2025-12-01T13:20:24.198062759Z [inf]  (Reading database ... 35%
+2025-12-01T13:20:24.198214362Z [inf]  (Reading database ... 40%
+2025-12-01T13:20:24.198661163Z [inf]  (Reading database ... 45%
+2025-12-01T13:20:24.199249716Z [inf]  (Reading database ... 50%(Reading database ... 55%
+2025-12-01T13:20:24.199428979Z [inf]  (Reading database ... 60%
+2025-12-01T13:20:24.199611851Z [inf]  (Reading database ... 65%
+2025-12-01T13:20:24.199974269Z [inf]  (Reading database ... 70%
+2025-12-01T13:20:24.20063942Z [inf]  (Reading database ... 75%
+2025-12-01T13:20:24.200755654Z [inf]  (Reading database ... 80%
+2025-12-01T13:20:24.201362866Z [inf]  (Reading database ... 85%
+2025-12-01T13:20:24.201919226Z [inf]  (Reading database ... 90%
+2025-12-01T13:20:24.202052867Z [inf]  (Reading database ... 95%
+2025-12-01T13:20:24.202461739Z [inf]  (Reading database ... 100%(Reading database ... 16364 files and directories currently installed.)
+
+2025-12-01T13:20:24.203271238Z [inf]  Preparing to unpack .../00-python3_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:24.207381446Z [inf]  Unpacking python3 (3.13.5-1) ...
+
+2025-12-01T13:20:24.223420317Z [inf]  Selecting previously unselected package build-essential.
+
+2025-12-01T13:20:24.226631178Z [inf]  Preparing to unpack .../01-build-essential_12.12_amd64.deb ...
+
+2025-12-01T13:20:24.227828596Z [inf]  Unpacking build-essential (12.12) ...
+
+2025-12-01T13:20:24.243999699Z [inf]  Selecting previously unselected package libconfig-inifiles-perl.
+
+2025-12-01T13:20:24.247587883Z [inf]  Preparing to unpack .../02-libconfig-inifiles-perl_3.000003-3_all.deb ...
+
+2025-12-01T13:20:24.249225669Z [inf]  Unpacking libconfig-inifiles-perl (3.000003-3) ...
+
+2025-12-01T13:20:24.26810158Z [inf]  Selecting previously unselected package mysql-common.
+
+2025-12-01T13:20:24.271335164Z [inf]  Preparing to unpack .../03-mysql-common_5.8+1.1.1_all.deb ...
+
+2025-12-01T13:20:24.281741136Z [inf]  Unpacking mysql-common (5.8+1.1.1) ...
+
+2025-12-01T13:20:24.300082203Z [inf]  Selecting previously unselected package mariadb-common.
+
+2025-12-01T13:20:24.303668722Z [inf]  Preparing to unpack .../04-mariadb-common_1%3a11.8.3-0+deb13u1_all.deb ...
+
+2025-12-01T13:20:24.307462364Z [inf]  Unpacking mariadb-common (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:24.324755197Z [inf]  Selecting previously unselected package libmariadb3:amd64.
+
+2025-12-01T13:20:24.327686536Z [inf]  Preparing to unpack .../05-libmariadb3_1%3a11.8.3-0+deb13u1_amd64.deb ...
+
+2025-12-01T13:20:24.329985748Z [inf]  Unpacking libmariadb3:amd64 (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:24.354573664Z [inf]  Selecting previously unselected package libedit2:amd64.
+
+2025-12-01T13:20:24.357703903Z [inf]  Preparing to unpack .../06-libedit2_3.1-20250104-1_amd64.deb ...
+
+2025-12-01T13:20:24.359031124Z [inf]  Unpacking libedit2:amd64 (3.1-20250104-1) ...
+
+2025-12-01T13:20:24.37801619Z [inf]  Selecting previously unselected package libncurses6:amd64.
+
+2025-12-01T13:20:24.381086384Z [inf]  Preparing to unpack .../07-libncurses6_6.5+20250216-2_amd64.deb ...
+
+2025-12-01T13:20:24.382200143Z [inf]  Unpacking libncurses6:amd64 (6.5+20250216-2) ...
+
+2025-12-01T13:20:24.400664982Z [inf]  Selecting previously unselected package mariadb-client-core.
+
+2025-12-01T13:20:24.403453524Z [inf]  Preparing to unpack .../08-mariadb-client-core_1%3a11.8.3-0+deb13u1_amd64.deb ...
+
+2025-12-01T13:20:24.404697622Z [inf]  Unpacking mariadb-client-core (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:24.496011924Z [inf]  Selecting previously unselected package libpcre2-posix3:amd64.
+
+2025-12-01T13:20:24.499457349Z [inf]  Preparing to unpack .../09-libpcre2-posix3_10.46-1~deb13u1_amd64.deb ...
+
+2025-12-01T13:20:24.50076662Z [inf]  Unpacking libpcre2-posix3:amd64 (10.46-1~deb13u1) ...
+
+2025-12-01T13:20:24.519488385Z [inf]  Selecting previously unselected package liburing2:amd64.
+
+2025-12-01T13:20:24.522713797Z [inf]  Preparing to unpack .../10-liburing2_2.9-1_amd64.deb ...
+
+2025-12-01T13:20:24.524237687Z [inf]  Unpacking liburing2:amd64 (2.9-1) ...
+
+2025-12-01T13:20:24.54204947Z [inf]  Selecting previously unselected package mariadb-client.
+
+2025-12-01T13:20:24.545307276Z [inf]  Preparing to unpack .../11-mariadb-client_1%3a11.8.3-0+deb13u1_amd64.deb ...
+
+2025-12-01T13:20:24.546641862Z [inf]  Unpacking mariadb-client (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:24.804519582Z [inf]  Selecting previously unselected package mariadb-client-compat.
+
+2025-12-01T13:20:24.807867474Z [inf]  Preparing to unpack .../12-mariadb-client-compat_1%3a11.8.3-0+deb13u1_all.deb ...
+
+2025-12-01T13:20:24.809178816Z [inf]  Unpacking mariadb-client-compat (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:24.826228876Z [inf]  Selecting previously unselected package default-mysql-client.
+
+2025-12-01T13:20:24.829122365Z [inf]  Preparing to unpack .../13-default-mysql-client_1.1.1_all.deb ...
+
+2025-12-01T13:20:24.830454491Z [inf]  Unpacking default-mysql-client (1.1.1) ...
+
+2025-12-01T13:20:24.847638646Z [inf]  Selecting previously unselected package javascript-common.
+
+2025-12-01T13:20:24.850864732Z [inf]  Preparing to unpack .../14-javascript-common_12+nmu1_all.deb ...
+
+2025-12-01T13:20:24.852096611Z [inf]  Unpacking javascript-common (12+nmu1) ...
+
+2025-12-01T13:20:24.867537878Z [inf]  Selecting previously unselected package libdbi-perl:amd64.
+
+2025-12-01T13:20:24.870851848Z [inf]  Preparing to unpack .../15-libdbi-perl_1.647-1_amd64.deb ...
+
+2025-12-01T13:20:24.872028527Z [inf]  Unpacking libdbi-perl:amd64 (1.647-1) ...
+
+2025-12-01T13:20:24.918897375Z [inf]  Selecting previously unselected package libdbd-mariadb-perl.
+
+2025-12-01T13:20:24.922654633Z [inf]  Preparing to unpack .../16-libdbd-mariadb-perl_1.22-1+b4_amd64.deb ...
+
+2025-12-01T13:20:24.923914466Z [inf]  Unpacking libdbd-mariadb-perl (1.22-1+b4) ...
+
+2025-12-01T13:20:24.943335464Z [inf]  Selecting previously unselected package libdrm-common.
+
+2025-12-01T13:20:24.946610836Z [inf]  Preparing to unpack .../17-libdrm-common_2.4.124-2_all.deb ...
+
+2025-12-01T13:20:24.947880782Z [inf]  Unpacking libdrm-common (2.4.124-2) ...
+
+2025-12-01T13:20:24.964281156Z [inf]  Selecting previously unselected package libdrm2:amd64.
+
+2025-12-01T13:20:24.967289923Z [inf]  Preparing to unpack .../18-libdrm2_2.4.124-2_amd64.deb ...
+
+2025-12-01T13:20:24.968996131Z [inf]  Unpacking libdrm2:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:24.986187148Z [inf]  Selecting previously unselected package libdrm-amdgpu1:amd64.
+
+2025-12-01T13:20:24.989056722Z [inf]  Preparing to unpack .../19-libdrm-amdgpu1_2.4.124-2_amd64.deb ...
+
+2025-12-01T13:20:24.990359018Z [inf]  Unpacking libdrm-amdgpu1:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:25.00663939Z [inf]  Selecting previously unselected package libpciaccess0:amd64.
+
+2025-12-01T13:20:25.009844913Z [inf]  Preparing to unpack .../20-libpciaccess0_0.17-3+b3_amd64.deb ...
+
+2025-12-01T13:20:25.011172347Z [inf]  Unpacking libpciaccess0:amd64 (0.17-3+b3) ...
+
+2025-12-01T13:20:25.029568097Z [inf]  Selecting previously unselected package libdrm-intel1:amd64.
+
+2025-12-01T13:20:25.033029718Z [inf]  Preparing to unpack .../21-libdrm-intel1_2.4.124-2_amd64.deb ...
+
+2025-12-01T13:20:25.034322708Z [inf]  Unpacking libdrm-intel1:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:25.053240139Z [inf]  Selecting previously unselected package libelf1t64:amd64.
+
+2025-12-01T13:20:25.056124058Z [inf]  Preparing to unpack .../22-libelf1t64_0.192-4_amd64.deb ...
+
+2025-12-01T13:20:25.057876542Z [inf]  Unpacking libelf1t64:amd64 (0.192-4) ...
+
+2025-12-01T13:20:25.082210648Z [inf]  Selecting previously unselected package libexpat1-dev:amd64.
+
+2025-12-01T13:20:25.085164104Z [inf]  Preparing to unpack .../23-libexpat1-dev_2.7.1-2_amd64.deb ...
+
+2025-12-01T13:20:25.086332747Z [inf]  Unpacking libexpat1-dev:amd64 (2.7.1-2) ...
+
+2025-12-01T13:20:25.109422682Z [inf]  Selecting previously unselected package libwayland-server0:amd64.
+
+2025-12-01T13:20:25.112388161Z [inf]  Preparing to unpack .../24-libwayland-server0_1.23.1-3_amd64.deb ...
+
+2025-12-01T13:20:25.113601136Z [inf]  Unpacking libwayland-server0:amd64 (1.23.1-3) ...
+
+2025-12-01T13:20:25.131636239Z [inf]  Selecting previously unselected package libz3-4:amd64.
+
+2025-12-01T13:20:25.135162901Z [inf]  Preparing to unpack .../25-libz3-4_4.13.3-1_amd64.deb ...
+
+2025-12-01T13:20:25.136494807Z [inf]  Unpacking libz3-4:amd64 (4.13.3-1) ...
+
+2025-12-01T13:20:25.498851234Z [inf]  Selecting previously unselected package libllvm19:amd64.
+
+2025-12-01T13:20:25.502180519Z [inf]  Preparing to unpack .../26-libllvm19_1%3a19.1.7-3+b1_amd64.deb ...
+
+2025-12-01T13:20:25.503831949Z [inf]  Unpacking libllvm19:amd64 (1:19.1.7-3+b1) ...
+
+2025-12-01T13:20:26.04010606Z [inf]  Selecting previously unselected package libsensors-config.
+
+2025-12-01T13:20:26.043321791Z [inf]  Preparing to unpack .../27-libsensors-config_1%3a3.6.2-2_all.deb ...
+
+2025-12-01T13:20:26.044525414Z [inf]  Unpacking libsensors-config (1:3.6.2-2) ...
+
+2025-12-01T13:20:26.062467758Z [inf]  Selecting previously unselected package libsensors5:amd64.
+
+2025-12-01T13:20:26.0657424Z [inf]  Preparing to unpack .../28-libsensors5_1%3a3.6.2-2_amd64.deb ...
+
+2025-12-01T13:20:26.06713573Z [inf]  Unpacking libsensors5:amd64 (1:3.6.2-2) ...
+
+2025-12-01T13:20:26.08396866Z [inf]  Selecting previously unselected package libxau6:amd64.
+
+2025-12-01T13:20:26.086789941Z [inf]  Preparing to unpack .../29-libxau6_1%3a1.0.11-1_amd64.deb ...
+
+2025-12-01T13:20:26.088073911Z [inf]  Unpacking libxau6:amd64 (1:1.0.11-1) ...
+
+2025-12-01T13:20:26.104146545Z [inf]  Selecting previously unselected package libxdmcp6:amd64.
+
+2025-12-01T13:20:26.107046339Z [inf]  Preparing to unpack .../30-libxdmcp6_1%3a1.1.5-1_amd64.deb ...
+
+2025-12-01T13:20:26.108271172Z [inf]  Unpacking libxdmcp6:amd64 (1:1.1.5-1) ...
+
+2025-12-01T13:20:26.125030872Z [inf]  Selecting previously unselected package libxcb1:amd64.
+
+2025-12-01T13:20:26.128224616Z [inf]  Preparing to unpack .../31-libxcb1_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.129535446Z [inf]  Unpacking libxcb1:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.14688568Z [inf]  Selecting previously unselected package libx11-data.
+
+2025-12-01T13:20:26.149943768Z [inf]  Preparing to unpack .../32-libx11-data_2%3a1.8.12-1_all.deb ...
+
+2025-12-01T13:20:26.151204331Z [inf]  Unpacking libx11-data (2:1.8.12-1) ...
+
+2025-12-01T13:20:26.189347709Z [inf]  Selecting previously unselected package libx11-6:amd64.
+
+2025-12-01T13:20:26.192703187Z [inf]  Preparing to unpack .../33-libx11-6_2%3a1.8.12-1_amd64.deb ...
+
+2025-12-01T13:20:26.194091755Z [inf]  Unpacking libx11-6:amd64 (2:1.8.12-1) ...
+
+2025-12-01T13:20:26.238067132Z [inf]  Selecting previously unselected package libx11-xcb1:amd64.
+
+2025-12-01T13:20:26.241356999Z [inf]  Preparing to unpack .../34-libx11-xcb1_2%3a1.8.12-1_amd64.deb ...
+
+2025-12-01T13:20:26.242879164Z [inf]  Unpacking libx11-xcb1:amd64 (2:1.8.12-1) ...
+
+2025-12-01T13:20:26.264798641Z [inf]  Selecting previously unselected package libxcb-dri3-0:amd64.
+
+2025-12-01T13:20:26.268226975Z [inf]  Preparing to unpack .../35-libxcb-dri3-0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.269629678Z [inf]  Unpacking libxcb-dri3-0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.289248383Z [inf]  Selecting previously unselected package libxcb-present0:amd64.
+
+2025-12-01T13:20:26.292137846Z [inf]  Preparing to unpack .../36-libxcb-present0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.293515094Z [inf]  Unpacking libxcb-present0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.31330392Z [inf]  Selecting previously unselected package libxcb-randr0:amd64.
+
+2025-12-01T13:20:26.316673769Z [inf]  Preparing to unpack .../37-libxcb-randr0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.317981264Z [inf]  Unpacking libxcb-randr0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.339243227Z [inf]  Selecting previously unselected package libxcb-sync1:amd64.
+
+2025-12-01T13:20:26.34250098Z [inf]  Preparing to unpack .../38-libxcb-sync1_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.343866965Z [inf]  Unpacking libxcb-sync1:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.364338359Z [inf]  Selecting previously unselected package libxcb-xfixes0:amd64.
+
+2025-12-01T13:20:26.367230651Z [inf]  Preparing to unpack .../39-libxcb-xfixes0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.368580513Z [inf]  Unpacking libxcb-xfixes0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.388520217Z [inf]  Selecting previously unselected package libxshmfence1:amd64.
+
+2025-12-01T13:20:26.391836477Z [inf]  Preparing to unpack .../40-libxshmfence1_1.3.3-1_amd64.deb ...
+
+2025-12-01T13:20:26.393208259Z [inf]  Unpacking libxshmfence1:amd64 (1.3.3-1) ...
+
+2025-12-01T13:20:26.409332408Z [inf]  Selecting previously unselected package mesa-libgallium:amd64.
+
+2025-12-01T13:20:26.412469576Z [inf]  Preparing to unpack .../41-mesa-libgallium_25.0.7-2_amd64.deb ...
+
+2025-12-01T13:20:26.413820086Z [inf]  Unpacking mesa-libgallium:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:26.801056624Z [inf]  Selecting previously unselected package libgbm1:amd64.
+
+2025-12-01T13:20:26.80433182Z [inf]  Preparing to unpack .../42-libgbm1_25.0.7-2_amd64.deb ...
+
+2025-12-01T13:20:26.805766698Z [inf]  Unpacking libgbm1:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:26.825248712Z [inf]  Selecting previously unselected package libglvnd0:amd64.
+
+2025-12-01T13:20:26.828483419Z [inf]  Preparing to unpack .../43-libglvnd0_1.7.0-1+b2_amd64.deb ...
+
+2025-12-01T13:20:26.829922211Z [inf]  Unpacking libglvnd0:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:26.850674999Z [inf]  Selecting previously unselected package libxcb-glx0:amd64.
+
+2025-12-01T13:20:26.853526405Z [inf]  Preparing to unpack .../44-libxcb-glx0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.854936859Z [inf]  Unpacking libxcb-glx0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.875110875Z [inf]  Selecting previously unselected package libxcb-shm0:amd64.
+
+2025-12-01T13:20:26.878338004Z [inf]  Preparing to unpack .../45-libxcb-shm0_1.17.0-2+b1_amd64.deb ...
+
+2025-12-01T13:20:26.879571582Z [inf]  Unpacking libxcb-shm0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:26.898338443Z [inf]  Selecting previously unselected package libxext6:amd64.
+
+2025-12-01T13:20:26.901483246Z [inf]  Preparing to unpack .../46-libxext6_2%3a1.3.4-1+b3_amd64.deb ...
+
+2025-12-01T13:20:26.902772167Z [inf]  Unpacking libxext6:amd64 (2:1.3.4-1+b3) ...
+
+2025-12-01T13:20:26.919568237Z [inf]  Selecting previously unselected package libxxf86vm1:amd64.
+
+2025-12-01T13:20:26.922524329Z [inf]  Preparing to unpack .../47-libxxf86vm1_1%3a1.1.4-1+b4_amd64.deb ...
+
+2025-12-01T13:20:26.923708843Z [inf]  Unpacking libxxf86vm1:amd64 (1:1.1.4-1+b4) ...
+
+2025-12-01T13:20:26.941047074Z [inf]  Selecting previously unselected package libvulkan1:amd64.
+
+2025-12-01T13:20:26.944414229Z [inf]  Preparing to unpack .../48-libvulkan1_1.4.309.0-1_amd64.deb ...
+
+2025-12-01T13:20:26.94579025Z [inf]  Unpacking libvulkan1:amd64 (1.4.309.0-1) ...
+
+2025-12-01T13:20:26.968657005Z [inf]  Selecting previously unselected package libgl1-mesa-dri:amd64.
+
+2025-12-01T13:20:26.971709624Z [inf]  Preparing to unpack .../49-libgl1-mesa-dri_25.0.7-2_amd64.deb ...
+
+2025-12-01T13:20:26.977119971Z [inf]  Unpacking libgl1-mesa-dri:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:26.995223612Z [inf]  Selecting previously unselected package libglx-mesa0:amd64.
+
+2025-12-01T13:20:26.998174396Z [inf]  Preparing to unpack .../50-libglx-mesa0_25.0.7-2_amd64.deb ...
+
+2025-12-01T13:20:26.999333871Z [inf]  Unpacking libglx-mesa0:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:27.023464238Z [inf]  Selecting previously unselected package libglx0:amd64.
+
+2025-12-01T13:20:27.026829355Z [inf]  Preparing to unpack .../51-libglx0_1.7.0-1+b2_amd64.deb ...
+
+2025-12-01T13:20:27.028070965Z [inf]  Unpacking libglx0:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:27.047101844Z [inf]  Selecting previously unselected package libgl1:amd64.
+
+2025-12-01T13:20:27.05010415Z [inf]  Preparing to unpack .../52-libgl1_1.7.0-1+b2_amd64.deb ...
+
+2025-12-01T13:20:27.051341047Z [inf]  Unpacking libgl1:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:27.075398452Z [inf]  Selecting previously unselected package libglib2.0-0t64:amd64.
+
+2025-12-01T13:20:27.078574121Z [inf]  Preparing to unpack .../53-libglib2.0-0t64_2.84.4-3~deb13u1_amd64.deb ...
+
+2025-12-01T13:20:27.088703917Z [inf]  Unpacking libglib2.0-0t64:amd64 (2.84.4-3~deb13u1) ...
+
+2025-12-01T13:20:27.165619063Z [inf]  Selecting previously unselected package libglib2.0-data.
+
+2025-12-01T13:20:27.168895748Z [inf]  Preparing to unpack .../54-libglib2.0-data_2.84.4-3~deb13u1_all.deb ...
+
+2025-12-01T13:20:27.170245506Z [inf]  Unpacking libglib2.0-data (2.84.4-3~deb13u1) ...
+
+2025-12-01T13:20:27.250407683Z [inf]  Selecting previously unselected package libgpm2:amd64.
+
+2025-12-01T13:20:27.253664922Z [inf]  Preparing to unpack .../55-libgpm2_1.20.7-11+b2_amd64.deb ...
+
+2025-12-01T13:20:27.255187846Z [inf]  Unpacking libgpm2:amd64 (1.20.7-11+b2) ...
+
+2025-12-01T13:20:27.271688583Z [inf]  Selecting previously unselected package libjs-jquery.
+
+2025-12-01T13:20:27.274732673Z [inf]  Preparing to unpack .../56-libjs-jquery_3.6.1+dfsg+~3.5.14-1_all.deb ...
+
+2025-12-01T13:20:27.28024832Z [inf]  Unpacking libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+
+2025-12-01T13:20:27.303774749Z [inf]  Selecting previously unselected package libjs-underscore.
+
+2025-12-01T13:20:27.306797875Z [inf]  Preparing to unpack .../57-libjs-underscore_1.13.4~dfsg+~1.11.4-3_all.deb ...
+
+2025-12-01T13:20:27.308144192Z [inf]  Unpacking libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+
+2025-12-01T13:20:27.328386776Z [inf]  Selecting previously unselected package libjs-sphinxdoc.
+
+2025-12-01T13:20:27.331822524Z [inf]  Preparing to unpack .../58-libjs-sphinxdoc_8.1.3-5_all.deb ...
+
+2025-12-01T13:20:27.333164065Z [inf]  Unpacking libjs-sphinxdoc (8.1.3-5) ...
+
+2025-12-01T13:20:27.352046485Z [inf]  Selecting previously unselected package libpython3.13:amd64.
+
+2025-12-01T13:20:27.355072276Z [inf]  Preparing to unpack .../59-libpython3.13_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:27.356580811Z [inf]  Unpacking libpython3.13:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:27.470494022Z [inf]  Selecting previously unselected package zlib1g-dev:amd64.
+
+2025-12-01T13:20:27.473407496Z [inf]  Preparing to unpack .../60-zlib1g-dev_1%3a1.3.dfsg+really1.3.1-1+b1_amd64.deb ...
+
+2025-12-01T13:20:27.47484281Z [inf]  Unpacking zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+b1) ...
+
+2025-12-01T13:20:27.502892356Z [inf]  Selecting previously unselected package libpython3.13-dev:amd64.
+
+2025-12-01T13:20:27.506086456Z [inf]  Preparing to unpack .../61-libpython3.13-dev_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:27.507492114Z [inf]  Unpacking libpython3.13-dev:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:27.767351605Z [inf]  Selecting previously unselected package libpython3-dev:amd64.
+
+2025-12-01T13:20:27.770652824Z [inf]  Preparing to unpack .../62-libpython3-dev_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:27.771905688Z [inf]  Unpacking libpython3-dev:amd64 (3.13.5-1) ...
+
+2025-12-01T13:20:27.786833661Z [inf]  Selecting previously unselected package libterm-readkey-perl.
+
+2025-12-01T13:20:27.789670702Z [inf]  Preparing to unpack .../63-libterm-readkey-perl_2.38-2+b4_amd64.deb ...
+
+2025-12-01T13:20:27.790967278Z [inf]  Unpacking libterm-readkey-perl (2.38-2+b4) ...
+
+2025-12-01T13:20:27.807693901Z [inf]  Selecting previously unselected package libwayland-client0:amd64.
+
+2025-12-01T13:20:27.810621867Z [inf]  Preparing to unpack .../64-libwayland-client0_1.23.1-3_amd64.deb ...
+
+2025-12-01T13:20:27.81193527Z [inf]  Unpacking libwayland-client0:amd64 (1.23.1-3) ...
+
+2025-12-01T13:20:27.828339354Z [inf]  Selecting previously unselected package mesa-vulkan-drivers:amd64.
+
+2025-12-01T13:20:27.831544475Z [inf]  Preparing to unpack .../65-mesa-vulkan-drivers_25.0.7-2_amd64.deb ...
+
+2025-12-01T13:20:27.832879961Z [inf]  Unpacking mesa-vulkan-drivers:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:28.187284132Z [inf]  Selecting previously unselected package python3.13-dev.
+
+2025-12-01T13:20:28.190553809Z [inf]  Preparing to unpack .../66-python3.13-dev_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:28.191804869Z [inf]  Unpacking python3.13-dev (3.13.5-2) ...
+
+2025-12-01T13:20:28.2101979Z [inf]  Selecting previously unselected package python3-dev.
+
+2025-12-01T13:20:28.213434978Z [inf]  Preparing to unpack .../67-python3-dev_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:28.214780861Z [inf]  Unpacking python3-dev (3.13.5-1) ...
+
+2025-12-01T13:20:28.231274661Z [inf]  Selecting previously unselected package python3-packaging.
+
+2025-12-01T13:20:28.234533098Z [inf]  Preparing to unpack .../68-python3-packaging_25.0-1_all.deb ...
+
+2025-12-01T13:20:28.236128077Z [inf]  Unpacking python3-packaging (25.0-1) ...
+
+2025-12-01T13:20:28.25651285Z [inf]  Selecting previously unselected package python3-wheel.
+
+2025-12-01T13:20:28.259721457Z [inf]  Preparing to unpack .../69-python3-wheel_0.46.1-2_all.deb ...
+
+2025-12-01T13:20:28.261164463Z [inf]  Unpacking python3-wheel (0.46.1-2) ...
+
+2025-12-01T13:20:28.279960079Z [inf]  Selecting previously unselected package python3-pip.
+
+2025-12-01T13:20:28.282852735Z [inf]  Preparing to unpack .../70-python3-pip_25.1.1+dfsg-1_all.deb ...
+
+2025-12-01T13:20:28.28418145Z [inf]  Unpacking python3-pip (25.1.1+dfsg-1) ...
+
+2025-12-01T13:20:28.371048853Z [inf]  Selecting previously unselected package python3-pip-whl.
+
+2025-12-01T13:20:28.374211218Z [inf]  Preparing to unpack .../71-python3-pip-whl_25.1.1+dfsg-1_all.deb ...
+
+2025-12-01T13:20:28.375536235Z [inf]  Unpacking python3-pip-whl (25.1.1+dfsg-1) ...
+
+2025-12-01T13:20:28.424836909Z [inf]  Selecting previously unselected package python3-setuptools-whl.
+
+2025-12-01T13:20:28.42769001Z [inf]  Preparing to unpack .../72-python3-setuptools-whl_78.1.1-0.1_all.deb ...
+
+2025-12-01T13:20:28.428961281Z [inf]  Unpacking python3-setuptools-whl (78.1.1-0.1) ...
+
+2025-12-01T13:20:28.484729679Z [inf]  Selecting previously unselected package python3.13-venv.
+
+2025-12-01T13:20:28.487592411Z [inf]  Preparing to unpack .../73-python3.13-venv_3.13.5-2_amd64.deb ...
+
+2025-12-01T13:20:28.48885472Z [inf]  Unpacking python3.13-venv (3.13.5-2) ...
+
+2025-12-01T13:20:28.504111334Z [inf]  Selecting previously unselected package python3-venv.
+
+2025-12-01T13:20:28.507452048Z [inf]  Preparing to unpack .../74-python3-venv_3.13.5-1_amd64.deb ...
+
+2025-12-01T13:20:28.508932179Z [inf]  Unpacking python3-venv (3.13.5-1) ...
+
+2025-12-01T13:20:28.527692479Z [inf]  Selecting previously unselected package shared-mime-info.
+
+2025-12-01T13:20:28.531018982Z [inf]  Preparing to unpack .../75-shared-mime-info_2.4-5+b2_amd64.deb ...
+
+2025-12-01T13:20:28.532402841Z [inf]  Unpacking shared-mime-info (2.4-5+b2) ...
+
+2025-12-01T13:20:28.589494299Z [inf]  Selecting previously unselected package xdg-user-dirs.
+
+2025-12-01T13:20:28.592964671Z [inf]  Preparing to unpack .../76-xdg-user-dirs_0.18-2_amd64.deb ...
+
+2025-12-01T13:20:28.597499623Z [inf]  Unpacking xdg-user-dirs (0.18-2) ...
+
+2025-12-01T13:20:28.625920095Z [inf]  Setting up libconfig-inifiles-perl (3.000003-3) ...
+
+2025-12-01T13:20:28.629385238Z [inf]  Setting up javascript-common (12+nmu1) ...
+
+2025-12-01T13:20:28.715651627Z [inf]  apache2_invoke: Enable configuration javascript-common
+
+2025-12-01T13:20:28.753286431Z [inf]  invoke-rc.d: could not determine current runlevel
+
+2025-12-01T13:20:28.75664946Z [inf]  invoke-rc.d: policy-rc.d denied execution of reload.
+
+2025-12-01T13:20:28.760198767Z [inf]  Setting up libwayland-server0:amd64 (1.23.1-3) ...
+
+2025-12-01T13:20:28.763380605Z [inf]  Setting up libpciaccess0:amd64 (0.17-3+b3) ...
+
+2025-12-01T13:20:28.766485982Z [inf]  Setting up mysql-common (5.8+1.1.1) ...
+
+2025-12-01T13:20:28.78168402Z [inf]  update-alternatives: using /etc/mysql/my.cnf.fallback to provide /etc/mysql/my.cnf (my.cnf) in auto mode
+
+2025-12-01T13:20:28.783812347Z [inf]  Setting up libxau6:amd64 (1:1.0.11-1) ...
+
+2025-12-01T13:20:28.787126544Z [inf]  Setting up libxdmcp6:amd64 (1:1.1.5-1) ...
+
+2025-12-01T13:20:28.790219049Z [inf]  Setting up python3-setuptools-whl (78.1.1-0.1) ...
+
+2025-12-01T13:20:28.793193047Z [inf]  Setting up libxcb1:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.796178527Z [inf]  Setting up libgpm2:amd64 (1.20.7-11+b2) ...
+
+2025-12-01T13:20:28.799253306Z [inf]  Setting up libxcb-xfixes0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.802311261Z [inf]  Setting up xdg-user-dirs (0.18-2) ...
+
+2025-12-01T13:20:28.811319517Z [inf]  Setting up python3-pip-whl (25.1.1+dfsg-1) ...
+
+2025-12-01T13:20:28.814448836Z [inf]  Setting up libglvnd0:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:28.817692526Z [inf]  Setting up libxcb-glx0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.820694996Z [inf]  Setting up libedit2:amd64 (3.1-20250104-1) ...
+
+2025-12-01T13:20:28.823723798Z [inf]  Setting up libsensors-config (1:3.6.2-2) ...
+
+2025-12-01T13:20:28.82905881Z [inf]  Setting up libxcb-shm0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.832414932Z [inf]  Setting up libelf1t64:amd64 (0.192-4) ...
+
+2025-12-01T13:20:28.835581224Z [inf]  Setting up libxcb-present0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.838580099Z [inf]  Setting up mariadb-common (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:28.843873969Z [inf]  update-alternatives: using /etc/mysql/mariadb.cnf to provide /etc/mysql/my.cnf (my.cnf) in auto mode
+
+2025-12-01T13:20:28.847321286Z [inf]  Setting up libz3-4:amd64 (4.13.3-1) ...
+
+2025-12-01T13:20:28.850511539Z [inf]  Setting up libglib2.0-0t64:amd64 (2.84.4-3~deb13u1) ...
+
+2025-12-01T13:20:28.85565622Z [inf]  No schema files found: doing nothing.
+
+2025-12-01T13:20:28.859756811Z [inf]  Setting up libglib2.0-data (2.84.4-3~deb13u1) ...
+
+2025-12-01T13:20:28.863062222Z [inf]  Setting up libexpat1-dev:amd64 (2.7.1-2) ...
+
+2025-12-01T13:20:28.86640476Z [inf]  Setting up libx11-data (2:1.8.12-1) ...
+
+2025-12-01T13:20:28.869759528Z [inf]  Setting up libxcb-sync1:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:28.872983784Z [inf]  Setting up libncurses6:amd64 (6.5+20250216-2) ...
+
+2025-12-01T13:20:28.876297212Z [inf]  Setting up shared-mime-info (2.4-5+b2) ...
+
+2025-12-01T13:20:29.672005443Z [inf]  Setting up libmariadb3:amd64 (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:29.675459508Z [inf]  Setting up libsensors5:amd64 (1:3.6.2-2) ...
+
+2025-12-01T13:20:29.678899096Z [inf]  Setting up libvulkan1:amd64 (1.4.309.0-1) ...
+
+2025-12-01T13:20:29.682397351Z [inf]  Setting up zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+b1) ...
+
+2025-12-01T13:20:29.685614831Z [inf]  Setting up libpcre2-posix3:amd64 (10.46-1~deb13u1) ...
+
+2025-12-01T13:20:29.688815141Z [inf]  Setting up libxshmfence1:amd64 (1.3.3-1) ...
+
+2025-12-01T13:20:29.691863898Z [inf]  Setting up libxcb-randr0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:29.695293182Z [inf]  Setting up build-essential (12.12) ...
+
+2025-12-01T13:20:29.698747908Z [inf]  Setting up libx11-6:amd64 (2:1.8.12-1) ...
+
+2025-12-01T13:20:29.702151835Z [inf]  Setting up netbase (6.5) ...
+
+2025-12-01T13:20:29.711895281Z [inf]  Setting up libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+
+2025-12-01T13:20:29.719385964Z [inf]  Setting up libterm-readkey-perl (2.38-2+b4) ...
+
+2025-12-01T13:20:29.72254304Z [inf]  Setting up liburing2:amd64 (2.9-1) ...
+
+2025-12-01T13:20:29.72590269Z [inf]  Setting up libdrm-common (2.4.124-2) ...
+
+2025-12-01T13:20:29.72961152Z [inf]  Setting up libpython3.13-stdlib:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:29.733087967Z [inf]  Setting up libdbi-perl:amd64 (1.647-1) ...
+
+2025-12-01T13:20:29.736527003Z [inf]  Setting up libpython3-stdlib:amd64 (3.13.5-1) ...
+
+2025-12-01T13:20:29.739815456Z [inf]  Setting up libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+
+2025-12-01T13:20:29.743107921Z [inf]  Setting up libwayland-client0:amd64 (1.23.1-3) ...
+
+2025-12-01T13:20:29.746306902Z [inf]  Setting up libpython3.13:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:29.749754811Z [inf]  Setting up libxcb-dri3-0:amd64 (1.17.0-2+b1) ...
+
+2025-12-01T13:20:29.753029274Z [inf]  Setting up libllvm19:amd64 (1:19.1.7-3+b1) ...
+
+2025-12-01T13:20:29.756419926Z [inf]  Setting up libx11-xcb1:amd64 (2:1.8.12-1) ...
+
+2025-12-01T13:20:29.759833085Z [inf]  Setting up python3.13 (3.13.5-2) ...
+
+2025-12-01T13:20:30.547971808Z [inf]  Setting up libxext6:amd64 (2:1.3.4-1+b3) ...
+
+2025-12-01T13:20:30.551155061Z [inf]  Setting up python3 (3.13.5-1) ...
+
+2025-12-01T13:20:30.557205744Z [inf]  running python rtupdate hooks for python3.13...
+running python post-rtupdate hooks for python3.13...
+
+2025-12-01T13:20:30.637705823Z [inf]  Setting up python3.13-venv (3.13.5-2) ...
+
+2025-12-01T13:20:30.688749537Z [inf]  Setting up libxxf86vm1:amd64 (1:1.1.4-1+b4) ...
+
+2025-12-01T13:20:30.692174511Z [inf]  Setting up mariadb-client-core (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:30.695466985Z [inf]  Setting up libdbd-mariadb-perl (1.22-1+b4) ...
+
+2025-12-01T13:20:30.698491082Z [inf]  Setting up python3-packaging (25.0-1) ...
+
+2025-12-01T13:20:30.819172106Z [inf]  Setting up python3-venv (3.13.5-1) ...
+
+2025-12-01T13:20:30.822455377Z [inf]  Setting up libpython3.13-dev:amd64 (3.13.5-2) ...
+
+2025-12-01T13:20:30.826055432Z [inf]  Setting up libjs-sphinxdoc (8.1.3-5) ...
+
+2025-12-01T13:20:30.829398852Z [inf]  Setting up libdrm2:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:30.832748968Z [inf]  Setting up libdrm-amdgpu1:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:30.836192402Z [inf]  Setting up mesa-vulkan-drivers:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:30.839424899Z [inf]  Setting up libpython3-dev:amd64 (3.13.5-1) ...
+
+2025-12-01T13:20:30.842701202Z [inf]  Setting up mariadb-client (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:30.850581401Z [inf]  Setting up python3.13-dev (3.13.5-2) ...
+
+2025-12-01T13:20:30.853799597Z [inf]  Setting up mariadb-client-compat (1:11.8.3-0+deb13u1) ...
+
+2025-12-01T13:20:30.857077001Z [inf]  Setting up libdrm-intel1:amd64 (2.4.124-2) ...
+
+2025-12-01T13:20:30.86026472Z [inf]  Setting up python3-wheel (0.46.1-2) ...
+
+2025-12-01T13:20:30.959413793Z [inf]  Setting up python3-dev (3.13.5-1) ...
+
+2025-12-01T13:20:30.963075632Z [inf]  Setting up python3-pip (25.1.1+dfsg-1) ...
+
+2025-12-01T13:20:31.779309789Z [inf]  Setting up default-mysql-client (1.1.1) ...
+
+2025-12-01T13:20:31.782470653Z [inf]  Setting up mesa-libgallium:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:31.7857145Z [inf]  Setting up libgbm1:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:31.78878635Z [inf]  Setting up libgl1-mesa-dri:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:31.802974471Z [inf]  Setting up libglx-mesa0:amd64 (25.0.7-2) ...
+
+2025-12-01T13:20:31.806463442Z [inf]  Setting up libglx0:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:31.809514719Z [inf]  Setting up libgl1:amd64 (1.7.0-1+b2) ...
+
+2025-12-01T13:20:31.812876209Z [inf]  Processing triggers for libc-bin (2.41-12) ...
+
+2025-12-01T13:20:32.798144146Z [inf]  Configuring for:
+PHP Api Version:         20220829
+Zend Module Api No:      20220829
+Zend Extension Api No:   420220829
+
+2025-12-01T13:20:33.493529651Z [inf]  checking for grep that handles long lines and -e... 
+2025-12-01T13:20:33.495840983Z [inf]  /usr/bin/grep
+checking for egrep... 
+2025-12-01T13:20:33.497958614Z [inf]  /usr/bin/grep -E
+checking for a sed that does not truncate output... 
+2025-12-01T13:20:33.502197692Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:33.528382605Z [inf]  checking for pkg-config... 
+2025-12-01T13:20:33.528568497Z [inf]  /usr/bin/pkg-config
+
+2025-12-01T13:20:33.528684925Z [inf]  checking pkg-config is at least version 0.9.0... 
+2025-12-01T13:20:33.529982679Z [inf]  yes
+
+2025-12-01T13:20:33.53021843Z [inf]  checking for cc... 
+2025-12-01T13:20:33.530423392Z [inf]  cc
+
+2025-12-01T13:20:33.55886766Z [inf]  checking whether the C compiler works... 
+2025-12-01T13:20:33.598935892Z [inf]  yes
+checking for C compiler default output file name... a.out
+
+2025-12-01T13:20:33.600282675Z [inf]  checking for suffix of executables... 
+2025-12-01T13:20:33.638106217Z [inf]  
+
+2025-12-01T13:20:33.640348657Z [inf]  checking whether we are cross compiling... 
+2025-12-01T13:20:33.684355302Z [inf]  no
+
+2025-12-01T13:20:33.685544402Z [inf]  checking for suffix of object files... 
+2025-12-01T13:20:33.708508686Z [inf]  o
+checking whether the compiler supports GNU C... 
+2025-12-01T13:20:33.729655659Z [inf]  yes
+
+2025-12-01T13:20:33.729669831Z [inf]  checking whether cc accepts -g... 
+2025-12-01T13:20:33.750437248Z [inf]  yes
+
+2025-12-01T13:20:33.750550624Z [inf]  checking for cc option to enable C11 features... 
+2025-12-01T13:20:33.796345125Z [inf]  none needed
+
+2025-12-01T13:20:33.796545602Z [inf]  checking how to run the C preprocessor... 
+2025-12-01T13:20:33.823409765Z [inf]  cc -E
+
+2025-12-01T13:20:33.850616959Z [inf]  checking for egrep -e... 
+2025-12-01T13:20:33.850750185Z [inf]  (cached) 
+2025-12-01T13:20:33.85080283Z [inf]  /usr/bin/grep -E
+
+2025-12-01T13:20:33.850835273Z [inf]  checking for icc... 
+2025-12-01T13:20:33.859900667Z [inf]  no
+
+2025-12-01T13:20:33.860952242Z [inf]  checking for suncc... 
+2025-12-01T13:20:33.869493951Z [inf]  no
+
+2025-12-01T13:20:33.87079927Z [inf]  checking for system library directory... 
+2025-12-01T13:20:33.870828832Z [inf]  lib
+
+2025-12-01T13:20:33.870855317Z [inf]  checking if compiler supports -Wl,-rpath,... 
+2025-12-01T13:20:33.907964238Z [inf]  yes
+
+2025-12-01T13:20:33.913674353Z [inf]  checking build system type... 
+2025-12-01T13:20:33.919190646Z [inf]  x86_64-pc-linux-gnu
+checking host system type... 
+2025-12-01T13:20:33.9192093Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:33.919353496Z [inf]  checking target system type... x86_64-pc-linux-gnu
+
+2025-12-01T13:20:33.954588798Z [inf]  checking for PHP prefix... /usr/local
+checking for PHP includes... 
+2025-12-01T13:20:33.954650249Z [inf]  -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib
+checking for PHP extension directory... 
+2025-12-01T13:20:33.954674114Z [inf]  /usr/local/lib/php/extensions/no-debug-non-zts-20220829
+
+2025-12-01T13:20:33.954708854Z [inf]  checking for PHP installed headers prefix... 
+2025-12-01T13:20:33.954720107Z [inf]  /usr/local/include/php
+
+2025-12-01T13:20:33.954751886Z [inf]  checking if debug is enabled... 
+2025-12-01T13:20:33.970585605Z [inf]  no
+checking if zts is enabled... 
+2025-12-01T13:20:33.986423693Z [inf]  no
+
+2025-12-01T13:20:33.986637785Z [inf]  checking for gawk... 
+2025-12-01T13:20:33.986927554Z [inf]  no
+
+2025-12-01T13:20:33.9869389Z [inf]  checking for nawk... 
+2025-12-01T13:20:33.987187249Z [inf]  nawk
+
+2025-12-01T13:20:33.987267345Z [inf]  checking if nawk is broken... 
+2025-12-01T13:20:33.98868773Z [inf]  no
+
+2025-12-01T13:20:33.988750869Z [inf]  checking for MySQLi support... 
+2025-12-01T13:20:33.988837416Z [inf]  yes, shared
+
+2025-12-01T13:20:33.988847653Z [inf]  checking for specified location of the MySQL UNIX socket... 
+2025-12-01T13:20:33.988928523Z [inf]  no
+
+2025-12-01T13:20:33.989485078Z [inf]  checking for MySQL UNIX socket location... no
+
+2025-12-01T13:20:34.009070387Z [inf]  checking for a sed that does not truncate output... 
+2025-12-01T13:20:34.012137601Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:34.012195546Z [inf]  checking for ld used by cc... 
+2025-12-01T13:20:34.017806093Z [inf]  /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... 
+2025-12-01T13:20:34.020598913Z [inf]  yes
+checking for /usr/bin/ld option to reload object files... 
+2025-12-01T13:20:34.020670695Z [inf]  -r
+
+2025-12-01T13:20:34.020674829Z [inf]  checking for BSD-compatible nm... 
+2025-12-01T13:20:34.023702855Z [inf]  /usr/bin/nm -B
+checking whether ln -s works... 
+2025-12-01T13:20:34.023759574Z [inf]  yes
+checking how to recognize dependent libraries... 
+2025-12-01T13:20:34.024099114Z [inf]  pass_all
+
+2025-12-01T13:20:34.040041419Z [inf]  checking for stdio.h... 
+2025-12-01T13:20:34.058873626Z [inf]  yes
+
+2025-12-01T13:20:34.059057375Z [inf]  checking for stdlib.h... 
+2025-12-01T13:20:34.081650753Z [inf]  yes
+
+2025-12-01T13:20:34.081759511Z [inf]  checking for string.h... 
+2025-12-01T13:20:34.105749311Z [inf]  yes
+
+2025-12-01T13:20:34.105915165Z [inf]  checking for inttypes.h... 
+2025-12-01T13:20:34.131152896Z [inf]  yes
+
+2025-12-01T13:20:34.131353249Z [inf]  checking for stdint.h... 
+2025-12-01T13:20:34.161229906Z [inf]  yes
+
+2025-12-01T13:20:34.161419575Z [inf]  checking for strings.h... 
+2025-12-01T13:20:34.184960903Z [inf]  yes
+
+2025-12-01T13:20:34.185114816Z [inf]  checking for sys/stat.h... 
+2025-12-01T13:20:34.210352689Z [inf]  yes
+
+2025-12-01T13:20:34.210498275Z [inf]  checking for sys/types.h... 
+2025-12-01T13:20:34.235459374Z [inf]  yes
+
+2025-12-01T13:20:34.235572683Z [inf]  checking for unistd.h... 
+2025-12-01T13:20:34.263417312Z [inf]  yes
+
+2025-12-01T13:20:34.263630382Z [inf]  checking for dlfcn.h... 
+2025-12-01T13:20:34.291593942Z [inf]  yes
+
+2025-12-01T13:20:34.291736331Z [inf]  checking the maximum length of command line arguments... 
+2025-12-01T13:20:34.297763553Z [inf]  1572864
+checking command to parse /usr/bin/nm -B output from cc object... 
+2025-12-01T13:20:34.369965715Z [inf]  ok
+checking for objdir... 
+2025-12-01T13:20:34.37357542Z [inf]  .libs
+
+2025-12-01T13:20:34.373859636Z [inf]  checking for ar... 
+2025-12-01T13:20:34.374239421Z [inf]  ar
+
+2025-12-01T13:20:34.374409967Z [inf]  checking for ranlib... 
+2025-12-01T13:20:34.374669028Z [inf]  ranlib
+
+2025-12-01T13:20:34.374919191Z [inf]  checking for strip... 
+2025-12-01T13:20:34.375074039Z [inf]  strip
+
+2025-12-01T13:20:34.430714667Z [inf]  checking if cc supports -fno-rtti -fno-exceptions... 
+2025-12-01T13:20:34.453926001Z [inf]  no
+
+2025-12-01T13:20:34.45399143Z [inf]  checking for cc option to produce PIC... 
+2025-12-01T13:20:34.454280042Z [inf]  -fPIC
+
+2025-12-01T13:20:34.454366593Z [inf]  checking if cc PIC flag -fPIC works... 
+2025-12-01T13:20:34.473615064Z [inf]  yes
+
+2025-12-01T13:20:34.47369325Z [inf]  checking if cc static flag -static works... 
+2025-12-01T13:20:34.547394757Z [inf]  yes
+checking if cc supports -c -o file.o... 
+2025-12-01T13:20:34.575413168Z [inf]  yes
+
+2025-12-01T13:20:34.575430255Z [inf]  checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... 
+2025-12-01T13:20:34.589123114Z [inf]  yes
+
+2025-12-01T13:20:34.589197939Z [inf]  checking whether -lc should be explicitly linked in... 
+2025-12-01T13:20:34.616202335Z [inf]  no
+
+2025-12-01T13:20:34.61622332Z [inf]  checking dynamic linker characteristics... 
+2025-12-01T13:20:34.6321866Z [inf]  GNU/Linux ld.so
+
+2025-12-01T13:20:34.632283729Z [inf]  checking how to hardcode library paths into programs... 
+2025-12-01T13:20:34.632298533Z [inf]  immediate
+
+2025-12-01T13:20:34.632339833Z [inf]  checking whether stripping libraries is possible... 
+2025-12-01T13:20:34.634472753Z [inf]  yes
+
+2025-12-01T13:20:34.635015217Z [inf]  checking if libtool supports shared libraries... 
+2025-12-01T13:20:34.635025314Z [inf]  yes
+
+2025-12-01T13:20:34.635064559Z [inf]  checking whether to build shared libraries... 
+2025-12-01T13:20:34.635124022Z [inf]  yes
+
+2025-12-01T13:20:34.635151262Z [inf]  checking whether to build static libraries... 
+2025-12-01T13:20:34.635176696Z [inf]  no
+
+2025-12-01T13:20:34.788364283Z [inf]  
+creating libtool
+
+2025-12-01T13:20:34.808528076Z [inf]  appending configuration tag "CXX" to libtool
+
+2025-12-01T13:20:34.884157066Z [inf]  configure: patching config.h.in
+
+2025-12-01T13:20:34.887526231Z [inf]  configure: creating ./config.status
+
+2025-12-01T13:20:34.942337585Z [inf]  config.status: creating config.h
+
+2025-12-01T13:20:34.979532259Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli.c -o mysqli.lo  -MMD -MF mysqli.dep -MT mysqli.lo
+
+2025-12-01T13:20:35.078305895Z [inf]  mkdir .libs
+
+2025-12-01T13:20:35.080950229Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli.c -MMD -MF mysqli.dep -MT mysqli.lo  -fPIC -DPIC -o .libs/mysqli.o
+
+2025-12-01T13:20:35.710261121Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_api.c -o mysqli_api.lo  -MMD -MF mysqli_api.dep -MT mysqli_api.lo
+
+2025-12-01T13:20:35.81505483Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_api.c -MMD -MF mysqli_api.dep -MT mysqli_api.lo  -fPIC -DPIC -o .libs/mysqli_api.o
+
+2025-12-01T13:20:36.907920658Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_prop.c -o mysqli_prop.lo  -MMD -MF mysqli_prop.dep -MT mysqli_prop.lo
+
+2025-12-01T13:20:37.007909322Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_prop.c -MMD -MF mysqli_prop.dep -MT mysqli_prop.lo  -fPIC -DPIC -o .libs/mysqli_prop.o
+
+2025-12-01T13:20:37.405072819Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_nonapi.c -o mysqli_nonapi.lo  -MMD -MF mysqli_nonapi.dep -MT mysqli_nonapi.lo
+
+2025-12-01T13:20:37.510787092Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_nonapi.c -MMD -MF mysqli_nonapi.dep -MT mysqli_nonapi.lo  -fPIC -DPIC -o .libs/mysqli_nonapi.o
+
+2025-12-01T13:20:38.04715129Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_report.c -o mysqli_report.lo  -MMD -MF mysqli_report.dep -MT mysqli_report.lo
+
+2025-12-01T13:20:38.143368469Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_report.c -MMD -MF mysqli_report.dep -MT mysqli_report.lo  -fPIC -DPIC -o .libs/mysqli_report.o
+
+2025-12-01T13:20:38.280910916Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_driver.c -o mysqli_driver.lo  -MMD -MF mysqli_driver.dep -MT mysqli_driver.lo
+
+2025-12-01T13:20:38.392781659Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_driver.c -MMD -MF mysqli_driver.dep -MT mysqli_driver.lo  -fPIC -DPIC -o .libs/mysqli_driver.o
+
+2025-12-01T13:20:38.547587062Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_warning.c -o mysqli_warning.lo  -MMD -MF mysqli_warning.dep -MT mysqli_warning.lo
+
+2025-12-01T13:20:38.653320277Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_warning.c -MMD -MF mysqli_warning.dep -MT mysqli_warning.lo  -fPIC -DPIC -o .libs/mysqli_warning.o
+
+2025-12-01T13:20:38.824495448Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_exception.c -o mysqli_exception.lo  -MMD -MF mysqli_exception.dep -MT mysqli_exception.lo
+
+2025-12-01T13:20:38.923789336Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_exception.c -MMD -MF mysqli_exception.dep -MT mysqli_exception.lo  -fPIC -DPIC -o .libs/mysqli_exception.o
+
+2025-12-01T13:20:39.074846156Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_result_iterator.c -o mysqli_result_iterator.lo  -MMD -MF mysqli_result_iterator.dep -MT mysqli_result_iterator.lo
+
+2025-12-01T13:20:39.191933602Z [inf]   cc -I. -I/usr/src/php/ext/mysqli -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/mysqli/mysqli_result_iterator.c -MMD -MF mysqli_result_iterator.dep -MT mysqli_result_iterator.lo  -fPIC -DPIC -o .libs/mysqli_result_iterator.o
+
+2025-12-01T13:20:39.35046628Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=link cc -shared -I/usr/src/php/ext/mysqli/include -I/usr/src/php/ext/mysqli/main -I/usr/src/php/ext/mysqli -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE  -Wl,-O1 -pie  -o mysqli.la -export-dynamic -avoid-version -prefer-pic -module -rpath /usr/src/php/ext/mysqli/modules  mysqli.lo mysqli_api.lo mysqli_prop.lo mysqli_nonapi.lo mysqli_report.lo mysqli_driver.lo mysqli_warning.lo mysqli_exception.lo mysqli_result_iterator.lo 
+
+2025-12-01T13:20:39.483207712Z [inf]  cc -shared  .libs/mysqli.o .libs/mysqli_api.o .libs/mysqli_prop.o .libs/mysqli_nonapi.o .libs/mysqli_report.o .libs/mysqli_driver.o .libs/mysqli_warning.o .libs/mysqli_exception.o .libs/mysqli_result_iterator.o   -Wl,-O1 -Wl,-soname -Wl,mysqli.so -o .libs/mysqli.so
+
+2025-12-01T13:20:39.50892929Z [inf]  creating mysqli.la
+
+2025-12-01T13:20:39.517878355Z [inf]  (cd .libs && rm -f mysqli.la && ln -s ../mysqli.la mysqli.la)
+
+2025-12-01T13:20:39.520454369Z [inf]  /bin/bash /usr/src/php/ext/mysqli/libtool --tag=CC --mode=install cp ./mysqli.la /usr/src/php/ext/mysqli/modules
+
+2025-12-01T13:20:39.550050849Z [inf]  cp ./.libs/mysqli.so /usr/src/php/ext/mysqli/modules/mysqli.so
+
+2025-12-01T13:20:39.554145412Z [inf]  cp ./.libs/mysqli.lai /usr/src/php/ext/mysqli/modules/mysqli.la
+
+2025-12-01T13:20:39.573938546Z [inf]  PATH="$PATH:/sbin" ldconfig -n /usr/src/php/ext/mysqli/modules
+
+2025-12-01T13:20:39.576426309Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:39.576588321Z [inf]  Libraries have been installed in:
+   /usr/src/php/ext/mysqli/modules
+
+
+2025-12-01T13:20:39.576600243Z [inf]  If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+
+2025-12-01T13:20:39.576605024Z [inf]  specify the full pathname of the library, or use the `-LLIBDIR'
+
+2025-12-01T13:20:39.576610324Z [inf]  flag during linking and do at least one of the following:
+
+2025-12-01T13:20:39.576639417Z [inf]     - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+
+2025-12-01T13:20:39.576647659Z [inf]     - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+
+2025-12-01T13:20:39.57671709Z [inf]     - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+
+2025-12-01T13:20:39.57672486Z [inf]     - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+See any operating system documentation about shared libraries for
+
+2025-12-01T13:20:39.576728022Z [inf]  more information, such as the ld(1) and ld.so(8) manual pages.
+
+2025-12-01T13:20:39.578343124Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:39.579916542Z [inf]  
+
+2025-12-01T13:20:39.581418943Z [inf]  Build complete.
+
+2025-12-01T13:20:39.582726616Z [inf]  Don't forget to run 'make test'.
+
+2025-12-01T13:20:39.584012899Z [inf]  
+
+2025-12-01T13:20:39.601979545Z [inf]  + strip --strip-all modules/mysqli.so
+
+2025-12-01T13:20:39.629296294Z [inf]  Installing shared extensions:     /usr/local/lib/php/extensions/no-debug-non-zts-20220829/
+
+2025-12-01T13:20:39.727248223Z [inf]  Installing header files:          /usr/local/include/php/
+
+2025-12-01T13:20:39.823258116Z [inf]  find . -name \*.gcno -o -name \*.gcda | xargs rm -f
+
+2025-12-01T13:20:39.827481785Z [inf]  find . -name \*.lo -o -name \*.o -o -name \*.dep | xargs rm -f
+
+2025-12-01T13:20:39.832303468Z [inf]  find . -name \*.la -o -name \*.a | xargs rm -f
+
+2025-12-01T13:20:39.836416767Z [inf]  find . -name \*.so | xargs rm -f
+
+2025-12-01T13:20:39.840281177Z [inf]  find . -name .libs -a -type d|xargs rm -rf
+
+2025-12-01T13:20:39.844036482Z [inf]  rm -f libphp.la      modules/* libs/*
+
+2025-12-01T13:20:39.845763928Z [inf]  rm -f ext/opcache/jit/zend_jit_x86.c
+
+2025-12-01T13:20:39.847399311Z [inf]  rm -f ext/opcache/jit/zend_jit_arm64.c
+
+2025-12-01T13:20:39.848946819Z [inf]  rm -f ext/opcache/minilua
+
+2025-12-01T13:20:39.875228851Z [inf]  Configuring for:
+PHP Api Version:         20220829
+Zend Module Api No:      20220829
+Zend Extension Api No:   420220829
+
+2025-12-01T13:20:40.556408344Z [inf]  checking for grep that handles long lines and -e... 
+2025-12-01T13:20:40.558436652Z [inf]  /usr/bin/grep
+checking for egrep... 
+2025-12-01T13:20:40.560231641Z [inf]  /usr/bin/grep -E
+
+2025-12-01T13:20:40.560243049Z [inf]  checking for a sed that does not truncate output... 
+2025-12-01T13:20:40.564484506Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:40.591129466Z [inf]  checking for pkg-config... 
+2025-12-01T13:20:40.591257806Z [inf]  /usr/bin/pkg-config
+
+2025-12-01T13:20:40.591354962Z [inf]  checking pkg-config is at least version 0.9.0... 
+2025-12-01T13:20:40.592766964Z [inf]  yes
+
+2025-12-01T13:20:40.593047032Z [inf]  checking for cc... 
+2025-12-01T13:20:40.593261819Z [inf]  cc
+
+2025-12-01T13:20:40.620520504Z [inf]  checking whether the C compiler works... 
+2025-12-01T13:20:40.658997588Z [inf]  yes
+checking for C compiler default output file name... a.out
+
+2025-12-01T13:20:40.66018495Z [inf]  checking for suffix of executables... 
+2025-12-01T13:20:40.695808761Z [inf]  
+
+2025-12-01T13:20:40.697846225Z [inf]  checking whether we are cross compiling... 
+2025-12-01T13:20:40.739193261Z [inf]  no
+
+2025-12-01T13:20:40.740447087Z [inf]  checking for suffix of object files... 
+2025-12-01T13:20:40.76181162Z [inf]  o
+checking whether the compiler supports GNU C... 
+2025-12-01T13:20:40.781766283Z [inf]  yes
+checking whether cc accepts -g... 
+2025-12-01T13:20:40.802074957Z [inf]  yes
+
+2025-12-01T13:20:40.802158242Z [inf]  checking for cc option to enable C11 features... 
+2025-12-01T13:20:40.850118397Z [inf]  none needed
+
+2025-12-01T13:20:40.850348544Z [inf]  checking how to run the C preprocessor... 
+2025-12-01T13:20:40.875723316Z [inf]  cc -E
+
+2025-12-01T13:20:40.901919188Z [inf]  checking for egrep -e... 
+2025-12-01T13:20:40.902063834Z [inf]  (cached) 
+2025-12-01T13:20:40.902111863Z [inf]  /usr/bin/grep -E
+
+2025-12-01T13:20:40.902142101Z [inf]  checking for icc... 
+2025-12-01T13:20:40.911288274Z [inf]  no
+
+2025-12-01T13:20:40.912610332Z [inf]  checking for suncc... 
+2025-12-01T13:20:40.920817592Z [inf]  no
+
+2025-12-01T13:20:40.922117811Z [inf]  checking for system library directory... 
+2025-12-01T13:20:40.92216748Z [inf]  lib
+
+2025-12-01T13:20:40.92219046Z [inf]  checking if compiler supports -Wl,-rpath,... 
+2025-12-01T13:20:40.960620099Z [inf]  yes
+
+2025-12-01T13:20:40.966557341Z [inf]  checking build system type... 
+2025-12-01T13:20:40.971721394Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:40.971785613Z [inf]  checking host system type... 
+2025-12-01T13:20:40.971829623Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:40.971967023Z [inf]  checking target system type... 
+2025-12-01T13:20:40.972015473Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:41.006279376Z [inf]  checking for PHP prefix... /usr/local
+checking for PHP includes... 
+2025-12-01T13:20:41.006298792Z [inf]  -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib
+
+2025-12-01T13:20:41.006336032Z [inf]  checking for PHP extension directory... 
+2025-12-01T13:20:41.006346299Z [inf]  /usr/local/lib/php/extensions/no-debug-non-zts-20220829
+
+2025-12-01T13:20:41.006377259Z [inf]  checking for PHP installed headers prefix... 
+2025-12-01T13:20:41.006458759Z [inf]  /usr/local/include/php
+checking if debug is enabled... 
+2025-12-01T13:20:41.022736726Z [inf]  no
+checking if zts is enabled... 
+2025-12-01T13:20:41.038938859Z [inf]  no
+
+2025-12-01T13:20:41.039140305Z [inf]  checking for gawk... 
+2025-12-01T13:20:41.039367765Z [inf]  no
+
+2025-12-01T13:20:41.039417232Z [inf]  checking for nawk... 
+2025-12-01T13:20:41.039608787Z [inf]  nawk
+
+2025-12-01T13:20:41.039740993Z [inf]  checking if nawk is broken... 
+2025-12-01T13:20:41.041199612Z [inf]  no
+checking whether to enable PDO support... 
+2025-12-01T13:20:41.041319131Z [inf]  yes, shared
+
+2025-12-01T13:20:41.056922879Z [inf]  checking for a sed that does not truncate output... 
+2025-12-01T13:20:41.05959657Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:41.059668855Z [inf]  checking for ld used by cc... 
+2025-12-01T13:20:41.06488662Z [inf]  /usr/bin/ld
+
+2025-12-01T13:20:41.064897069Z [inf]  checking if the linker (/usr/bin/ld) is GNU ld... 
+2025-12-01T13:20:41.067586656Z [inf]  yes
+
+2025-12-01T13:20:41.067595938Z [inf]  checking for /usr/bin/ld option to reload object files... 
+2025-12-01T13:20:41.067659213Z [inf]  -r
+
+2025-12-01T13:20:41.067772298Z [inf]  checking for BSD-compatible nm... 
+2025-12-01T13:20:41.070845855Z [inf]  /usr/bin/nm -B
+checking whether ln -s works... 
+2025-12-01T13:20:41.070930947Z [inf]  yes
+checking how to recognize dependent libraries... 
+2025-12-01T13:20:41.071208884Z [inf]  pass_all
+
+2025-12-01T13:20:41.086886165Z [inf]  checking for stdio.h... 
+2025-12-01T13:20:41.104886345Z [inf]  yes
+
+2025-12-01T13:20:41.105058435Z [inf]  checking for stdlib.h... 
+2025-12-01T13:20:41.12595875Z [inf]  yes
+
+2025-12-01T13:20:41.126137012Z [inf]  checking for string.h... 
+2025-12-01T13:20:41.148112241Z [inf]  yes
+
+2025-12-01T13:20:41.148271825Z [inf]  checking for inttypes.h... 
+2025-12-01T13:20:41.171202549Z [inf]  yes
+
+2025-12-01T13:20:41.17134519Z [inf]  checking for stdint.h... 
+2025-12-01T13:20:41.19405561Z [inf]  yes
+
+2025-12-01T13:20:41.194241733Z [inf]  checking for strings.h... 
+2025-12-01T13:20:41.216961623Z [inf]  yes
+
+2025-12-01T13:20:41.217099847Z [inf]  checking for sys/stat.h... 
+2025-12-01T13:20:41.24108215Z [inf]  yes
+
+2025-12-01T13:20:41.241191221Z [inf]  checking for sys/types.h... 
+2025-12-01T13:20:41.26573203Z [inf]  yes
+
+2025-12-01T13:20:41.265886717Z [inf]  checking for unistd.h... 
+2025-12-01T13:20:41.292958501Z [inf]  yes
+
+2025-12-01T13:20:41.293175021Z [inf]  checking for dlfcn.h... 
+2025-12-01T13:20:41.319528175Z [inf]  yes
+
+2025-12-01T13:20:41.319659703Z [inf]  checking the maximum length of command line arguments... 
+2025-12-01T13:20:41.324717744Z [inf]  1572864
+checking command to parse /usr/bin/nm -B output from cc object... 
+2025-12-01T13:20:41.395596336Z [inf]  ok
+checking for objdir... 
+2025-12-01T13:20:41.399593543Z [inf]  .libs
+
+2025-12-01T13:20:41.399806995Z [inf]  checking for ar... 
+2025-12-01T13:20:41.399948435Z [inf]  ar
+
+2025-12-01T13:20:41.400196165Z [inf]  checking for ranlib... 
+2025-12-01T13:20:41.400263008Z [inf]  ranlib
+
+2025-12-01T13:20:41.400531595Z [inf]  checking for strip... 
+2025-12-01T13:20:41.400674977Z [inf]  strip
+
+2025-12-01T13:20:41.459435694Z [inf]  checking if cc supports -fno-rtti -fno-exceptions... 
+2025-12-01T13:20:41.481258289Z [inf]  no
+
+2025-12-01T13:20:41.481370364Z [inf]  checking for cc option to produce PIC... 
+2025-12-01T13:20:41.481654332Z [inf]  -fPIC
+
+2025-12-01T13:20:41.481846203Z [inf]  checking if cc PIC flag -fPIC works... 
+2025-12-01T13:20:41.503020814Z [inf]  yes
+
+2025-12-01T13:20:41.503110213Z [inf]  checking if cc static flag -static works... 
+2025-12-01T13:20:41.580401604Z [inf]  yes
+checking if cc supports -c -o file.o... 
+2025-12-01T13:20:41.609659495Z [inf]  yes
+
+2025-12-01T13:20:41.609764093Z [inf]  checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... 
+2025-12-01T13:20:41.623341968Z [inf]  yes
+
+2025-12-01T13:20:41.623424355Z [inf]  checking whether -lc should be explicitly linked in... 
+2025-12-01T13:20:41.651385552Z [inf]  no
+
+2025-12-01T13:20:41.651413198Z [inf]  checking dynamic linker characteristics... 
+2025-12-01T13:20:41.667301182Z [inf]  GNU/Linux ld.so
+
+2025-12-01T13:20:41.667380195Z [inf]  checking how to hardcode library paths into programs... 
+2025-12-01T13:20:41.6673918Z [inf]  immediate
+
+2025-12-01T13:20:41.667473143Z [inf]  checking whether stripping libraries is possible... 
+2025-12-01T13:20:41.669463717Z [inf]  yes
+
+2025-12-01T13:20:41.6701723Z [inf]  checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... 
+2025-12-01T13:20:41.670265761Z [inf]  yes
+checking whether to build static libraries... 
+2025-12-01T13:20:41.670325365Z [inf]  no
+
+2025-12-01T13:20:41.822084053Z [inf]  
+creating libtool
+
+2025-12-01T13:20:41.841695506Z [inf]  appending configuration tag "CXX" to libtool
+
+2025-12-01T13:20:41.907839378Z [inf]  configure: patching config.h.in
+
+2025-12-01T13:20:41.911643377Z [inf]  configure: creating ./config.status
+
+2025-12-01T13:20:41.977238658Z [inf]  config.status: creating config.h
+
+2025-12-01T13:20:42.019761163Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo.c -o pdo.lo  -MMD -MF pdo.dep -MT pdo.lo
+
+2025-12-01T13:20:42.138679475Z [inf]  mkdir .libs
+
+2025-12-01T13:20:42.141332469Z [inf]   cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo.c -MMD -MF pdo.dep -MT pdo.lo  -fPIC -DPIC -o .libs/pdo.o
+
+2025-12-01T13:20:42.373093619Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_dbh.c -o pdo_dbh.lo  -MMD -MF pdo_dbh.dep -MT pdo_dbh.lo
+
+2025-12-01T13:20:42.4945551Z [inf]   cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_dbh.c -MMD -MF pdo_dbh.dep -MT pdo_dbh.lo  -fPIC -DPIC -o .libs/pdo_dbh.o
+
+2025-12-01T13:20:43.345957539Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_stmt.c -o pdo_stmt.lo  -MMD -MF pdo_stmt.dep -MT pdo_stmt.lo
+
+2025-12-01T13:20:43.457322933Z [inf]   cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_stmt.c -MMD -MF pdo_stmt.dep -MT pdo_stmt.lo  -fPIC -DPIC -o .libs/pdo_stmt.o
+
+2025-12-01T13:20:44.346540571Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_sql_parser.c -o pdo_sql_parser.lo  -MMD -MF pdo_sql_parser.dep -MT pdo_sql_parser.lo
+
+2025-12-01T13:20:44.43846171Z [inf]   cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_sql_parser.c -MMD -MF pdo_sql_parser.dep -MT pdo_sql_parser.lo  -fPIC -DPIC -o .libs/pdo_sql_parser.o
+
+2025-12-01T13:20:44.72711912Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_sqlstate.c -o pdo_sqlstate.lo  -MMD -MF pdo_sqlstate.dep -MT pdo_sqlstate.lo
+
+2025-12-01T13:20:44.824407496Z [inf]   cc -I. -I/usr/src/php/ext/pdo -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo/pdo_sqlstate.c -MMD -MF pdo_sqlstate.dep -MT pdo_sqlstate.lo  -fPIC -DPIC -o .libs/pdo_sqlstate.o
+
+2025-12-01T13:20:44.956670751Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=link cc -shared -I/usr/src/php/ext/pdo/include -I/usr/src/php/ext/pdo/main -I/usr/src/php/ext/pdo -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE  -Wl,-O1 -pie  -o pdo.la -export-dynamic -avoid-version -prefer-pic -module -rpath /usr/src/php/ext/pdo/modules  pdo.lo pdo_dbh.lo pdo_stmt.lo pdo_sql_parser.lo pdo_sqlstate.lo 
+
+2025-12-01T13:20:45.083823556Z [inf]  cc -shared  .libs/pdo.o .libs/pdo_dbh.o .libs/pdo_stmt.o .libs/pdo_sql_parser.o .libs/pdo_sqlstate.o   -Wl,-O1 -Wl,-soname -Wl,pdo.so -o .libs/pdo.so
+
+2025-12-01T13:20:45.104544261Z [inf]  creating pdo.la
+
+2025-12-01T13:20:45.112624945Z [inf]  (cd .libs && rm -f pdo.la && ln -s ../pdo.la pdo.la)
+
+2025-12-01T13:20:45.115130084Z [inf]  /bin/bash /usr/src/php/ext/pdo/libtool --tag=CC --mode=install cp ./pdo.la /usr/src/php/ext/pdo/modules
+
+2025-12-01T13:20:45.147077299Z [inf]  cp ./.libs/pdo.so /usr/src/php/ext/pdo/modules/pdo.so
+
+2025-12-01T13:20:45.151423541Z [inf]  cp ./.libs/pdo.lai /usr/src/php/ext/pdo/modules/pdo.la
+
+2025-12-01T13:20:45.173021672Z [inf]  PATH="$PATH:/sbin" ldconfig -n /usr/src/php/ext/pdo/modules
+
+2025-12-01T13:20:45.175835478Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:45.175904639Z [inf]  Libraries have been installed in:
+   /usr/src/php/ext/pdo/modules
+
+
+2025-12-01T13:20:45.175928482Z [inf]  If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+
+2025-12-01T13:20:45.175988081Z [inf]     - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+
+2025-12-01T13:20:45.176034827Z [inf]     - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+
+2025-12-01T13:20:45.176046831Z [inf]  See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+
+2025-12-01T13:20:45.177472164Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:45.178998567Z [inf]  
+
+2025-12-01T13:20:45.180287926Z [inf]  Build complete.
+
+2025-12-01T13:20:45.181994775Z [inf]  Don't forget to run 'make test'.
+
+2025-12-01T13:20:45.183100144Z [inf]  
+
+2025-12-01T13:20:45.201585451Z [inf]  + strip --strip-all modules/pdo.so
+
+2025-12-01T13:20:45.228040939Z [inf]  Installing shared extensions:     /usr/local/lib/php/extensions/no-debug-non-zts-20220829/
+
+2025-12-01T13:20:45.352505496Z [inf]  Installing header files:          /usr/local/include/php/
+
+2025-12-01T13:20:45.435809771Z [inf]  Installing PDO headers:           /usr/local/include/php/ext/pdo/
+
+2025-12-01T13:20:45.581484472Z [inf]  
+warning: pdo (pdo) is already loaded!
+
+
+2025-12-01T13:20:45.583724393Z [inf]  find . -name \*.gcno -o -name \*.gcda | xargs rm -f
+
+2025-12-01T13:20:45.587711372Z [inf]  find . -name \*.lo -o -name \*.o -o -name \*.dep | xargs rm -f
+
+2025-12-01T13:20:45.591864546Z [inf]  find . -name \*.la -o -name \*.a | xargs rm -f
+
+2025-12-01T13:20:45.595772457Z [inf]  find . -name \*.so | xargs rm -f
+
+2025-12-01T13:20:45.599533054Z [inf]  find . -name .libs -a -type d|xargs rm -rf
+
+2025-12-01T13:20:45.603439299Z [inf]  rm -f libphp.la      modules/* libs/*
+
+2025-12-01T13:20:45.60523874Z [inf]  rm -f ext/opcache/jit/zend_jit_x86.c
+
+2025-12-01T13:20:45.606778942Z [inf]  rm -f ext/opcache/jit/zend_jit_arm64.c
+
+2025-12-01T13:20:45.608345246Z [inf]  rm -f ext/opcache/minilua
+
+2025-12-01T13:20:45.634570053Z [inf]  Configuring for:
+PHP Api Version:         20220829
+Zend Module Api No:      20220829
+Zend Extension Api No:   420220829
+
+2025-12-01T13:20:46.361381759Z [inf]  checking for grep that handles long lines and -e... 
+2025-12-01T13:20:46.363595604Z [inf]  /usr/bin/grep
+checking for egrep... 
+2025-12-01T13:20:46.36557028Z [inf]  /usr/bin/grep -E
+
+2025-12-01T13:20:46.365580746Z [inf]  checking for a sed that does not truncate output... 
+2025-12-01T13:20:46.370268508Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:46.400439653Z [inf]  checking for pkg-config... 
+2025-12-01T13:20:46.40065614Z [inf]  /usr/bin/pkg-config
+
+2025-12-01T13:20:46.400788236Z [inf]  checking pkg-config is at least version 0.9.0... 
+2025-12-01T13:20:46.402063541Z [inf]  yes
+
+2025-12-01T13:20:46.402364637Z [inf]  checking for cc... 
+2025-12-01T13:20:46.402583653Z [inf]  cc
+
+2025-12-01T13:20:46.432490272Z [inf]  checking whether the C compiler works... 
+2025-12-01T13:20:46.47338202Z [inf]  yes
+checking for C compiler default output file name... a.out
+
+2025-12-01T13:20:46.474650582Z [inf]  checking for suffix of executables... 
+2025-12-01T13:20:46.512719732Z [inf]  
+
+2025-12-01T13:20:46.515212829Z [inf]  checking whether we are cross compiling... 
+2025-12-01T13:20:46.561441891Z [inf]  no
+
+2025-12-01T13:20:46.562554165Z [inf]  checking for suffix of object files... 
+2025-12-01T13:20:46.585832418Z [inf]  o
+checking whether the compiler supports GNU C... 
+2025-12-01T13:20:46.607787921Z [inf]  yes
+checking whether cc accepts -g... 
+2025-12-01T13:20:46.629767538Z [inf]  yes
+
+2025-12-01T13:20:46.629835486Z [inf]  checking for cc option to enable C11 features... 
+2025-12-01T13:20:46.678485387Z [inf]  none needed
+
+2025-12-01T13:20:46.678692962Z [inf]  checking how to run the C preprocessor... 
+2025-12-01T13:20:46.70557204Z [inf]  cc -E
+
+2025-12-01T13:20:46.732109782Z [inf]  checking for egrep -e... 
+2025-12-01T13:20:46.732256667Z [inf]  (cached) 
+2025-12-01T13:20:46.732327748Z [inf]  /usr/bin/grep -E
+checking for icc... 
+2025-12-01T13:20:46.742438818Z [inf]  no
+
+2025-12-01T13:20:46.743624966Z [inf]  checking for suncc... 
+2025-12-01T13:20:46.753457978Z [inf]  no
+
+2025-12-01T13:20:46.754600878Z [inf]  checking for system library directory... 
+2025-12-01T13:20:46.754651615Z [inf]  lib
+
+2025-12-01T13:20:46.75465532Z [inf]  checking if compiler supports -Wl,-rpath,... 
+2025-12-01T13:20:46.795594673Z [inf]  yes
+
+2025-12-01T13:20:46.801181657Z [inf]  checking build system type... 
+2025-12-01T13:20:46.806947532Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:46.806975542Z [inf]  checking host system type... 
+2025-12-01T13:20:46.807012675Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:46.80710617Z [inf]  checking target system type... 
+2025-12-01T13:20:46.807118359Z [inf]  x86_64-pc-linux-gnu
+
+2025-12-01T13:20:46.846717477Z [inf]  checking for PHP prefix... /usr/local
+
+2025-12-01T13:20:46.846742758Z [inf]  checking for PHP includes... -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib
+
+2025-12-01T13:20:46.846801246Z [inf]  checking for PHP extension directory... 
+2025-12-01T13:20:46.84681316Z [inf]  /usr/local/lib/php/extensions/no-debug-non-zts-20220829
+
+2025-12-01T13:20:46.84681709Z [inf]  checking for PHP installed headers prefix... 
+2025-12-01T13:20:46.846885903Z [inf]  /usr/local/include/php
+checking if debug is enabled... 
+2025-12-01T13:20:46.863744549Z [inf]  no
+checking if zts is enabled... 
+2025-12-01T13:20:46.880445493Z [inf]  no
+
+2025-12-01T13:20:46.880685467Z [inf]  checking for gawk... 
+2025-12-01T13:20:46.880894815Z [inf]  no
+checking for nawk... 
+2025-12-01T13:20:46.881031507Z [inf]  nawk
+
+2025-12-01T13:20:46.881094439Z [inf]  checking if nawk is broken... 
+2025-12-01T13:20:46.882416704Z [inf]  no
+
+2025-12-01T13:20:46.88247306Z [inf]  checking for MySQL support for PDO... 
+2025-12-01T13:20:46.882551285Z [inf]  yes, shared
+
+2025-12-01T13:20:46.882600709Z [inf]  checking for the location of libz... 
+2025-12-01T13:20:46.882630649Z [inf]  no
+
+2025-12-01T13:20:46.883489421Z [inf]  checking for MySQL UNIX socket location... 
+2025-12-01T13:20:46.883553795Z [inf]  
+
+2025-12-01T13:20:46.883569989Z [inf]  checking for PDO includes... 
+2025-12-01T13:20:46.883648195Z [inf]  /usr/local/include/php/ext
+
+2025-12-01T13:20:46.89106637Z [inf]  checking for a sed that does not truncate output... 
+2025-12-01T13:20:46.894264356Z [inf]  /usr/bin/sed
+
+2025-12-01T13:20:46.894364391Z [inf]  checking for ld used by cc... 
+2025-12-01T13:20:46.899712409Z [inf]  /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... 
+2025-12-01T13:20:46.903259982Z [inf]  yes
+checking for /usr/bin/ld option to reload object files... 
+2025-12-01T13:20:46.903273774Z [inf]  -r
+
+2025-12-01T13:20:46.903358164Z [inf]  checking for BSD-compatible nm... 
+2025-12-01T13:20:46.906153188Z [inf]  /usr/bin/nm -B
+checking whether ln -s works... 
+2025-12-01T13:20:46.906203221Z [inf]  yes
+
+2025-12-01T13:20:46.90620975Z [inf]  checking how to recognize dependent libraries... 
+2025-12-01T13:20:46.906471218Z [inf]  pass_all
+
+2025-12-01T13:20:46.922315297Z [inf]  checking for stdio.h... 
+2025-12-01T13:20:46.942597729Z [inf]  yes
+
+2025-12-01T13:20:46.94279001Z [inf]  checking for stdlib.h... 
+2025-12-01T13:20:46.967089233Z [inf]  yes
+
+2025-12-01T13:20:46.967262013Z [inf]  checking for string.h... 
+2025-12-01T13:20:46.990446094Z [inf]  yes
+
+2025-12-01T13:20:46.990604264Z [inf]  checking for inttypes.h... 
+2025-12-01T13:20:47.013551Z [inf]  yes
+
+2025-12-01T13:20:47.013806869Z [inf]  checking for stdint.h... 
+2025-12-01T13:20:47.039095051Z [inf]  yes
+
+2025-12-01T13:20:47.039246968Z [inf]  checking for strings.h... 
+2025-12-01T13:20:47.06358194Z [inf]  yes
+
+2025-12-01T13:20:47.06376533Z [inf]  checking for sys/stat.h... 
+2025-12-01T13:20:47.088596773Z [inf]  yes
+
+2025-12-01T13:20:47.088859439Z [inf]  checking for sys/types.h... 
+2025-12-01T13:20:47.113339803Z [inf]  yes
+
+2025-12-01T13:20:47.113495947Z [inf]  checking for unistd.h... 
+2025-12-01T13:20:47.14021892Z [inf]  yes
+
+2025-12-01T13:20:47.140443242Z [inf]  checking for dlfcn.h... 
+2025-12-01T13:20:47.171956533Z [inf]  yes
+
+2025-12-01T13:20:47.172066563Z [inf]  checking the maximum length of command line arguments... 
+2025-12-01T13:20:47.177564554Z [inf]  1572864
+checking command to parse /usr/bin/nm -B output from cc object... 
+2025-12-01T13:20:47.244370301Z [inf]  ok
+checking for objdir... 
+2025-12-01T13:20:47.247742848Z [inf]  .libs
+
+2025-12-01T13:20:47.247980331Z [inf]  checking for ar... 
+2025-12-01T13:20:47.248130533Z [inf]  ar
+
+2025-12-01T13:20:47.248332788Z [inf]  checking for ranlib... 
+2025-12-01T13:20:47.248415981Z [inf]  ranlib
+
+2025-12-01T13:20:47.248592695Z [inf]  checking for strip... 
+2025-12-01T13:20:47.248727203Z [inf]  strip
+
+2025-12-01T13:20:47.306570822Z [inf]  checking if cc supports -fno-rtti -fno-exceptions... 
+2025-12-01T13:20:47.327276751Z [inf]  no
+
+2025-12-01T13:20:47.32729562Z [inf]  checking for cc option to produce PIC... 
+2025-12-01T13:20:47.327642628Z [inf]  -fPIC
+
+2025-12-01T13:20:47.327659185Z [inf]  checking if cc PIC flag -fPIC works... 
+2025-12-01T13:20:47.347957174Z [inf]  yes
+
+2025-12-01T13:20:47.348037106Z [inf]  checking if cc static flag -static works... 
+2025-12-01T13:20:47.420771976Z [inf]  yes
+checking if cc supports -c -o file.o... 
+2025-12-01T13:20:47.448945275Z [inf]  yes
+
+2025-12-01T13:20:47.448966079Z [inf]  checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... 
+2025-12-01T13:20:47.462396721Z [inf]  yes
+
+2025-12-01T13:20:47.462482843Z [inf]  checking whether -lc should be explicitly linked in... 
+2025-12-01T13:20:47.489945441Z [inf]  no
+checking dynamic linker characteristics... 
+2025-12-01T13:20:47.506086698Z [inf]  GNU/Linux ld.so
+
+2025-12-01T13:20:47.506109447Z [inf]  checking how to hardcode library paths into programs... 
+2025-12-01T13:20:47.50617225Z [inf]  immediate
+
+2025-12-01T13:20:47.506214612Z [inf]  checking whether stripping libraries is possible... 
+2025-12-01T13:20:47.50828502Z [inf]  yes
+
+2025-12-01T13:20:47.508946288Z [inf]  checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... 
+2025-12-01T13:20:47.50900171Z [inf]  yes
+
+2025-12-01T13:20:47.509015344Z [inf]  checking whether to build static libraries... 
+2025-12-01T13:20:47.509060295Z [inf]  no
+
+2025-12-01T13:20:47.663443684Z [inf]  
+creating libtool
+
+2025-12-01T13:20:47.683371875Z [inf]  appending configuration tag "CXX" to libtool
+
+2025-12-01T13:20:47.749317628Z [inf]  configure: patching config.h.in
+
+2025-12-01T13:20:47.752199099Z [inf]  configure: creating ./config.status
+
+2025-12-01T13:20:47.806641947Z [inf]  config.status: creating config.h
+
+2025-12-01T13:20:47.844556586Z [inf]  /bin/bash /usr/src/php/ext/pdo_mysql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/pdo_mysql.c -o pdo_mysql.lo  -MMD -MF pdo_mysql.dep -MT pdo_mysql.lo
+
+2025-12-01T13:20:47.953836327Z [inf]  mkdir .libs
+
+2025-12-01T13:20:47.955860509Z [inf]   cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/pdo_mysql.c -MMD -MF pdo_mysql.dep -MT pdo_mysql.lo  -fPIC -DPIC -o .libs/pdo_mysql.o
+
+2025-12-01T13:20:48.107341369Z [inf]  /bin/bash /usr/src/php/ext/pdo_mysql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/mysql_driver.c -o mysql_driver.lo  -MMD -MF mysql_driver.dep -MT mysql_driver.lo
+
+2025-12-01T13:20:48.220766099Z [inf]   cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/mysql_driver.c -MMD -MF mysql_driver.dep -MT mysql_driver.lo  -fPIC -DPIC -o .libs/mysql_driver.o
+
+2025-12-01T13:20:48.624081996Z [inf]  /bin/bash /usr/src/php/ext/pdo_mysql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/mysql_statement.c -o mysql_statement.lo  -MMD -MF mysql_statement.dep -MT mysql_statement.lo
+
+2025-12-01T13:20:48.73447677Z [inf]   cc -I. -I/usr/src/php/ext/pdo_mysql -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_mysql/mysql_statement.c -MMD -MF mysql_statement.dep -MT mysql_statement.lo  -fPIC -DPIC -o .libs/mysql_statement.o
+
+2025-12-01T13:20:48.972800935Z [inf]  /bin/bash /usr/src/php/ext/pdo_mysql/libtool --tag=CC --mode=link cc -shared -I/usr/src/php/ext/pdo_mysql/include -I/usr/src/php/ext/pdo_mysql/main -I/usr/src/php/ext/pdo_mysql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE  -Wl,-O1 -pie  -o pdo_mysql.la -export-dynamic -avoid-version -prefer-pic -module -rpath /usr/src/php/ext/pdo_mysql/modules  pdo_mysql.lo mysql_driver.lo mysql_statement.lo 
+
+2025-12-01T13:20:49.092786958Z [inf]  cc -shared  .libs/pdo_mysql.o .libs/mysql_driver.o .libs/mysql_statement.o   -Wl,-O1 -Wl,-soname -Wl,pdo_mysql.so -o .libs/pdo_mysql.so
+
+2025-12-01T13:20:49.114251024Z [inf]  creating pdo_mysql.la
+
+2025-12-01T13:20:49.122935713Z [inf]  (cd .libs && rm -f pdo_mysql.la && ln -s ../pdo_mysql.la pdo_mysql.la)
+
+2025-12-01T13:20:49.125796925Z [inf]  /bin/bash /usr/src/php/ext/pdo_mysql/libtool --tag=CC --mode=install cp ./pdo_mysql.la /usr/src/php/ext/pdo_mysql/modules
+
+2025-12-01T13:20:49.15737795Z [inf]  cp ./.libs/pdo_mysql.so /usr/src/php/ext/pdo_mysql/modules/pdo_mysql.so
+
+2025-12-01T13:20:49.161542783Z [inf]  cp ./.libs/pdo_mysql.lai /usr/src/php/ext/pdo_mysql/modules/pdo_mysql.la
+
+2025-12-01T13:20:49.183011575Z [inf]  PATH="$PATH:/sbin" ldconfig -n /usr/src/php/ext/pdo_mysql/modules
+
+2025-12-01T13:20:49.18547211Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:49.185677345Z [inf]  Libraries have been installed in:
+   /usr/src/php/ext/pdo_mysql/modules
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+
+2025-12-01T13:20:49.185719961Z [inf]     - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+
+2025-12-01T13:20:49.185736419Z [inf]     - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+2025-12-01T13:20:49.185740839Z [inf]  
+
+2025-12-01T13:20:49.185744552Z [inf]  See any operating system documentation about shared libraries for
+
+2025-12-01T13:20:49.185765772Z [inf]  more information, such as the ld(1) and ld.so(8) manual pages.
+
+2025-12-01T13:20:49.187202891Z [inf]  ----------------------------------------------------------------------
+
+2025-12-01T13:20:49.188874927Z [inf]  
+
+2025-12-01T13:20:49.19015649Z [inf]  Build complete.
+
+2025-12-01T13:20:49.191653875Z [inf]  Don't forget to run 'make test'.
+
+2025-12-01T13:20:49.19288451Z [inf]  
+
+2025-12-01T13:20:49.210502027Z [inf]  + strip --strip-all modules/pdo_mysql.so
+
+2025-12-01T13:20:49.23533262Z [inf]  Installing shared extensions:     /usr/local/lib/php/extensions/no-debug-non-zts-20220829/
+
+2025-12-01T13:20:49.310366918Z [inf]  find . -name \*.gcno -o -name \*.gcda | xargs rm -f
+
+2025-12-01T13:20:49.314474859Z [inf]  find . -name \*.lo -o -name \*.o -o -name \*.dep | xargs rm -f
+
+2025-12-01T13:20:49.3190453Z [inf]  find . -name \*.la -o -name \*.a | xargs rm -f
+
+2025-12-01T13:20:49.323002689Z [inf]  find . -name \*.so | xargs rm -f
+
+2025-12-01T13:20:49.327017608Z [inf]  find . -name .libs -a -type d|xargs rm -rf
+
+2025-12-01T13:20:49.330732751Z [inf]  rm -f libphp.la      modules/* libs/*
+
+2025-12-01T13:20:49.332688543Z [inf]  rm -f ext/opcache/jit/zend_jit_x86.c
+
+2025-12-01T13:20:49.334330121Z [inf]  rm -f ext/opcache/jit/zend_jit_arm64.c
+
+2025-12-01T13:20:49.335864565Z [inf]  rm -f ext/opcache/minilua
+
+2025-12-01T13:20:49.895899506Z [inf]  [ 2/12] RUN apt-get update && apt-get install -y     python3     python3-pip     python3-venv     libgl1     libglib2.0-0     default-mysql-client     && docker-php-ext-install mysqli pdo pdo_mysql     && apt-get clean && rm -rf /var/lib/apt/lists/*
+2025-12-01T13:20:49.896710504Z [inf]  [ 3/12] RUN python3 -m venv /opt/venv
+2025-12-01T13:20:52.576394616Z [inf]  [ 3/12] RUN python3 -m venv /opt/venv
+2025-12-01T13:20:52.576497139Z [inf]  [ 4/12] COPY requirements.txt /tmp/requirements.txt
+2025-12-01T13:20:52.605409946Z [inf]  [ 4/12] COPY requirements.txt /tmp/requirements.txt
+2025-12-01T13:20:52.606164406Z [inf]  [ 5/12] RUN pip install --no-cache-dir -r /tmp/requirements.txt
+2025-12-01T13:20:53.043490757Z [inf]  Collecting flask==2.3.0 (from -r /tmp/requirements.txt (line 1))
+
+2025-12-01T13:20:53.066058021Z [inf]    Downloading Flask-2.3.0-py3-none-any.whl.metadata (3.7 kB)
+
+2025-12-01T13:20:53.080255422Z [inf]  Collecting flask-cors==4.0.0 (from -r /tmp/requirements.txt (line 2))
+
+2025-12-01T13:20:53.083819815Z [inf]    Downloading Flask_Cors-4.0.0-py2.py3-none-any.whl.metadata (5.4 kB)
+
+2025-12-01T13:20:53.138767581Z [inf]  Collecting opencv-python-headless==4.8.0.74 (from -r /tmp/requirements.txt (line 3))
+
+2025-12-01T13:20:53.143696304Z [inf]    Downloading opencv_python_headless-4.8.0.74-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (19 kB)
+
+2025-12-01T13:20:53.308696834Z [inf]  Collecting numpy==1.24.3 (from -r /tmp/requirements.txt (line 4))
+
+2025-12-01T13:20:53.314663136Z [inf]    Downloading numpy-1.24.3.tar.gz (10.9 MB)
+
+2025-12-01T13:20:53.377477346Z [inf]       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 198.4 MB/s eta 0:00:00
+2025-12-01T13:20:53.377500576Z [inf]  
+
+2025-12-01T13:20:54.24991404Z [inf]    Installing build dependencies: started
+
+2025-12-01T13:20:55.180781158Z [inf]    Installing build dependencies: finished with status 'done'
+
+2025-12-01T13:20:55.183634611Z [inf]    Getting requirements to build wheel: started
+
+2025-12-01T13:20:55.231707519Z [inf]    Getting requirements to build wheel: finished with status 'done'
+
+2025-12-01T13:20:55.238460029Z [inf]  ERROR: Exception:
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/cli/base_command.py", line 105, in _run_wrapper
+    status = _inner_run()
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/cli/base_command.py", line 96, in _inner_run
+    return self.run(options, args)
+           ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/cli/req_command.py", line 68, in wrapper
+    return func(self, options, args)
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/commands/install.py", line 387, in run
+    requirement_set = resolver.resolve(
+        reqs, check_supported_wheels=not options.target_dir
+    )
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/resolver.py", line 96, in resolve
+    result = self._result = resolver.resolve(
+                            ~~~~~~~~~~~~~~~~^
+        collected.requirements, max_rounds=limit_how_complex_resolution_can_be
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/resolvers/resolution.py", line 515, in resolve
+    state = resolution.resolve(requirements, max_rounds=max_rounds)
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/resolvers/resolution.py", line 388, in resolve
+    self._add_to_criteria(self.state.criteria, r, parent=None)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/resolvers/resolution.py", line 141, in _add_to_criteria
+    if not criterion.candidates:
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/resolvelib/structs.py", line 194, in __bool__
+    return bool(self._sequence)
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/found_candidates.py", line 163, in __bool__
+    self._bool = any(self)
+                 ~~~^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/found_candidates.py", line 147, in <genexpr>
+    return (c for c in iterator if id(c) not in self._incompatible_ids)
+                       ^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/found_candidates.py", line 37, in _iter_built
+    candidate = func()
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/factory.py", line 187, in _make_candidate_from_link
+    base: Optional[BaseCandidate] = self._make_base_candidate_from_link(
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        link, template, name, version
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/factory.py", line 233, in _make_base_candidate_from_link
+    self._link_candidate_cache[link] = LinkCandidate(
+                                       ~~~~~~~~~~~~~^
+        link,
+        ^^^^^
+    ...<3 lines>...
+        version=version,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/candidates.py", line 306, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        link=link,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        version=version,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/candidates.py", line 159, in __init__
+    self.dist = self._prepare()
+                ~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/candidates.py", line 236, in _prepare
+    dist = self._prepare_distribution()
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/resolution/resolvelib/candidates.py", line 317, in _prepare_distribution
+    return preparer.prepare_linked_requirement(self._ireq, parallel_builds=True)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/operations/prepare.py", line 532, in prepare_linked_requirement
+    return self._prepare_linked_requirement(req, parallel_builds)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/operations/prepare.py", line 647, in _prepare_linked_requirement
+    dist = _get_prepared_distribution(
+        req,
+    ...<3 lines>...
+        self.check_build_deps,
+    )
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/operations/prepare.py", line 71, in _get_prepared_distribution
+    abstract_dist.prepare_distribution_metadata(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        finder, build_isolation, check_build_deps
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/distributions/sdist.py", line 56, in prepare_distribution_metadata
+    self._install_build_reqs(finder)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/distributions/sdist.py", line 126, in _install_build_reqs
+    build_reqs = self._get_build_requires_wheel()
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/distributions/sdist.py", line 103, in _get_build_requires_wheel
+    return backend.get_requires_for_build_wheel()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_internal/utils/misc.py", line 702, in get_requires_for_build_wheel
+    return super().get_requires_for_build_wheel(config_settings=cs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_impl.py", line 196, in get_requires_for_build_wheel
+    return self._call_hook(
+           ~~~~~~~~~~~~~~~^
+        "get_requires_for_build_wheel", {"config_settings": config_settings}
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/venv/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_impl.py", line 402, in _call_hook
+    raise BackendUnavailable(
+    ...<4 lines>...
+    )
+pip._vendor.pyproject_hooks._impl.BackendUnavailable: Cannot import 'setuptools.build_meta'
+
+2025-12-01T13:20:55.499541635Z [err]  [ 5/12] RUN pip install --no-cache-dir -r /tmp/requirements.txt
+2025-12-01T13:20:55.524232197Z [err]  Dockerfile:20
+2025-12-01T13:20:55.524276362Z [err]  -------------------
+2025-12-01T13:20:55.524282801Z [err]  18 |     # Install Python dependencies
+2025-12-01T13:20:55.524288205Z [err]  19 |     COPY requirements.txt /tmp/requirements.txt
+2025-12-01T13:20:55.524297018Z [err]  20 | >>> RUN pip install --no-cache-dir -r /tmp/requirements.txt
+2025-12-01T13:20:55.524302038Z [err]  21 |
+2025-12-01T13:20:55.524308720Z [err]  22 |     # Configure Apache
+2025-12-01T13:20:55.524316000Z [err]  -------------------
+2025-12-01T13:20:55.524323114Z [err]  ERROR: failed to build: failed to solve: process "/bin/sh -c pip install --no-cache-dir -r /tmp/requirements.txt" did not complete successfully: exit code: 2

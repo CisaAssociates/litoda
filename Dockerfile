@@ -17,7 +17,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Configure Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
