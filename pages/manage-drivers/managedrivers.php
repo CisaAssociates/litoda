@@ -1,4 +1,7 @@
 <?php
+// Start output buffering at the very beginning
+ob_start();
+
 require_once '../../api/auth/auth_guard.php';
 include '../../database/db.php';
 
@@ -290,3 +293,4 @@ $result = $conn->query($sql);
     <script src="../../assets/js/manage-drivers/managedrivers.js"></script>
 </body>
 </html>
+<?php ob_end_flush(); ?>
