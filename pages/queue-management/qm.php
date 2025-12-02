@@ -734,76 +734,51 @@ function confirmDispatch() {
   $.ajax({
     url: '../../api/auth/dispatch_driver.php',
     type: 'POST',
-    data: { 
-      queue_id: currentDispatchQueueId,
-      action: 'dispatch'
-    },
+    data: { queue_id: currentDispatchQueueId, action: 'dispatch' },
     dataType: 'json',
     success: function(response) {
       closeModal();
-      
       if (response.success) {
         showNotification('✅ Driver dispatched successfully!', 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        fetchQueue(); // Update queue immediately
       } else {
         showNotification('❌ Error: ' + (response.message || 'Failed to dispatch driver'), 'error');
       }
     },
-    error: function(xhr, status, error) {
+    error: function() {
       closeModal();
-      console.error('Dispatch error:', error);
-      showNotification('❌ Error: Unable to dispatch driver. Please try again.', 'error');
+      showNotification('❌ Error: Unable to dispatch driver.', 'error');
     }
   });
 }
 
 function showNotification(message, type) {
   $('.notification-toast').remove();
-  
   const bgColor = type === 'success' ? '#10b981' : '#ef4444';
   const notification = $('<div>', {
     class: 'notification-toast',
     html: message,
     css: {
-      position: 'fixed',
-      top: '20px',
-      right: '20px',
-      background: bgColor,
-      color: 'white',
-      padding: '16px 24px',
-      borderRadius: '8px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-      zIndex: 10000,
-      fontSize: '0.95rem',
-      fontWeight: '600',
-      animation: 'slideInRight 0.3s ease',
+      position: 'fixed', top: '20px', right: '20px',
+      background: bgColor, color: 'white',
+      padding: '16px 24px', borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10000,
+      fontSize: '0.95rem', fontWeight: '600', animation: 'slideInRight 0.3s ease',
       maxWidth: '400px'
     }
   });
-  
   $('body').append(notification);
-  
-  if ($('#notification-animation').length === 0) {
-    $('<style id="notification-animation">@keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }</style>').appendTo('head');
-  }
-  
-  setTimeout(() => {
-    notification.fadeOut(300, function() { $(this).remove(); });
-  }, 4000);
+  setTimeout(() => { notification.fadeOut(300, () => $(this).remove()); }, 4000);
 }
-
+  
 function startAutoRefresh() {
   clearInterval(refreshInterval);
-  refreshInterval = setInterval(function() {
-    location.reload();
-  }, 5000);
+  refreshInterval = setInterval(fetchQueue, 5000);
 }
 
 $(document).ready(function() {
   console.log('🚀 LTODA Queue Management System Started');
-  console.log('🔄 Auto-refresh active (every 5 seconds)');
+  fetchQueue(); // Initial fetch
   startAutoRefresh();
 });
 </script>
