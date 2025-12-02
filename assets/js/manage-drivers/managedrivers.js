@@ -1,3 +1,584 @@
+// Modal elements
+const modal = document.getElementById("userModal");
+const openBtn = document.getElementById("openModal");
+const closeBtn = document.getElementById("closeModal");
+
+// Camera modal elements
+const cameraModal = document.getElementById("cameraModal");
+const profilePictureContainer = document.getElementById("profilePictureContainer");
+const closeCameraBtn = document.getElementById("closeCameraModal");
+const cancelCameraBtn = document.getElementById("cancelCameraBtn");
+
+// Camera elements
+const video = document.getElementById("cameraVideo");
+const canvas = document.getElementById("capturedCanvas");
+const captureBtn = document.getElementById("captureBtn");
+const retakeBtn = document.getElementById("retakeBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+
+// Form elements
+const submitBtn = document.getElementById("submitBtn");
+const profileImageData = document.getElementById("profileImageData");
+const statusMessage = document.getElementById("statusMessage");
+const userForm = document.getElementById("userForm");
+
+let stream = null;
+let capturedImageData = null;
+
+// API Base URL - Change this to use relative path (proxied through Apache)
+const API_BASE_URL = '/api/face';
+
+// Main modal controls
+openBtn.onclick = () => modal.classList.add("show");
+closeBtn.onclick = () => {
+    modal.classList.remove("show");
+    resetForm();
+};
+
+window.onclick = (e) => {
+    if (e.target === modal) {
+        modal.classList.remove("show");
+        resetForm();
+    }
+    if (e.target === cameraModal) {
+        closeCameraModal();
+    }
+};
+
+// Profile picture click to open camera
+if (profilePictureContainer) {
+    profilePictureContainer.onclick = openCamera;
+}
+
+// Camera modal controls
+if (closeCameraBtn) closeCameraBtn.onclick = closeCameraModal;
+if (cancelCameraBtn) cancelCameraBtn.onclick = closeCameraModal;
+if (captureBtn) captureBtn.onclick = capturePhoto;
+if (retakeBtn) retakeBtn.onclick = retakePhoto;
+if (confirmBtn) confirmBtn.onclick = confirmPhoto;
+
+// Camera functions
+async function openCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: 'user'
+            }
+        });
+        video.srcObject = stream;
+        cameraModal.classList.add("show");
+
+        // Reset camera state
+        video.style.display = 'block';
+        canvas.style.display = 'none';
+        captureBtn.style.display = 'inline-block';
+        retakeBtn.style.display = 'none';
+        confirmBtn.style.display = 'none';
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        showStatus("Camera access denied or not available", "error");
+    }
+}
+
+function closeCameraModal() {
+    cameraModal.classList.remove("show");
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    video.srcObject = null;
+}
+
+async function capturePhoto() {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    
+    // Validate face count before confirming capture
+    showStatus("Validating face...", "info");
+    captureBtn.disabled = true;
+    captureBtn.textContent = "Validating...";
+    
+    try {
+        // UPDATED: Use relative API path instead of localhost
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: imageData })
+        });
+        
+        const result = await response.json();
+        
+        if (result.valid) {
+            // Face is valid, now check for duplicates
+            showStatus("Checking for duplicate faces...", "info");
+            
+            // UPDATED: Use relative API path
+            const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: imageData })
+            });
+            
+            const duplicateResult = await duplicateResponse.json();
+            
+            if (duplicateResult.duplicate) {
+                showStatus(`Face already registered to: ${duplicateResult.matched_driver}`, "error");
+                showGlobalStatus(`This face is already registered to ${duplicateResult.matched_driver}. Please use a different person.`, "error");
+                captureBtn.disabled = false;
+                captureBtn.textContent = "Capture";
+            } else {
+                // Face is valid and not a duplicate
+                video.style.display = 'none';
+                canvas.style.display = 'block';
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'inline-block';
+                confirmBtn.style.display = 'inline-block';
+                capturedImageData = imageData;
+                showStatus("Face validated successfully!", "success");
+            }
+        } else {
+            showStatus(result.message || "Invalid face capture", "error");
+            showGlobalStatus(result.message || "Invalid face capture", "error");
+            captureBtn.disabled = false;
+            captureBtn.textContent = "Capture";
+        }
+    } catch (err) {
+        console.error("Face validation error:", err);
+        showStatus("Error validating face. Please try again.", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
+        captureBtn.disabled = false;
+        captureBtn.textContent = "Capture";
+    }
+}
+
+function retakePhoto() {
+    video.style.display = 'block';
+    canvas.style.display = 'none';
+    captureBtn.style.display = 'inline-block';
+    captureBtn.disabled = false;
+    captureBtn.textContent = "Capture";
+    retakeBtn.style.display = 'none';
+    confirmBtn.style.display = 'none';
+    capturedImageData = null;
+}
+
+function confirmPhoto() {
+    if (capturedImageData) {
+        profilePictureContainer.innerHTML = `<img src="${capturedImageData}" alt="Profile Picture">`;
+        profileImageData.value = capturedImageData;
+        submitBtn.disabled = false;
+        showStatus("Profile picture captured successfully!", "success");
+        closeCameraModal();
+    }
+}
+
+function showStatus(message, type) {
+    if (statusMessage) {
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message status-${type}`;
+        statusMessage.style.display = 'block';
+        
+        if (type === 'success') {
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+    }
+}
+
+function resetForm() {
+    if (userForm) userForm.reset();
+    if (profilePictureContainer) {
+        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Take Photo</p></div>`;
+    }
+    if (profileImageData) profileImageData.value = '';
+    if (submitBtn) submitBtn.disabled = true;
+    if (statusMessage) statusMessage.style.display = 'none';
+    capturedImageData = null;
+}
+
+// Form submission handling - contact is optional, can be blank
+if (userForm) {
+    userForm.onsubmit = function(e) {
+        const contactInput = document.getElementById('contactnumber');
+        
+        if (!capturedImageData) {
+            e.preventDefault();
+            showStatus("Please take a profile picture before submitting", "error");
+            return false;
+        }
+        
+        // Only validate contact if it has a value (blank is allowed)
+        if (contactInput && contactInput.value.length > 0 && contactInput.value.length !== 11) {
+            e.preventDefault();
+            showStatus("Contact number must be exactly 11 digits if provided", "error");
+            contactInput.focus();
+            return false;
+        }
+        
+        return true;
+    };
+}
+
+// Check for camera support
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showStatus("Camera not supported on this device", "error");
+    if (profilePictureContainer) {
+        profilePictureContainer.style.cursor = 'not-allowed';
+        profilePictureContainer.onclick = null;
+    }
+}
+
+// Enhanced notification function
+function showGlobalStatus(message, type) {
+    const existing = document.querySelectorAll('.global-notification');
+    existing.forEach(el => el.remove());
+    
+    const globalStatus = document.createElement('div');
+    globalStatus.className = `global-notification status-${type}`;
+    globalStatus.innerHTML = `<div>${message}</div>`;
+    document.body.appendChild(globalStatus);
+    
+    setTimeout(() => {
+        globalStatus.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        globalStatus.classList.remove('show');
+        setTimeout(() => {
+            if (document.body.contains(globalStatus)) {
+                document.body.removeChild(globalStatus);
+            }
+        }, 300);
+    }, 4000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add global notification styles
+    if (!document.getElementById('global-notification-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'global-notification-styles';
+        styles.textContent = `
+            .global-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                max-width: 500px;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+                font-weight: 500;
+                font-family: 'Poppins', sans-serif;
+                opacity: 0;
+                transform: translateX(400px);
+                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                backdrop-filter: blur(10px);
+            }
+            .global-notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            .global-notification.status-success {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                border: 2px solid #059669;
+            }
+            .global-notification.status-error {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                color: white;
+                border: 2px solid #dc2626;
+            }
+            .global-notification.status-info {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                color: white;
+                border: 2px solid #2563eb;
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success === 'user_added') {
+        showGlobalStatus('Driver added successfully!', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (success === 'user_updated') {
+        showGlobalStatus('Driver updated successfully!', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (success === 'user_deleted') {
+        showGlobalStatus('Driver deleted successfully!', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error) {
+        let errorMessage;
+        if (error.startsWith('duplicate_driver')) {
+            errorMessage = 'Driver with same name and plate number already exists';
+        } else if (error === 'duplicate_face') {
+            errorMessage = 'This face is already registered to another driver';
+        } else {
+            switch(error) {
+                case 'missing_fields':
+                    errorMessage = 'Please fill in all required fields';
+                    break;
+                case 'database_error':
+                    errorMessage = 'Database error occurred';
+                    break;
+                case 'file_upload_failed':
+                    errorMessage = 'Failed to upload profile picture';
+                    break;
+                case 'invalid_image_data':
+                    errorMessage = 'Invalid image data provided';
+                    break;
+                case 'no_image_provided':
+                    errorMessage = 'Profile picture is required';
+                    break;
+                case 'invalid_contact':
+                    errorMessage = 'Contact number must be exactly 11 digits';
+                    break;
+                case 'delete_failed':
+                    errorMessage = 'Failed to delete driver';
+                    break;
+                case 'invalid_image_type':
+                    errorMessage = 'Invalid image type';
+                    break;
+                case 'update_failed':
+                    errorMessage = 'Failed to update driver';
+                    break;
+                case 'database_insert_failed':
+                    errorMessage = 'Failed to add driver to database';
+                    break;
+                default:
+                    errorMessage = 'An error occurred';
+                    break;
+            }
+        }
+        showGlobalStatus(errorMessage, 'error');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Contact number validation for Add form - optional field
+    const contactInput = document.getElementById('contactnumber');
+    if (contactInput) {
+        contactInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 11) {
+                this.value = this.value.slice(0, 11);
+            }
+            if (this.value.length === 11) {
+                this.style.borderColor = '#10b981';
+            } else if (this.value.length === 0) {
+                this.style.borderColor = '#d1d5db';
+            } else {
+                this.style.borderColor = '#d1d5db';
+            }
+        });
+        
+        contactInput.addEventListener('blur', function() {
+            if (this.value.length > 0 && this.value.length !== 11) {
+                showStatus('Contact number must be exactly 11 digits if provided', 'error');
+                this.style.borderColor = '#ef4444';
+            }
+        });
+    }
+    
+    // Contact number validation for Edit form - optional field
+    const editContactInput = document.getElementById('edit_contact');
+    if (editContactInput) {
+        editContactInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 11) {
+                this.value = this.value.slice(0, 11);
+            }
+            if (this.value.length === 11) {
+                this.style.borderColor = '#10b981';
+            } else if (this.value.length === 0) {
+                this.style.borderColor = '#d1d5db';
+            } else {
+                this.style.borderColor = '#d1d5db';
+            }
+        });
+        
+        editContactInput.addEventListener('blur', function() {
+            if (this.value.length > 0 && this.value.length !== 11) {
+                showEditStatus('Contact number must be exactly 11 digits if provided', 'error');
+                this.style.borderColor = '#ef4444';
+            }
+        });
+    }
+});
+
+// Toggle action menu dropdown
+function toggleActionMenu(event, button) {
+    event.stopPropagation();
+    const dropdown = button.nextElementSibling;
+    const allDropdowns = document.querySelectorAll('.action-dropdown');
+    
+    allDropdowns.forEach(dd => {
+        if (dd !== dropdown) {
+            dd.classList.remove('show');
+        }
+    });
+    
+    const rect = button.getBoundingClientRect();
+    dropdown.style.top = (rect.bottom + 5) + 'px';
+    dropdown.style.left = (rect.left - 80) + 'px';
+    dropdown.classList.toggle('show');
+}
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.action-menu-container')) {
+        const allDropdowns = document.querySelectorAll('.action-dropdown');
+        allDropdowns.forEach(dd => dd.classList.remove('show'));
+    }
+});
+
+// Delete driver function
+function deleteDriver(driverId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Deleting...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            fetch(`../../api/manage-drivers/deletedriver.php?id=${driverId}`)
+                .then(response => response.json())
+                .then(data => {
+                    Swal.close();
+                    if (data.success) {
+                        showGlobalStatus('Driver deleted successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = window.location.pathname + '?success=user_deleted';
+                        }, 1000);
+                    } else {
+                        showGlobalStatus(data.message || 'Failed to delete driver', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.close();
+                    showGlobalStatus('An error occurred while deleting the driver', 'error');
+                });
+        }
+    });
+}
+
+// Edit Modal elements
+const editModal = document.getElementById("editModal");
+const closeEditModal = document.getElementById("closeEditModal");
+const editUserForm = document.getElementById("editUserForm");
+const editSubmitBtn = document.getElementById("editSubmitBtn");
+
+// Edit Camera modal elements
+const editCameraModal = document.getElementById("editCameraModal");
+const editProfilePictureContainer = document.getElementById("editProfilePictureContainer");
+const closeEditCameraBtn = document.getElementById("closeEditCameraModal");
+const cancelEditCameraBtn = document.getElementById("cancelEditCameraBtn");
+
+// Edit Camera elements
+const editVideo = document.getElementById("editCameraVideo");
+const editCanvas = document.getElementById("editCapturedCanvas");
+const editCaptureBtn = document.getElementById("editCaptureBtn");
+const editRetakeBtn = document.getElementById("editRetakeBtn");
+const editConfirmBtn = document.getElementById("editConfirmBtn");
+const editProfileImageData = document.getElementById("editProfileImageData");
+const editStatusMessage = document.getElementById("editStatusMessage");
+
+let editStream = null;
+let editCapturedImageData = null;
+let currentEditDriverId = null;
+
+// Edit Modal Controls
+if (closeEditModal) {
+    closeEditModal.onclick = () => {
+        editModal.classList.remove("show");
+    };
+}
+
+window.addEventListener('click', (e) => {
+    if (e.target === editModal) {
+        editModal.classList.remove("show");
+    }
+    if (e.target === editCameraModal) {
+        closeEditCameraModal();
+    }
+});
+
+// Edit driver function
+function editDriver(driverId) {
+    console.log('Edit driver:', driverId);
+    currentEditDriverId = driverId;
+    showEditStatus("Loading driver data...", "success");
+    
+    fetch(`../../api/manage-drivers/getuser.php?id=${driverId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                populateEditForm(data.data);
+                editModal.classList.add("show");
+            } else {
+                showGlobalStatus(data.message || 'Failed to load driver data', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showGlobalStatus('An error occurred while loading driver data', 'error');
+        });
+}
+
+// Populate edit form with driver data
+function populateEditForm(driver) {
+    document.getElementById('edit_driver_id').value = driver.id;
+    document.getElementById('edit_firstname').value = driver.firstname;
+    document.getElementById('edit_middlename').value = driver.middlename || '';
+    document.getElementById('edit_lastname').value = driver.lastname;
+    document.getElementById('edit_platenumber').value = driver.tricycle_number;
+    document.getElementById('edit_contact').value = driver.contact_no || '';
+    
+    if (driver.profile_pic) {
+        document.getElementById('existingImagePath').value = driver.profile_pic;
+        editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture">`;
+    } else {
+        editProfilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Change Photo</p></div>`;
+    }
+    
+    editStatusMessage.style.display = 'none';
+}
+
+// Edit Profile picture click to open camera
+if (editProfilePictureContainer) {
+    editProfilePictureContainer.onclick = openEditCamera;
+}
+
+// Edit Camera modal controls
+if (closeEditCameraBtn) closeEditCameraBtn.onclick = closeEditCameraModal;
+if (cancelEditCameraBtn) cancelEditCameraBtn.onclick = closeEditCameraModal;
+if (editCaptureBtn) editCaptureBtn.onclick = captureEditPhoto;
+if (editRetakeBtn) editRetakeBtn.onclick = retakeEditPhoto;
+if (editConfirmBtn) editConfirmBtn.onclick = confirmEditPhoto;
+
 // Edit Camera functions
 async function openEditCamera() {
     try {
@@ -45,8 +626,8 @@ async function captureEditPhoto() {
     editCaptureBtn.textContent = "Validating...";
     
     try {
-        // Step 1: Validate single face
-        const response = await fetch("http://127.0.0.1:5000/validate_single_face", {
+        // UPDATED: Use relative API path
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
@@ -55,76 +636,13 @@ async function captureEditPhoto() {
         const result = await response.json();
         
         if (result.valid) {
-            // Step 2: Check if this is the same person as the existing profile
-            const existingPath = document.getElementById('existingImagePath').value;
-            
-            if (existingPath) {
-                showEditStatus("Verifying face match...", "info");
-                
-                const matchResponse = await fetch("http://127.0.0.1:5000/check_face_match", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        existing_image_path: existingPath,
-                        new_image: imageData
-                    })
-                });
-                
-                const matchResult = await matchResponse.json();
-                
-                if (matchResult.same_face) {
-                    // Same person - allow update
-                    editVideo.style.display = 'none';
-                    editCanvas.style.display = 'block';
-                    editCaptureBtn.style.display = 'none';
-                    editRetakeBtn.style.display = 'inline-block';
-                    editConfirmBtn.style.display = 'inline-block';
-                    editCapturedImageData = imageData;
-                    showEditStatus("✓ Same person detected! Face verified successfully.", "success");
-                    showGlobalStatus("✓ Face matched! This is the same person. You can proceed with the update.", "success");
-                } else {
-                    // Different person - check if it's registered to someone else
-                    showEditStatus("Checking for duplicate registration...", "info");
-                    
-                    const duplicateResponse = await fetch("http://127.0.0.1:5000/check_face_duplicate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ 
-                            image: imageData,
-                            exclude_driver_id: currentEditDriverId // Exclude current driver from duplicate check
-                        })
-                    });
-                    
-                    const duplicateResult = await duplicateResponse.json();
-                    
-                    if (duplicateResult.duplicate) {
-                        showEditStatus(`This face is registered to: ${duplicateResult.matched_driver}`, "error");
-                        showGlobalStatus(`This face is already registered to ${duplicateResult.matched_driver}. Cannot update.`, "error");
-                        editCaptureBtn.disabled = false;
-                        editCaptureBtn.textContent = "Capture";
-                    } else {
-                        // Not a duplicate, but different from original - allow it
-                        // This handles case where driver wants to change their registered face
-                        editVideo.style.display = 'none';
-                        editCanvas.style.display = 'block';
-                        editCaptureBtn.style.display = 'none';
-                        editRetakeBtn.style.display = 'inline-block';
-                        editConfirmBtn.style.display = 'inline-block';
-                        editCapturedImageData = imageData;
-                        showEditStatus("New face validated! You can confirm the update.", "success");
-                        showGlobalStatus("Note: This appears to be a different person. Proceeding with update.", "info");
-                    }
-                }
-            } else {
-                // No existing image, just proceed
-                editVideo.style.display = 'none';
-                editCanvas.style.display = 'block';
-                editCaptureBtn.style.display = 'none';
-                editRetakeBtn.style.display = 'inline-block';
-                editConfirmBtn.style.display = 'inline-block';
-                editCapturedImageData = imageData;
-                showEditStatus("Face validated successfully!", "success");
-            }
+            editVideo.style.display = 'none';
+            editCanvas.style.display = 'block';
+            editCaptureBtn.style.display = 'none';
+            editRetakeBtn.style.display = 'inline-block';
+            editConfirmBtn.style.display = 'inline-block';
+            editCapturedImageData = imageData;
+            showEditStatus("Face validated successfully!", "success");
         } else {
             showEditStatus(result.message || "Invalid face capture", "error");
             showGlobalStatus(result.message || "Invalid face capture", "error");
@@ -134,7 +652,7 @@ async function captureEditPhoto() {
     } catch (err) {
         console.error("Face validation error:", err);
         showEditStatus("Error validating face. Please try again.", "error");
-        showGlobalStatus("Error connecting to face recognition system", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
         editCaptureBtn.disabled = false;
         editCaptureBtn.textContent = "Capture";
     }
@@ -151,14 +669,47 @@ function retakeEditPhoto() {
     editCapturedImageData = null;
 }
 
-function confirmEditPhoto() {
+async function confirmEditPhoto() {
     if (editCapturedImageData) {
-        // Update the profile picture container with proper styling
-        editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="New Profile Picture" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; cursor: pointer;">`;
-        editProfileImageData.value = editCapturedImageData;
-        showEditStatus("Profile picture updated successfully!", "success");
-        showGlobalStatus("Profile picture updated! Remember to click 'Update User' to save changes.", "success");
-        closeEditCameraModal();
+        const existingPath = document.getElementById('existingImagePath').value;
+        
+        if (existingPath) {
+            // Check if face matches the existing driver's face
+            try {
+                // UPDATED: Use relative API path
+                const response = await fetch(`${API_BASE_URL}/check_face_match`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        existing_image_path: existingPath,
+                        new_image: editCapturedImageData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.same_face) {
+                    editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
+                    editProfileImageData.value = editCapturedImageData;
+                    showEditStatus("Profile picture updated successfully!", "success");
+                    showGlobalStatus("Face matched. Profile picture updated!", "success");
+                    closeEditCameraModal();
+                } else {
+                    showEditStatus("Face does not match existing profile!", "error");
+                    showGlobalStatus("Face does not match existing profile!", "error");
+                }
+            } catch (err) {
+                console.error("Face match error:", err);
+                showEditStatus("Error connecting to face recognition system", "error");
+                showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
+            }
+        } else {
+            // No existing path, just update
+            editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
+            editProfileImageData.value = editCapturedImageData;
+            showEditStatus("Profile picture updated successfully!", "success");
+            closeEditCameraModal();
+        }
     }
 }
 
@@ -176,7 +727,7 @@ function showEditStatus(message, type) {
     }
 }
 
-// Edit form submission with contact validation
+// Edit form submission with contact validation - blank is allowed
 if (editUserForm) {
     editUserForm.onsubmit = function(e) {
         const editContactInput = document.getElementById('edit_contact');
