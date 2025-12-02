@@ -189,7 +189,7 @@ function showStatus(message, type) {
 function resetForm() {
     if (userForm) userForm.reset();
     if (profilePictureContainer) {
-        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon">📷</span><p>Take Photo</p></div>`;
+        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Take Photo</p></div>`;
     }
     if (profileImageData) profileImageData.value = '';
     if (submitBtn) submitBtn.disabled = true;
@@ -555,7 +555,7 @@ function populateEditForm(driver) {
         document.getElementById('existingImagePath').value = driver.profile_pic;
         editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture">`;
     } else {
-        editProfilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon">📷</span><p>Change Photo</p></div>`;
+        editProfilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Change Photo</p></div>`;
     }
     
     editStatusMessage.style.display = 'none';
