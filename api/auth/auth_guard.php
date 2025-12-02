@@ -5,6 +5,9 @@
  * 
  * Include this file at the top of every protected admin page
  */
+if (ob_get_level() === 0) {
+    ob_start();
+}
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
