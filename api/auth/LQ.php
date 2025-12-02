@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Manila');
 include('../../database/db.php');
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';

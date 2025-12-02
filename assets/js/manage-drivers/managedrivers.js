@@ -25,13 +25,17 @@ const userForm = document.getElementById("userForm");
 let stream = null;
 let capturedImageData = null;
 
+// API Base URL - Change this to use relative path (proxied through Apache)
+const API_BASE_URL = '/api/face';
+
 // Main modal controls
 openBtn.onclick = () => modal.classList.add("show");
 closeBtn.onclick = () => {
     modal.classList.remove("show");
     resetForm();
 };
-window.onclick = (e) => { 
+
+window.onclick = (e) => {
     if (e.target === modal) {
         modal.classList.remove("show");
         resetForm();
@@ -56,23 +60,22 @@ if (confirmBtn) confirmBtn.onclick = confirmPhoto;
 // Camera functions
 async function openCamera() {
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { 
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
                 width: { ideal: 640 },
                 height: { ideal: 480 },
                 facingMode: 'user'
-            } 
+            }
         });
         video.srcObject = stream;
         cameraModal.classList.add("show");
-        
+
         // Reset camera state
         video.style.display = 'block';
         canvas.style.display = 'none';
         captureBtn.style.display = 'inline-block';
         retakeBtn.style.display = 'none';
         confirmBtn.style.display = 'none';
-        
     } catch (error) {
         console.error("Error accessing camera:", error);
         showStatus("Camera access denied or not available", "error");
@@ -92,7 +95,6 @@ async function capturePhoto() {
     const context = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
@@ -103,26 +105,43 @@ async function capturePhoto() {
     captureBtn.textContent = "Validating...";
     
     try {
-        const response = await fetch(`${FLASK_API_URL}/validate_single_face`, {
+        // UPDATED: Use relative API path instead of localhost
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
         });
         
         const result = await response.json();
         
         if (result.valid) {
-            video.style.display = 'none';
-            canvas.style.display = 'block';
+            // Face is valid, now check for duplicates
+            showStatus("Checking for duplicate faces...", "info");
             
-            captureBtn.style.display = 'none';
-            retakeBtn.style.display = 'inline-block';
-            confirmBtn.style.display = 'inline-block';
+            // UPDATED: Use relative API path
+            const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: imageData })
+            });
             
-            capturedImageData = imageData;
-            showStatus("Face validated successfully!", "success");
+            const duplicateResult = await duplicateResponse.json();
+            
+            if (duplicateResult.duplicate) {
+                showStatus(`Face already registered to: ${duplicateResult.matched_driver}`, "error");
+                showGlobalStatus(`This face is already registered to ${duplicateResult.matched_driver}. Please use a different person.`, "error");
+                captureBtn.disabled = false;
+                captureBtn.textContent = "Capture";
+            } else {
+                // Face is valid and not a duplicate
+                video.style.display = 'none';
+                canvas.style.display = 'block';
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'inline-block';
+                confirmBtn.style.display = 'inline-block';
+                capturedImageData = imageData;
+                showStatus("Face validated successfully!", "success");
+            }
         } else {
             showStatus(result.message || "Invalid face capture", "error");
             showGlobalStatus(result.message || "Invalid face capture", "error");
@@ -132,6 +151,7 @@ async function capturePhoto() {
     } catch (err) {
         console.error("Face validation error:", err);
         showStatus("Error validating face. Please try again.", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
         captureBtn.disabled = false;
         captureBtn.textContent = "Capture";
     }
@@ -140,13 +160,11 @@ async function capturePhoto() {
 function retakePhoto() {
     video.style.display = 'block';
     canvas.style.display = 'none';
-    
     captureBtn.style.display = 'inline-block';
     captureBtn.disabled = false;
     captureBtn.textContent = "Capture";
     retakeBtn.style.display = 'none';
     confirmBtn.style.display = 'none';
-    
     capturedImageData = null;
 }
 
@@ -177,12 +195,7 @@ function showStatus(message, type) {
 function resetForm() {
     if (userForm) userForm.reset();
     if (profilePictureContainer) {
-        profilePictureContainer.innerHTML = `
-            <div class="profile-picture-placeholder">
-                <i class="fas fa-camera"></i>
-                <span>Take Photo</span>
-            </div>
-        `;
+        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Take Photo</p></div>`;
     }
     if (profileImageData) profileImageData.value = '';
     if (submitBtn) submitBtn.disabled = true;
@@ -194,13 +207,13 @@ function resetForm() {
 if (userForm) {
     userForm.onsubmit = function(e) {
         const contactInput = document.getElementById('contactnumber');
-
+        
         if (!capturedImageData) {
             e.preventDefault();
             showStatus("Please take a profile picture before submitting", "error");
             return false;
         }
-
+        
         // Only validate contact if it has a value (blank is allowed)
         if (contactInput && contactInput.value.length > 0 && contactInput.value.length !== 11) {
             e.preventDefault();
@@ -208,7 +221,7 @@ if (userForm) {
             contactInput.focus();
             return false;
         }
-
+        
         return true;
     };
 }
@@ -229,14 +242,7 @@ function showGlobalStatus(message, type) {
     
     const globalStatus = document.createElement('div');
     globalStatus.className = `global-notification status-${type}`;
-    globalStatus.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" 
-               style="font-size: 20px;"></i>
-            <span style="flex: 1;">${message}</span>
-        </div>
-    `;
-    
+    globalStatus.innerHTML = `<div>${message}</div>`;
     document.body.appendChild(globalStatus);
     
     setTimeout(() => {
@@ -276,24 +282,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
                 backdrop-filter: blur(10px);
             }
-            
             .global-notification.show {
                 opacity: 1;
                 transform: translateX(0);
             }
-            
             .global-notification.status-success {
                 background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                 color: white;
                 border: 2px solid #059669;
             }
-            
             .global-notification.status-error {
                 background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
                 color: white;
                 border: 2px solid #dc2626;
             }
-            
             .global-notification.status-info {
                 background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
                 color: white;
@@ -318,9 +320,10 @@ document.addEventListener('DOMContentLoaded', function() {
         window.history.replaceState({}, document.title, window.location.pathname);
     } else if (error) {
         let errorMessage;
-        
         if (error.startsWith('duplicate_driver')) {
             errorMessage = 'Driver with same name and plate number already exists';
+        } else if (error === 'duplicate_face') {
+            errorMessage = 'This face is already registered to another driver';
         } else {
             switch(error) {
                 case 'missing_fields':
@@ -358,7 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
             }
         }
-        
         showGlobalStatus(errorMessage, 'error');
         window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -368,11 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contactInput) {
         contactInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
-            
             if (this.value.length > 11) {
                 this.value = this.value.slice(0, 11);
             }
-            
             if (this.value.length === 11) {
                 this.style.borderColor = '#10b981';
             } else if (this.value.length === 0) {
@@ -383,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         contactInput.addEventListener('blur', function() {
-            // Only show error if there's a value but it's not 11 digits
             if (this.value.length > 0 && this.value.length !== 11) {
                 showStatus('Contact number must be exactly 11 digits if provided', 'error');
                 this.style.borderColor = '#ef4444';
@@ -396,11 +395,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (editContactInput) {
         editContactInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
-            
             if (this.value.length > 11) {
                 this.value = this.value.slice(0, 11);
             }
-            
             if (this.value.length === 11) {
                 this.style.borderColor = '#10b981';
             } else if (this.value.length === 0) {
@@ -411,7 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         editContactInput.addEventListener('blur', function() {
-            // Only show error if there's a value but it's not 11 digits
             if (this.value.length > 0 && this.value.length !== 11) {
                 showEditStatus('Contact number must be exactly 11 digits if provided', 'error');
                 this.style.borderColor = '#ef4444';
@@ -423,7 +419,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Toggle action menu dropdown
 function toggleActionMenu(event, button) {
     event.stopPropagation();
-    
     const dropdown = button.nextElementSibling;
     const allDropdowns = document.querySelectorAll('.action-dropdown');
     
@@ -436,7 +431,6 @@ function toggleActionMenu(event, button) {
     const rect = button.getBoundingClientRect();
     dropdown.style.top = (rect.bottom + 5) + 'px';
     dropdown.style.left = (rect.left - 80) + 'px';
-    
     dropdown.classList.toggle('show');
 }
 
@@ -468,12 +462,11 @@ function deleteDriver(driverId) {
                     Swal.showLoading();
                 }
             });
-
+            
             fetch(`../../api/manage-drivers/deletedriver.php?id=${driverId}`)
                 .then(response => response.json())
                 .then(data => {
                     Swal.close();
-                    
                     if (data.success) {
                         showGlobalStatus('Driver deleted successfully!', 'success');
                         setTimeout(() => {
@@ -515,6 +508,7 @@ const editStatusMessage = document.getElementById("editStatusMessage");
 
 let editStream = null;
 let editCapturedImageData = null;
+let currentEditDriverId = null;
 
 // Edit Modal Controls
 if (closeEditModal) {
@@ -535,7 +529,7 @@ window.addEventListener('click', (e) => {
 // Edit driver function
 function editDriver(driverId) {
     console.log('Edit driver:', driverId);
-    
+    currentEditDriverId = driverId;
     showEditStatus("Loading driver data...", "success");
     
     fetch(`../../api/manage-drivers/getuser.php?id=${driverId}`)
@@ -565,14 +559,9 @@ function populateEditForm(driver) {
     
     if (driver.profile_pic) {
         document.getElementById('existingImagePath').value = driver.profile_pic;
-        editProfilePictureContainer.innerHTML = `<img src="../../${driver.profile_pic}" alt="Profile Picture">`;
+        editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture">`;
     } else {
-        editProfilePictureContainer.innerHTML = `
-            <div class="profile-picture-placeholder">
-                <i class="fa-solid fa-camera"></i>
-                <span>Change Photo</span>
-            </div>
-        `;
+        editProfilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Change Photo</p></div>`;
     }
     
     editStatusMessage.style.display = 'none';
@@ -593,12 +582,12 @@ if (editConfirmBtn) editConfirmBtn.onclick = confirmEditPhoto;
 // Edit Camera functions
 async function openEditCamera() {
     try {
-        editStream = await navigator.mediaDevices.getUserMedia({ 
-            video: { 
+        editStream = await navigator.mediaDevices.getUserMedia({
+            video: {
                 width: { ideal: 640 },
                 height: { ideal: 480 },
                 facingMode: 'user'
-            } 
+            }
         });
         editVideo.srcObject = editStream;
         editCameraModal.classList.add("show");
@@ -608,7 +597,6 @@ async function openEditCamera() {
         editCaptureBtn.style.display = 'inline-block';
         editRetakeBtn.style.display = 'none';
         editConfirmBtn.style.display = 'none';
-        
     } catch (error) {
         console.error("Error accessing camera:", error);
         showEditStatus("Camera access denied or not available", "error");
@@ -628,7 +616,6 @@ async function captureEditPhoto() {
     const context = editCanvas.getContext('2d');
     editCanvas.width = editVideo.videoWidth;
     editCanvas.height = editVideo.videoHeight;
-    
     context.drawImage(editVideo, 0, 0, editCanvas.width, editCanvas.height);
     
     const imageData = editCanvas.toDataURL('image/jpeg', 0.8);
@@ -639,7 +626,8 @@ async function captureEditPhoto() {
     editCaptureBtn.textContent = "Validating...";
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/validate_single_face", {
+        // UPDATED: Use relative API path
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
@@ -650,11 +638,9 @@ async function captureEditPhoto() {
         if (result.valid) {
             editVideo.style.display = 'none';
             editCanvas.style.display = 'block';
-            
             editCaptureBtn.style.display = 'none';
             editRetakeBtn.style.display = 'inline-block';
             editConfirmBtn.style.display = 'inline-block';
-            
             editCapturedImageData = imageData;
             showEditStatus("Face validated successfully!", "success");
         } else {
@@ -666,6 +652,7 @@ async function captureEditPhoto() {
     } catch (err) {
         console.error("Face validation error:", err);
         showEditStatus("Error validating face. Please try again.", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
         editCaptureBtn.disabled = false;
         editCaptureBtn.textContent = "Capture";
     }
@@ -674,33 +661,33 @@ async function captureEditPhoto() {
 function retakeEditPhoto() {
     editVideo.style.display = 'block';
     editCanvas.style.display = 'none';
-    
     editCaptureBtn.style.display = 'inline-block';
     editCaptureBtn.disabled = false;
     editCaptureBtn.textContent = "Capture";
     editRetakeBtn.style.display = 'none';
     editConfirmBtn.style.display = 'none';
-    
     editCapturedImageData = null;
 }
 
 async function confirmEditPhoto() {
     if (editCapturedImageData) {
         const existingPath = document.getElementById('existingImagePath').value;
-
+        
         if (existingPath) {
+            // Check if face matches the existing driver's face
             try {
-                const response = await fetch("http://127.0.0.1:5000/check_face_match", {
+                // UPDATED: Use relative API path
+                const response = await fetch(`${API_BASE_URL}/check_face_match`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        existing_image_path: existingPath, 
-                        new_image: editCapturedImageData 
+                    body: JSON.stringify({
+                        existing_image_path: existingPath,
+                        new_image: editCapturedImageData
                     })
                 });
-
+                
                 const result = await response.json();
-
+                
                 if (result.same_face) {
                     editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
                     editProfileImageData.value = editCapturedImageData;
@@ -714,10 +701,10 @@ async function confirmEditPhoto() {
             } catch (err) {
                 console.error("Face match error:", err);
                 showEditStatus("Error connecting to face recognition system", "error");
-                showGlobalStatus("Error connecting to face recognition system", "error");
+                showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
             }
         } else {
-            // If no existing path, just update
+            // No existing path, just update
             editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
             editProfileImageData.value = editCapturedImageData;
             showEditStatus("Profile picture updated successfully!", "success");

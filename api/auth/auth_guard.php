@@ -5,6 +5,9 @@
  * 
  * Include this file at the top of every protected admin page
  */
+if (ob_get_level() === 0) {
+    ob_start();
+}
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
@@ -54,20 +57,14 @@ function forceLogout($reason = 'Please log in to continue.') {
     $_SESSION = array();
     
     // Destroy the session cookie
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time() - 3600, '/');
     }
     
     // Destroy the session
-    if (session_status() === PHP_SESSION_ACTIVE) {
-        session_destroy();
-    }
+    session_destroy();
     
-    // Start new session for error message
+    // Start new session for error message - ONLY if not already started
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -75,14 +72,8 @@ function forceLogout($reason = 'Please log in to continue.') {
     $_SESSION['redirect_after_login'] = $current_page;
     
     // Redirect to login page - adjust path based on your structure
-    // Ensure no output has been sent
-    if (!headers_sent()) {
-        header('Location: ../../pages/login/login.php');
-        exit();
-    } else {
-        echo "<script>window.location.href='../../pages/login/login.php';</script>";
-        exit();
-    }
+    header('Location: ../../pages/login/login.php');
+    exit();
 }
 
 /**

@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+date_default_timezone_set('Asia/Manila');
 include '../../database/db.php';
 
 // Admin ID from session
