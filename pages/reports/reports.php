@@ -33,7 +33,7 @@ $whereClause = !empty($whereConditions) ? "WHERE " . implode(" AND ", $whereCond
 
 // ✅ Updated query — include dispatch_at
 $sql = "
-    SELECT q.id, q.status, q.queued_at, q.dispatch_at, q.driver_id,
+    SELECT q.id, q.status, q.queued_at, q.dispatch_at,
            d.firstname, d.lastname, d.tricycle_number, d.profile_pic
     FROM queue q
     INNER JOIN drivers d ON q.driver_id = d.id
@@ -42,30 +42,6 @@ $sql = "
     LIMIT $limit OFFSET $offset
 ";
 $result = $conn->query($sql);
-
-// STEP 2: Get currently serving (active dispatched) drivers
-$currentlyServingQuery = $conn->query("
-    SELECT driver_id 
-    FROM queue 
-    WHERE status = 'Dispatched' 
-    AND DATE(queued_at) = CURDATE()
-    AND dispatch_at IS NOT NULL
-    GROUP BY driver_id
-    HAVING MAX(dispatch_at) = (
-        SELECT MAX(q2.dispatch_at) 
-        FROM queue q2 
-        WHERE q2.driver_id = queue.driver_id 
-        AND DATE(q2.queued_at) = CURDATE()
-    )
-");
-
-// Store currently serving driver IDs
-$currentlyServing = [];
-if ($currentlyServingQuery->num_rows > 0) {
-    while ($row = $currentlyServingQuery->fetch_assoc()) {
-        $currentlyServing[] = $row['driver_id'];
-    }
-}
 
 // Apply filter logic
 $filteredResults = [];
@@ -531,25 +507,19 @@ tbody tr:hover{
     <!-- Table Section with responsive wrapper -->
     <div class="table-section">
         <div class="table-responsive">
-           <table id="reportsTable">
+            <table id="reportsTable">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>DRIVER NAME</th>
-                        <th>PLATE NUMBER</th>
-                        <th>QUEUE TIME</th>
-                        <th>DISPATCH TIME</th>
-                        <th>STATUS</th>
+                        <th>Driver Name</th>
+                        <th>Plate Number</th>
+                        <th>Queue Time</th>
+                        <th>Dispatch Time</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($filteredResults)): ?>
                         <?php $count = 1; foreach ($filteredResults as $row): ?>
-                            <?php
-                            // Check if this driver is currently in "Now Serving"
-                            $driverIdFromQueue = $row['driver_id'] ?? null;
-                            $isNowServing = in_array($driverIdFromQueue, $currentlyServing);
-                            ?>
                             <tr>
                                 <td><?= $count++; ?></td>
                                 <td>
@@ -567,40 +537,23 @@ tbody tr:hover{
                                 <td><?= htmlspecialchars($row['tricycle_number']); ?></td>
                                 <td>
                                     <span>
-                                        <?= date('M d, Y h:i A', strtotime($row['queued_at'])); ?>
+                                        Queue <?= date('M d, Y h:i A', strtotime($row['queued_at'])); ?>
                                     </span>
                                 </td>
                                 <td>
                                     <?php if ($row['status'] === 'Dispatched' && !empty($row['dispatch_at'])): ?>
                                         <span>
-                                            <?= date('M d, Y h:i A', strtotime($row['dispatch_at'])); ?>
+                                           Dispatch <?= date('M d, Y h:i A', strtotime($row['dispatch_at'])); ?>
                                         </span>
                                     <?php else: ?>
-                                        <span style="color: #9ca3af;">—</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($row['status'] === 'Dispatched'): ?>
-                                        <?php if ($isNowServing): ?>
-                                            <span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                                ✓ Complete
-                                            </span>
-                                        <?php else: ?>
-                                            <span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                                ⏳ Incomplete
-                                            </span>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        <span style="background: #e5e7eb; color: #6b7280; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                            Queue
-                                        </span>
+                                        <span>—</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>   
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="no-records">
+                            <td colspan="5" class="no-records">
                                 <i class="fa-solid fa-inbox"></i><br>No records found for selected filters
                             </td>
                         </tr>
