@@ -25,6 +25,9 @@ const userForm = document.getElementById("userForm");
 let stream = null;
 let capturedImageData = null;
 
+// API Base URL - Change this to use relative path (proxied through Apache)
+const API_BASE_URL = '/api/face';
+
 // Main modal controls
 openBtn.onclick = () => modal.classList.add("show");
 closeBtn.onclick = () => {
@@ -102,7 +105,8 @@ async function capturePhoto() {
     captureBtn.textContent = "Validating...";
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/validate_single_face", {
+        // UPDATED: Use relative API path instead of localhost
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
@@ -114,7 +118,8 @@ async function capturePhoto() {
             // Face is valid, now check for duplicates
             showStatus("Checking for duplicate faces...", "info");
             
-            const duplicateResponse = await fetch("http://127.0.0.1:5000/check_face_duplicate", {
+            // UPDATED: Use relative API path
+            const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ image: imageData })
@@ -146,6 +151,7 @@ async function capturePhoto() {
     } catch (err) {
         console.error("Face validation error:", err);
         showStatus("Error validating face. Please try again.", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
         captureBtn.disabled = false;
         captureBtn.textContent = "Capture";
     }
@@ -502,7 +508,7 @@ const editStatusMessage = document.getElementById("editStatusMessage");
 
 let editStream = null;
 let editCapturedImageData = null;
-let currentEditDriverId = null; // Track current driver being edited
+let currentEditDriverId = null;
 
 // Edit Modal Controls
 if (closeEditModal) {
@@ -620,7 +626,8 @@ async function captureEditPhoto() {
     editCaptureBtn.textContent = "Validating...";
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/validate_single_face", {
+        // UPDATED: Use relative API path
+        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
@@ -645,6 +652,7 @@ async function captureEditPhoto() {
     } catch (err) {
         console.error("Face validation error:", err);
         showEditStatus("Error validating face. Please try again.", "error");
+        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
         editCaptureBtn.disabled = false;
         editCaptureBtn.textContent = "Capture";
     }
@@ -668,7 +676,8 @@ async function confirmEditPhoto() {
         if (existingPath) {
             // Check if face matches the existing driver's face
             try {
-                const response = await fetch("http://127.0.0.1:5000/check_face_match", {
+                // UPDATED: Use relative API path
+                const response = await fetch(`${API_BASE_URL}/check_face_match`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -692,7 +701,7 @@ async function confirmEditPhoto() {
             } catch (err) {
                 console.error("Face match error:", err);
                 showEditStatus("Error connecting to face recognition system", "error");
-                showGlobalStatus("Error connecting to face recognition system", "error");
+                showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
             }
         } else {
             // No existing path, just update
