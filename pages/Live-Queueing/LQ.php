@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Manila');
 include('../../database/db.php');
 
 // Fetch all queued drivers today, ordered by their unique queue_number
