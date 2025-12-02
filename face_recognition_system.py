@@ -444,6 +444,17 @@ CORS(app)
 face_system = FaceRecognitionSystem()
 
 
+@app.before_request
+def log_request_info():
+    print(f"[Flask] Request path: {request.path}", flush=True)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    print(f"[Flask] 404 Error for path: {request.path}", flush=True)
+    return jsonify({"error": "Not Found", "path": request.path}), 404
+
+
 @app.route('/validate_single_face', methods=['POST'])
 def validate_single_face():
     """
