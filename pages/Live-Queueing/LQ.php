@@ -609,7 +609,7 @@ body {
   <div class="serving-cards-container">
     <?php foreach($highlightDrivers as $driver): ?>
       <div class="serving-card">
-        <div class="queue-number-badge">#<?php echo $driver['queue_number']; ?></div>
+        <div class="queue-number-badge"><?php echo $driver['queue_number']; ?></div>
         <img src="<?php 
           echo !empty($driver['profile_pic']) && file_exists('../../'.$driver['profile_pic']) 
               ? '../../'.$driver['profile_pic'] 
@@ -645,7 +645,7 @@ body {
         <?php if(!empty($queuedDrivers)): ?>
           <?php foreach($queuedDrivers as $driver): ?>
           <tr class="<?php echo ($driver['queue_number'] == $highlightDrivers[0]['queue_number'] + 1) ? 'next-in-line' : ''; ?>">
-            <td class="queue-number-cell">#<?php echo $driver['queue_number']; ?></td>
+            <td class="queue-number-cell"><?php echo $driver['queue_number']; ?></td>
             <td><img src="<?php 
               echo !empty($driver['profile_pic']) && file_exists('../../'.$driver['profile_pic'])
                 ? '../../'.$driver['profile_pic']
