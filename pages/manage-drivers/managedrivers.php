@@ -1,4 +1,4 @@
-<?php
+    <?php
     require_once '../../api/auth/auth_guard.php';
     include '../../database/db.php';
 
@@ -25,8 +25,10 @@
     $totalRecords = $totalRow['total'];
     $totalPages = ceil($totalRecords / $limit);
 
-    // Fetch limited data
-    $sql = "SELECT * FROM drivers $whereClause ORDER BY registered_at DESC LIMIT $limit OFFSET $offset";
+    // Fetch limited data (sorted alphabetically)
+    $sql = "SELECT * FROM drivers $whereClause 
+            ORDER BY lastname ASC, firstname ASC 
+            LIMIT $limit OFFSET $offset";
     $result = $conn->query($sql);
     ?>
     <!DOCTYPE html>
@@ -286,7 +288,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://kit.fontawesome.com/4c7e22a859.js" crossorigin="anonymous"></script>
-    <script src="../../assets/js/config.js.php"></script>
     <script src="../../assets/js/manage-drivers/managedrivers.js"></script>
     </body>
     </html>
