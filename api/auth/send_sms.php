@@ -3,10 +3,10 @@ header('Content-Type: application/json');
 include('../../database/db.php');
 
 // ============================================
-// SEMAPHORE CONFIGURATION
+// PHILSMS CONFIGURATION
 // ============================================
-define('SEMAPHORE_API_KEY', '597ad0ae040c16997f25cbfd49ae0b7f'); // Replace with your Semaphore API Key
-define('SEMAPHORE_SENDER_NAME', 'LITODA'); // Alphanumeric sender (no number needed)
+define('PHILSMS_API_KEY', 'YOUR_PHILSMS_API_KEY'); // Replace with your PhilSMS API Key
+define('PHILSMS_SENDER_NAME', 'LITODA'); // Sender ID
 
 /**
  * Format phone number for Philippines
@@ -14,34 +14,38 @@ define('SEMAPHORE_SENDER_NAME', 'LITODA'); // Alphanumeric sender (no number nee
 function formatPhoneNumber($phone) {
     $phone = preg_replace('/[\s\-\(\)]/', '', $phone);
 
-    if (substr($phone, 0, 1) == '0') return '+63' . substr($phone, 1);
-    if (substr($phone, 0, 2) == '63') return '+' . $phone;
-    if (substr($phone, 0, 3) == '+63') return $phone;
-    if (strlen($phone) == 10 && substr($phone, 0, 1) == '9') return '+63' . $phone;
+    if (substr($phone, 0, 1) == '0') return '63' . substr($phone, 1);
+    if (substr($phone, 0, 3) == '+63') return substr($phone, 1);
+    if (substr($phone, 0, 2) == '63') return $phone;
+    if (strlen($phone) == 10 && substr($phone, 0, 1) == '9') return '63' . $phone;
 
     return $phone;
 }
 
 /**
- * Send SMS using Semaphore API
+ * Send SMS using PhilSMS API
  */
-function sendSemaphoreSMS($toNumber, $message) {
-    $apiKey = SEMAPHORE_API_KEY;
-    $sender = SEMAPHORE_SENDER_NAME;
+function sendPhilSMS($toNumber, $message) {
+    $apiKey = PHILSMS_API_KEY;
+    $sender = PHILSMS_SENDER_NAME;
 
-    $url = "https://api.semaphore.co/api/v4/messages";
+    $url = "https://app.philsms.com/api/v3/sms/send";
     $data = [
-        'apikey' => $apiKey,
-        'number' => $toNumber,
-        'message' => $message,
-        'sendername' => $sender
+        'recipient' => $toNumber,
+        'sender_id' => $sender,
+        'type' => 'plain',
+        'message' => $message
     ];
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $apiKey
+    ]);
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -129,7 +133,7 @@ try {
     if (!empty($tricycleNumber)) $message .= " (Tricycle #{$tricycleNumber})";
     $message .= ". Please be ready at the queue area. - LITODA System";
 
-    $result = sendSemaphoreSMS($formattedPhone, $message);
+    $result = sendPhilSMS($formattedPhone, $message);
     $status = $result['success'] ? 'sent' : 'failed';
 
     logSMS($conn, $driverId, $formattedPhone, $message, $status, $result['response']);
