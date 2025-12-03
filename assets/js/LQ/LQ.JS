@@ -1,5 +1,7 @@
 let currentDispatchQueueId = null;
 let previousQueueState = null;
+let lastSMSSentTo = null; // Track last SMS recipient
+let smsInProgress = false; // Prevent duplicate sends
 
 console.log('🚀 LITODA Queue System Starting...');
 console.log('📍 jQuery loaded:', typeof jQuery !== 'undefined');
@@ -8,6 +10,21 @@ console.log('📍 jQuery loaded:', typeof jQuery !== 'undefined');
 // SEND SMS TO NEXT DRIVER
 // ================================
 function sendNextDriverSMS(driver) {
+  // Prevent duplicate SMS sends
+  if (smsInProgress) {
+    console.log('⏳ SMS already in progress, skipping...');
+    return;
+  }
+
+  // Check if SMS was already sent to this driver
+  if (lastSMSSentTo === driver.id) {
+    console.log('✅ SMS already sent to driver:', driver.id);
+    return;
+  }
+
+  smsInProgress = true;
+  console.log('📤 Sending SMS to driver:', driver.id);
+
   $.ajax({
     url: '../../api/sms/send_sms.php',
     type: 'POST',
@@ -17,17 +34,28 @@ function sendNextDriverSMS(driver) {
       tricycle_number: driver.tricycle_number,
       contact_no: driver.contact_no
     },
+    dataType: 'json',
     success: function(response) {
       console.log("📩 SMS Response:", response);
+      
       if (response.success) {
+        lastSMSSentTo = driver.id; // Mark as sent
         showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname}`, 'success');
+      } else if (response.duplicate) {
+        console.log('⚠️ Duplicate SMS prevented by server');
+        lastSMSSentTo = driver.id; // Mark as sent to prevent retries
+        showNotification(`✓ ${driver.firstname} ${driver.lastname} already notified`, 'info');
       } else {
-        showNotification(`⚠ SMS sending failed: ${response.message}`, 'error');
+        console.error('❌ SMS Failed:', response.message);
+        showNotification(`⚠ SMS failed: ${response.message}`, 'error');
       }
     },
     error: function(xhr, status, error) {
       console.error("❌ SMS AJAX Error:", error);
-      showNotification("❌ Failed to send SMS (AJAX error)", "error");
+      showNotification("❌ Failed to send SMS (connection error)", "error");
+    },
+    complete: function() {
+      smsInProgress = false;
     }
   });
 }
@@ -61,6 +89,12 @@ function detectQueueChanges(currentData) {
     }
     
     if (removed.length > 0) {
+      // Reset SMS tracking when queue changes
+      const removedDriver = previousQueueState.find(d => d.id === removed[0]);
+      if (removedDriver && lastSMSSentTo === removedDriver.id) {
+        console.log('🔄 Resetting SMS tracking due to queue change');
+        lastSMSSentTo = null; // Reset to allow next driver notification
+      }
       showNotification(`🚗 Driver dispatched/removed from queue`, 'info');
     }
   }
@@ -84,7 +118,7 @@ function loadQueueData() {
       console.log('✅ Queue data received:', response);
       
       if (response.success && response.data.length > 0) {
-        detectQueueChanges(response.data);
+        const changes = detectQueueChanges(response.data);
 
         let onqueueDrivers = response.data.filter(d => d.status === 'Onqueue');
 
@@ -95,10 +129,13 @@ function loadQueueData() {
           let remainingDrivers = onqueueDrivers.slice(1);
           if (remainingDrivers.length > 0) {
 
-            // 📩 SEND SMS TO NEXT DRIVER
+            // 📩 SEND SMS TO NEXT DRIVER (only if not already sent)
             const nextDriver = remainingDrivers[0];
             if (nextDriver && nextDriver.contact_no) {
-              sendNextDriverSMS(nextDriver);
+              // Only send SMS if queue changed or it's a new "next" driver
+              if (changes.hasChanges || lastSMSSentTo !== nextDriver.id) {
+                sendNextDriverSMS(nextDriver);
+              }
             }
 
             updateQueueTable(remainingDrivers);
@@ -241,4 +278,5 @@ $(document).ready(function() {
   
   console.log('📱 Real-time updates: ACTIVE');
   console.log('⏱️ Refresh interval: 3 seconds');
+  console.log('📩 SMS System: PhilSMS Integrated');
 });
