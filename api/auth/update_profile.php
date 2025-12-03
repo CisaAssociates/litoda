@@ -1,4 +1,7 @@
 <?php
+// ✅ Set Philippine timezone
+date_default_timezone_set('Asia/Manila');
+
 // Start session only if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -82,7 +85,7 @@ try {
             throw new Exception("Image size must be less than 5MB.");
         }
 
-        // Generate unique filename
+        // Generate unique filename with timestamp (timezone aware)
         $extension = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
         $fileName = 'admin_' . $adminId . '_' . uniqid() . '.' . strtolower($extension);
         $targetPath = $uploadDir . $fileName;
@@ -140,6 +143,9 @@ try {
         $types .= "s";
     }
 
+    // ✅ Add updated_at timestamp with current Philippine time
+    $updateFields[] = "updated_at = NOW()";
+
     // Add admin ID for WHERE clause
     $params[] = $adminId;
     $types .= "i";
@@ -160,7 +166,7 @@ try {
 
     $stmt->close();
 
-    // Update ONLY admin-related session variables (don't touch driver sessions)
+    // Update ONLY admin-related session variables
     $_SESSION['admin_firstname'] = $firstname;
     $_SESSION['admin_middlename'] = $middlename;
     $_SESSION['admin_lastname'] = $lastname;
