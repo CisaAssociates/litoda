@@ -29,10 +29,16 @@ class FaceRecognitionSystem:
         )
 
         # Database configuration
+        # Check for Railway environment variables to determine defaults
+        is_railway = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RAILWAY_STATIC_URL') or os.environ.get('RAILWAY_GIT_COMMIT_SHA')
+        
+        default_host = "mysql.railway.internal" if is_railway else "localhost"
+        default_pass = "eIKUyoNeEeMStYONTCowvZAzNHJbrFkv" if is_railway else ""
+
         self.db_config = {
-            'host': os.environ.get('DB_HOST', 'mysql.railway.internal'),
+            'host': os.environ.get('DB_HOST', default_host),
             'user': os.environ.get('DB_USER', 'root'),
-            'password': os.environ.get('DB_PASSWORD', 'eIKUyoNeEeMStYONTCowvZAzNHJbrFkv'),
+            'password': os.environ.get('DB_PASSWORD', default_pass),
             'database': os.environ.get('DB_NAME', 'litoda_db'),
             'port': int(os.environ.get('DB_PORT', 3306))
         }

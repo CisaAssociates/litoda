@@ -25,8 +25,8 @@ const userForm = document.getElementById("userForm");
 let stream = null;
 let capturedImageData = null;
 
-// API Base URL - Change this to use relative path (proxied through Apache)
-const API_BASE_URL = '/py-api';
+// API Base URL - Use global variable from config.js.php, fallback to relative proxy if undefined
+const API_BASE_URL = (typeof FLASK_API_URL !== 'undefined') ? FLASK_API_URL : '/py-api';
 
 // Main modal controls
 openBtn.onclick = () => modal.classList.add("show");

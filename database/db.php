@@ -2,9 +2,13 @@
     // ✅ CRITICAL: Set PHP timezone to Philippine Time
     date_default_timezone_set('Asia/Manila');
 
-    $servername = getenv('DB_HOST') ?: "mysql.railway.internal";
+    // Determine if we are running on Railway (using common Railway env vars)
+    $is_railway = getenv('RAILWAY_ENVIRONMENT') || getenv('RAILWAY_STATIC_URL') || getenv('RAILWAY_GIT_COMMIT_SHA');
+
+    // Prioritize Environment Variables (best practice), then Railway Defaults, then Localhost Defaults
+    $servername = getenv('DB_HOST') ?: ($is_railway ? "mysql.railway.internal" : "localhost");
     $username   = getenv('DB_USER') ?: "root";
-    $password   = getenv('DB_PASSWORD') ?: "eIKUyoNeEeMStYONTCowvZAzNHJbrFkv";
+    $password   = getenv('DB_PASSWORD') ?: ($is_railway ? "eIKUyoNeEeMStYONTCowvZAzNHJbrFkv" : "");
     $dbname     = getenv('DB_NAME') ?: "litoda_db";
     $port       = getenv('DB_PORT') ?: 3306;
     

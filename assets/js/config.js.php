@@ -1,17 +1,30 @@
 <?php
 header("Content-Type: application/javascript");
-// Since we are running via Docker Monolith, we expose the same public URL for both.
-// However, the Python API is internal-only (127.0.0.1:5000).
-// JS needs to talk to Python API?
-// Wait, JS runs in the browser. It cannot access 127.0.0.1:5000 of the server.
-// We need to Proxy the requests or Expose Python to the world?
-// Since we are using Apache, we can ProxyPass /api/py/ to localhost:5000
-// OR we can expose it on a different port? Railway only exposes one port.
-//
-// BEST SOLUTION: Use Apache ProxyPass to forward requests from /py-api/ to localhost:5000
-// This requires mod_proxy and mod_proxy_http which are enabled in Dockerfile (need to verify).
 
-$apiUrl = ""; // Relative path will be used if we set up Proxy
+// Determine environment
+// Railway usually sets 'RAILWAY_ENVIRONMENT' or similar, or we can check for 'litoda-production' in hostname
+// But a simpler way is: 
+// If we are on localhost/127.0.0.1, default to localhost:5000
+// If we are on a domain (like railway.app), use /py-api proxy
+
+// However, since we are using a monolith docker container in Railway, 
+// we might have set up ProxyPass there, but NOT on XAMPP.
+
+$serverName = $_SERVER['SERVER_NAME'];
+$isLocalhost = ($serverName === 'localhost' || $serverName === '127.0.0.1');
+
+// If running in Docker Monolith (detected via env var or just assumption for online), use relative proxy
+// If running in XAMPP, we assume Python is running on port 5000 separately
+// Let's allow an override via Environment Variable if possible, but PHP-FPM/Apache might not pass it easily to this script without config.
+
+$apiUrl = "/py-api"; // Default for Production/Docker with Proxy
+
+if ($isLocalhost) {
+    // For XAMPP local development, unless you configured ProxyPass in httpd.conf,
+    // you probably need to hit Python directly.
+    $apiUrl = "http://127.0.0.1:5000";
+}
 ?>
-// We will use a relative path that Apache proxies to the Python app
-const FLASK_API_URL = "/py-api";
+// Generated API Configuration
+const FLASK_API_URL = "<?php echo $apiUrl; ?>";
+console.log("API Config Loaded: " + FLASK_API_URL);

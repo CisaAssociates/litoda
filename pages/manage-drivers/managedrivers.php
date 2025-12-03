@@ -290,6 +290,8 @@ $result = $conn->query($sql);
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://kit.fontawesome.com/4c7e22a859.js" crossorigin="anonymous"></script>
+    <!-- Config must be loaded before managedrivers.js -->
+    <script src="../../assets/js/config.js.php"></script>
     <script src="../../assets/js/manage-drivers/managedrivers.js"></script>
 </body>
 </html>
