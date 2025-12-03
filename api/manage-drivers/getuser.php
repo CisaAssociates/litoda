@@ -1,6 +1,8 @@
 <?php
-require_once '../../database/db.php';
+// ✅ Set Philippine timezone
+date_default_timezone_set('Asia/Manila');
 
+require_once '../../database/db.php';
 header('Content-Type: application/json');
 
 if (isset($_GET['id'])) {
@@ -38,6 +40,5 @@ if (isset($_GET['id'])) {
         'message' => 'No ID provided'
     ]);
 }
-
 $conn->close();
 ?>
