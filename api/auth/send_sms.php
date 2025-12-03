@@ -129,9 +129,12 @@ try {
         throw new Exception('Invalid phone number format');
     }
 
-    $message = "Hello {$driverName}! You are NEXT in line";
-    if (!empty($tricycleNumber)) $message .= " (Tricycle #{$tricycleNumber})";
-    $message .= ". Please be ready at the queue area. - LITODA System";
+    // Create message informing driver they are next
+    $message = "Hello {$driverName}! You are the NEXT driver in the queue";
+    if (!empty($tricycleNumber)) {
+        $message .= " (Tricycle #{$tricycleNumber})";
+    }
+    $message .= ". Please prepare and proceed to the loading area now. Thank you! - LITODA Queue System";
 
     $result = sendPhilSMS($formattedPhone, $message);
     $status = $result['success'] ? 'sent' : 'failed';
