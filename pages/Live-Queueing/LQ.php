@@ -2,32 +2,42 @@
 date_default_timezone_set('Asia/Manila');
 include('../../database/db.php');
 
-// Fetch all queued drivers today, ordered by their unique queue_number
-  $servingSql = "
-      SELECT q.id, q.status, q.queued_at,
-            d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
-      FROM queue q
-      LEFT JOIN drivers d ON q.driver_id = d.id
-      WHERE q.status = 'Onqueue'
-      AND DATE(q.queued_at) = CURDATE()
-      ORDER BY q.queued_at ASC
-      LIMIT 1
-  ";
-  $servingResult = $conn->query($servingSql);
-  $servingDriver = $servingResult && $servingResult->num_rows > 0 ? $servingResult->fetch_assoc() : null;
+// Fetch the currently serving driver (first in queue)
+$servingSql = "
+    SELECT q.id, q.status, q.queued_at,
+          d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+    FROM queue q
+    LEFT JOIN drivers d ON q.driver_id = d.id
+    WHERE q.status = 'Onqueue'
+    AND DATE(q.queued_at) = CURDATE()
+    ORDER BY q.queued_at ASC
+    LIMIT 1
+";
+$servingResult = $conn->query($servingSql);
+$servingDriver = $servingResult && $servingResult->num_rows > 0 ? $servingResult->fetch_assoc() : null;
 
-  // Fetch remaining queued drivers (excluding the first one)
-  $queueSql = "
-      SELECT q.id, q.status, q.queued_at,
-            d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
-      FROM queue q
-      LEFT JOIN drivers d ON q.driver_id = d.id
-      WHERE q.status = 'Onqueue'
-      AND DATE(q.queued_at) = CURDATE()
-      ORDER BY q.queued_at ASC
-      LIMIT 999 OFFSET 1
-  ";
-  $queueResult = $conn->query($queueSql);
+// Fetch remaining queued drivers (excluding the first one)
+$queueSql = "
+    SELECT q.id, q.status, q.queued_at,
+          d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+    FROM queue q
+    LEFT JOIN drivers d ON q.driver_id = d.id
+    WHERE q.status = 'Onqueue'
+    AND DATE(q.queued_at) = CURDATE()
+    ORDER BY q.queued_at ASC
+    LIMIT 999 OFFSET 1
+";
+$queueResult = $conn->query($queueSql);
+
+// Build array of queued drivers with queue numbers
+$queuedDrivers = [];
+$queueNumber = 2; // Start from 2 since serving driver is #1
+if ($queueResult && $queueResult->num_rows > 0) {
+    while ($row = $queueResult->fetch_assoc()) {
+        $row['queue_number'] = $queueNumber++;
+        $queuedDrivers[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -212,6 +222,13 @@ body {
   color:#10b981; 
 }
 
+.driver-name-cell {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
 .status-badge { 
   display:inline-block; 
   padding:6px 16px; 
@@ -282,11 +299,11 @@ body {
   display:inline-block; 
   background:#f59e0b; 
   color:white; 
-  padding:2px 8px; 
+  padding:4px 12px; 
   border-radius:12px; 
-  font-size:0.7rem; 
+  font-size:0.75rem; 
   font-weight:700; 
-  margin-left:8px; 
+  text-transform:uppercase;
   animation:pulse 2s infinite; 
 }
 
@@ -610,25 +627,23 @@ body {
 <!-- Now Serving -->
 <div class="now-serving-section">
   <h2 class="now-serving-title">Now Serving</h2>
-  <?php if(!empty($highlightDrivers)): ?>
+  <?php if($servingDriver): ?>
   <div class="serving-cards-container">
-    <?php foreach($highlightDrivers as $driver): ?>
-      <div class="serving-card">
-        <div class="queue-number-badge"><?php echo $driver['queue_number']; ?></div>
-        <img src="<?php 
-          echo !empty($driver['profile_pic']) && file_exists('../../'.$driver['profile_pic']) 
-              ? '../../'.$driver['profile_pic'] 
-              : '../../assets/img/default-profile.png'; 
-        ?>" class="serving-profile" alt="Driver">
-        <div class="serving-info">
-          <div class="serving-name"><?php echo htmlspecialchars($driver['firstname'].' '.$driver['lastname']); ?></div>
-          <div class="serving-tricycle"><?php echo htmlspecialchars($driver['tricycle_number'] ?? ''); ?></div>
-        </div>
+    <div class="serving-card">
+      <div class="queue-number-badge">#1</div>
+      <img src="<?php 
+        echo !empty($servingDriver['profile_pic']) && file_exists('../../'.$servingDriver['profile_pic']) 
+            ? '../../'.$servingDriver['profile_pic'] 
+            : '../../assets/img/default-profile.png'; 
+      ?>" class="serving-profile" alt="Driver">
+      <div class="serving-info">
+        <div class="serving-name"><?php echo htmlspecialchars($servingDriver['firstname'].' '.$servingDriver['lastname']); ?></div>
+        <div class="serving-tricycle"><?php echo htmlspecialchars($servingDriver['tricycle_number'] ?? ''); ?></div>
       </div>
-    <?php endforeach; ?>
+    </div>
   </div>
   <?php else: ?>
-    <div class="no-serving"></div>
+    <div class="no-serving">No driver currently being served</div>
   <?php endif; ?>
 </div>
 
@@ -648,17 +663,22 @@ body {
       </thead>
       <tbody id="queue-body">
         <?php if(!empty($queuedDrivers)): ?>
-          <?php foreach($queuedDrivers as $driver): ?>
-          <tr class="<?php echo ($driver['queue_number'] == $highlightDrivers[0]['queue_number'] + 1) ? 'next-in-line' : ''; ?>">
-            <td class="queue-number-cell"><?php echo $driver['queue_number']; ?></td>
+          <?php foreach($queuedDrivers as $index => $driver): ?>
+          <tr class="<?php echo ($index === 0) ? 'next-in-line' : ''; ?>">
+            <td class="queue-number-cell">#<?php echo $driver['queue_number']; ?></td>
             <td><img src="<?php 
               echo !empty($driver['profile_pic']) && file_exists('../../'.$driver['profile_pic'])
                 ? '../../'.$driver['profile_pic']
                 : '../../assets/img/default-profile.png'; 
             ?>" class="driver-pic" alt="Driver"></td>
-            <td><?php echo htmlspecialchars($driver['firstname'].' '.$driver['lastname']); ?></td>
+            <td class="driver-name-cell">
+              <?php echo htmlspecialchars($driver['firstname'].' '.$driver['lastname']); ?>
+              <?php if($index === 0): ?>
+                <span class="next-badge">Next</span>
+              <?php endif; ?>
+            </td>
             <td><?php echo htmlspecialchars($driver['tricycle_number'] ?? ''); ?></td>
-            <td><?php echo date('h:i A', strtotime($driver['queued_at'])); ?></td>
+            <td><?php echo date('g:i A', strtotime($driver['queued_at'])); ?></td>
             <td><span class="status-badge status-waiting">Waiting</span></td>
           </tr>
           <?php endforeach; ?>
