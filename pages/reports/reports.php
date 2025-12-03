@@ -7,6 +7,11 @@ include('../../database/db.php');
 
 // Set timezone
 date_default_timezone_set('Asia/Manila');
+$conn->query("SET time_zone = '+08:00'");
+
+// In SQL queries:
+CONVERT_TZ(q.queued_at, '+00:00', '+08:00') as queued_at
+CONVERT_TZ(q.dispatch_at, '+00:00', '+08:00') as dispatch_at
 
 // Get filter parameters
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : 'all';
