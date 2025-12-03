@@ -127,7 +127,7 @@ function updateServingSection(driver) {
     <h2 class="now-serving-title">Now Serving</h2>
     <div class="serving-cards-container">
       <div class="serving-card">
-        <div class="queue-number-badge">#1</div>
+        <div class="queue-number-badge">1</div>
         <img src="${profileImg}" alt="Profile" class="serving-profile" onerror="this.src='../../assets/img/default-profile.png'">
         <div class="serving-info">
           <div class="serving-name">${driverName}</div>
@@ -143,7 +143,7 @@ function updateServingSection(driver) {
 function showNoServing() {
   $('.now-serving-section').html(`
     <h2 class="now-serving-title">Now Serving</h2>
-    <div class="no-serving">No driver currently being served</div>
+    <div class="no-serving"></div>
   `);
 }
 
@@ -174,7 +174,7 @@ function updateQueueTable(drivers) {
 
     html += `
       <tr class="${nextClass}" data-driver-id="${driver.id}">
-        <td class="queue-number-cell">#${queueNumber}</td>
+        <td class="queue-number-cell">${queueNumber}</td>
         <td><img src="${profileImg}" alt="Profile" class="driver-pic" onerror="this.src='../../assets/img/default-profile.png'"></td>
         <td>${driverName}${index === 0 ? ' <span class="next-badge">NEXT</span>' : ''}</td>
         <td>${tricycleNo}</td>
