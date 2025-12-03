@@ -643,7 +643,7 @@ body {
     </div>
   </div>
   <?php else: ?>
-    <div class="no-serving">No driver currently being served</div>
+    <div class="no-serving"></div>
   <?php endif; ?>
 </div>
 
