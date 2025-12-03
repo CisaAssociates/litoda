@@ -3,27 +3,31 @@ date_default_timezone_set('Asia/Manila');
 include('../../database/db.php');
 
 // Fetch all queued drivers today, ordered by their unique queue_number
-$allQueueSql = "
-    SELECT q.id, q.status, q.queued_at, q.queue_number,
-           d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
-    FROM queue q
-    LEFT JOIN drivers d ON q.driver_id = d.id
-    WHERE q.status = 'Onqueue'
+  $servingSql = "
+      SELECT q.id, q.status, q.queued_at,
+            d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+      FROM queue q
+      LEFT JOIN drivers d ON q.driver_id = d.id
+      WHERE q.status = 'Onqueue'
       AND DATE(q.queued_at) = CURDATE()
-    ORDER BY q.queue_number ASC
-";
-$allQueueResult = $conn->query($allQueueSql);
+      ORDER BY q.queued_at ASC
+      LIMIT 1
+  ";
+  $servingResult = $conn->query($servingSql);
+  $servingDriver = $servingResult && $servingResult->num_rows > 0 ? $servingResult->fetch_assoc() : null;
 
-$queueDrivers = [];
-if ($allQueueResult && $allQueueResult->num_rows > 0) {
-    while ($row = $allQueueResult->fetch_assoc()) {
-        $queueDrivers[] = $row;
-    }
-}
-
-// Separate first 3 drivers for Now Serving + the rest
-$highlightDrivers = array_slice($queueDrivers, 0, 3); // top 3
-$queuedDrivers   = array_slice($queueDrivers, 3);     // remaining drivers
+  // Fetch remaining queued drivers (excluding the first one)
+  $queueSql = "
+      SELECT q.id, q.status, q.queued_at,
+            d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+      FROM queue q
+      LEFT JOIN drivers d ON q.driver_id = d.id
+      WHERE q.status = 'Onqueue'
+      AND DATE(q.queued_at) = CURDATE()
+      ORDER BY q.queued_at ASC
+      LIMIT 999 OFFSET 1
+  ";
+  $queueResult = $conn->query($queueSql);
 ?>
 
 <!DOCTYPE html>
