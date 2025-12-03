@@ -340,7 +340,7 @@ body {
 <!-- Now Serving -->
 <div class="now-serving-section">
   <h2 class="now-serving-title">Now Serving</h2>
-  <div class="no-serving">Loading...</div>
+  <div class="no-serving"></div>
 </div>
 
 <!-- Remaining Queue Table -->
