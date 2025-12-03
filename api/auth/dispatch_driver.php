@@ -1,5 +1,5 @@
 <?php
-// Start session first
+// Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -29,13 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get POST data
 $queue_id = isset($_POST['queue_id']) ? intval($_POST['queue_id']) : 0;
-$action = isset($_POST['action']) ? $_POST['action'] : '';
 
 // Validate input
-if ($queue_id <= 0 || $action !== 'dispatch') {
+if ($queue_id <= 0) {
     echo json_encode([
         'success' => false,
-        'message' => 'Invalid request parameters'
+        'message' => 'Invalid queue ID'
     ]);
     exit;
 }
@@ -44,15 +43,16 @@ try {
     // Start transaction
     $conn->begin_transaction();
 
-    // Check if the queue entry exists and is in 'Onqueue' status
-    $checkSql = "SELECT q.id, q.driver_id, q.status, d.firstname, d.lastname, d.tricycle_number
-                 FROM queue q
-                 LEFT JOIN drivers d ON q.driver_id = d.id
-                 WHERE q.id = ? AND q.status = 'Onqueue'";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("i", $queue_id);
-    $checkStmt->execute();
-    $result = $checkStmt->get_result();
+    // Fetch queue entry with driver details
+    $sql = "SELECT q.id, q.driver_id, q.status, d.firstname, d.lastname, d.tricycle_number
+            FROM queue q
+            LEFT JOIN drivers d ON q.driver_id = d.id
+            WHERE q.id = ? AND q.status = 'Onqueue'
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $queue_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows === 0) {
         $conn->rollback();
@@ -66,25 +66,23 @@ try {
     $queueData = $result->fetch_assoc();
     $driver_id = $queueData['driver_id'];
     $driver_name = trim($queueData['firstname'] . ' ' . $queueData['lastname']);
-    $tricycle_number = $queueData['tricycle_number'];
+    $tricycle_number = $queueData['tricycle_number'] ?? 'N/A';
 
-    // Update queue status and set dispatch_at timestamp
-    $updateQueueSql = "UPDATE queue SET status = 'Dispatched', dispatch_at = NOW() WHERE id = ?";
-    $updateQueueStmt = $conn->prepare($updateQueueSql);
-    $updateQueueStmt->bind_param("i", $queue_id);
-
-    if (!$updateQueueStmt->execute()) {
-        throw new Exception('Failed to update queue status with dispatch time');
+    // Update queue status to Dispatched
+    $updateSql = "UPDATE queue SET status = 'Dispatched', dispatch_at = NOW() WHERE id = ?";
+    $updateStmt = $conn->prepare($updateSql);
+    $updateStmt->bind_param("i", $queue_id);
+    if (!$updateStmt->execute()) {
+        throw new Exception('Failed to update queue status');
     }
 
-    // Optional: Insert into history table for record keeping
+    // Insert into history table
     $historySql = "INSERT INTO history (driver_id, driver_name, tricycle_number, dispatch_time, queue_id)
                    VALUES (?, ?, ?, NOW(), ?)";
     $historyStmt = $conn->prepare($historySql);
     $historyStmt->bind_param("issi", $driver_id, $driver_name, $tricycle_number, $queue_id);
-
     if (!$historyStmt->execute()) {
-        throw new Exception('Failed to insert dispatch history');
+        throw new Exception('Failed to log dispatch history');
     }
 
     // Commit transaction
@@ -94,7 +92,8 @@ try {
         'success' => true,
         'message' => 'Driver dispatched successfully',
         'queue_id' => $queue_id,
-        'driver_id' => $driver_id
+        'driver_id' => $driver_id,
+        'driver_name' => $driver_name
     ]);
 
 } catch (Exception $e) {
@@ -103,8 +102,11 @@ try {
         'success' => false,
         'message' => 'Error dispatching driver: ' . $e->getMessage()
     ]);
+} finally {
+    // Close statements and connection
+    if (isset($stmt)) $stmt->close();
+    if (isset($updateStmt)) $updateStmt->close();
+    if (isset($historyStmt)) $historyStmt->close();
+    $conn->close();
 }
-
-// Close connection
-$conn->close();
 ?>
