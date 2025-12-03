@@ -691,7 +691,7 @@ body {
 <div id="dispatchModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <i class="" style="color: #10b981; margin-right: 8px;"></i>
+      <i class="fas fa-paper-plane" style="color: #10b981; margin-right: 8px;"></i>
       Confirm Dispatch
     </div>
     <div class="modal-body">
