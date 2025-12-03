@@ -5,6 +5,34 @@ console.log('🚀 LITODA Queue System Starting...');
 console.log('📍 jQuery loaded:', typeof jQuery !== 'undefined');
 
 // ================================
+// SEND SMS TO NEXT DRIVER
+// ================================
+function sendNextDriverSMS(driver) {
+  $.ajax({
+    url: '../../api/sms/send_sms.php',
+    type: 'POST',
+    data: {
+      driver_id: driver.id,
+      driver_name: driver.firstname + " " + driver.lastname,
+      tricycle_number: driver.tricycle_number,
+      contact_no: driver.contact_no
+    },
+    success: function(response) {
+      console.log("📩 SMS Response:", response);
+      if (response.success) {
+        showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname}`, 'success');
+      } else {
+        showNotification(`⚠ SMS sending failed: ${response.message}`, 'error');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("❌ SMS AJAX Error:", error);
+      showNotification("❌ Failed to send SMS (AJAX error)", "error");
+    }
+  });
+}
+
+// ================================
 // DETECT CHANGES IN QUEUE
 // ================================
 function detectQueueChanges(currentData) {
@@ -66,6 +94,13 @@ function loadQueueData() {
 
           let remainingDrivers = onqueueDrivers.slice(1);
           if (remainingDrivers.length > 0) {
+
+            // 📩 SEND SMS TO NEXT DRIVER
+            const nextDriver = remainingDrivers[0];
+            if (nextDriver && nextDriver.contact_no) {
+              sendNextDriverSMS(nextDriver);
+            }
+
             updateQueueTable(remainingDrivers);
           } else {
             showEmptyQueue();
@@ -200,7 +235,6 @@ $(document).ready(function() {
   
   loadQueueData();
   
-  // Auto-refresh every 3 seconds
   setInterval(function() {
     loadQueueData();
   }, 3000);
