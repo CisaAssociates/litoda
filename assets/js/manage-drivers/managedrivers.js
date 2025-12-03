@@ -105,7 +105,6 @@ async function capturePhoto() {
     captureBtn.textContent = "Validating...";
     
     try {
-        // UPDATED: Use relative API path instead of localhost
         const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -118,7 +117,6 @@ async function capturePhoto() {
             // Face is valid, now check for duplicates
             showStatus("Checking for duplicate faces...", "info");
             
-            // UPDATED: Use relative API path
             const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -170,7 +168,7 @@ function retakePhoto() {
 
 function confirmPhoto() {
     if (capturedImageData) {
-        profilePictureContainer.innerHTML = `<img src="${capturedImageData}" alt="Profile Picture">`;
+        profilePictureContainer.innerHTML = `<img src="${capturedImageData}" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">`;
         profileImageData.value = capturedImageData;
         submitBtn.disabled = false;
         showStatus("Profile picture captured successfully!", "success");
@@ -195,7 +193,7 @@ function showStatus(message, type) {
 function resetForm() {
     if (userForm) userForm.reset();
     if (profilePictureContainer) {
-        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Take Photo</p></div>`;
+        profilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon">📷</span><p>Take Photo</p></div>`;
     }
     if (profileImageData) profileImageData.value = '';
     if (submitBtn) submitBtn.disabled = true;
@@ -559,12 +557,14 @@ function populateEditForm(driver) {
     
     if (driver.profile_pic) {
         document.getElementById('existingImagePath').value = driver.profile_pic;
-        editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture">`;
+        editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; cursor: pointer;">`;
     } else {
-        editProfilePictureContainer.innerHTML = `<div class="placeholder"><span class="icon"></span><p>Change Photo</p></div>`;
+        editProfilePictureContainer.innerHTML = `<div class="placeholder" style="width: 150px; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #d1d5db; border-radius: 50%; cursor: pointer;"><span class="icon">📷</span><p style="margin: 5px 0 0 0; font-size: 12px;">Change Photo</p></div>`;
     }
     
     editStatusMessage.style.display = 'none';
+    editCapturedImageData = null;
+    editProfileImageData.value = '';
 }
 
 // Edit Profile picture click to open camera
@@ -626,7 +626,7 @@ async function captureEditPhoto() {
     editCaptureBtn.textContent = "Validating...";
     
     try {
-        // UPDATED: Use relative API path
+        // Step 1: Validate single face
         const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -636,13 +636,75 @@ async function captureEditPhoto() {
         const result = await response.json();
         
         if (result.valid) {
-            editVideo.style.display = 'none';
-            editCanvas.style.display = 'block';
-            editCaptureBtn.style.display = 'none';
-            editRetakeBtn.style.display = 'inline-block';
-            editConfirmBtn.style.display = 'inline-block';
-            editCapturedImageData = imageData;
-            showEditStatus("Face validated successfully!", "success");
+            // Step 2: Check if this is the same person as the existing profile
+            const existingPath = document.getElementById('existingImagePath').value;
+            
+            if (existingPath) {
+                showEditStatus("Verifying face match...", "info");
+                
+                const matchResponse = await fetch(`${API_BASE_URL}/check_face_match`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        existing_image_path: existingPath,
+                        new_image: imageData
+                    })
+                });
+                
+                const matchResult = await matchResponse.json();
+                
+                if (matchResult.same_face) {
+                    // Same person - allow update
+                    editVideo.style.display = 'none';
+                    editCanvas.style.display = 'block';
+                    editCaptureBtn.style.display = 'none';
+                    editRetakeBtn.style.display = 'inline-block';
+                    editConfirmBtn.style.display = 'inline-block';
+                    editCapturedImageData = imageData;
+                    showEditStatus("✓ Same person detected! Face verified successfully.", "success");
+                    showGlobalStatus("✓ Face matched! This is the same person. You can proceed with the update.", "success");
+                } else {
+                    // Different person - check if it's registered to someone else
+                    showEditStatus("Checking for duplicate registration...", "info");
+                    
+                    const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            image: imageData,
+                            exclude_driver_id: currentEditDriverId
+                        })
+                    });
+                    
+                    const duplicateResult = await duplicateResponse.json();
+                    
+                    if (duplicateResult.duplicate) {
+                        showEditStatus(`This face is registered to: ${duplicateResult.matched_driver}`, "error");
+                        showGlobalStatus(`This face is already registered to ${duplicateResult.matched_driver}. Cannot update.`, "error");
+                        editCaptureBtn.disabled = false;
+                        editCaptureBtn.textContent = "Capture";
+                    } else {
+                        // Not a duplicate, but different from original
+                        editVideo.style.display = 'none';
+                        editCanvas.style.display = 'block';
+                        editCaptureBtn.style.display = 'none';
+                        editRetakeBtn.style.display = 'inline-block';
+                        editConfirmBtn.style.display = 'inline-block';
+                        editCapturedImageData = imageData;
+                        showEditStatus("New face validated! You can confirm the update.", "success");
+                        showGlobalStatus("⚠️ Warning: This appears to be a different person. Proceeding with update.", "info");
+                    }
+                }
+            } else {
+                // No existing image, just proceed
+                editVideo.style.display = 'none';
+                editCanvas.style.display = 'block';
+                editCaptureBtn.style.display = 'none';
+                editRetakeBtn.style.display = 'inline-block';
+                editConfirmBtn.style.display = 'inline-block';
+                editCapturedImageData = imageData;
+                showEditStatus("Face validated successfully!", "success");
+            }
         } else {
             showEditStatus(result.message || "Invalid face capture", "error");
             showGlobalStatus(result.message || "Invalid face capture", "error");
@@ -669,47 +731,13 @@ function retakeEditPhoto() {
     editCapturedImageData = null;
 }
 
-async function confirmEditPhoto() {
+function confirmEditPhoto() {
     if (editCapturedImageData) {
-        const existingPath = document.getElementById('existingImagePath').value;
-        
-        if (existingPath) {
-            // Check if face matches the existing driver's face
-            try {
-                // UPDATED: Use relative API path
-                const response = await fetch(`${API_BASE_URL}/check_face_match`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        existing_image_path: existingPath,
-                        new_image: editCapturedImageData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.same_face) {
-                    editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
-                    editProfileImageData.value = editCapturedImageData;
-                    showEditStatus("Profile picture updated successfully!", "success");
-                    showGlobalStatus("Face matched. Profile picture updated!", "success");
-                    closeEditCameraModal();
-                } else {
-                    showEditStatus("Face does not match existing profile!", "error");
-                    showGlobalStatus("Face does not match existing profile!", "error");
-                }
-            } catch (err) {
-                console.error("Face match error:", err);
-                showEditStatus("Error connecting to face recognition system", "error");
-                showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
-            }
-        } else {
-            // No existing path, just update
-            editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="Profile Picture">`;
-            editProfileImageData.value = editCapturedImageData;
-            showEditStatus("Profile picture updated successfully!", "success");
-            closeEditCameraModal();
-        }
+        editProfilePictureContainer.innerHTML = `<img src="${editCapturedImageData}" alt="New Profile Picture" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; cursor: pointer;">`;
+        editProfileImageData.value = editCapturedImageData;
+        showEditStatus("Profile picture updated successfully!", "success");
+        showGlobalStatus("✓ Profile picture updated! Remember to click 'Update User' to save changes.", "success");
+        closeEditCameraModal();
     }
 }
 
@@ -727,7 +755,7 @@ function showEditStatus(message, type) {
     }
 }
 
-// Edit form submission with contact validation - blank is allowed
+// Edit form submission with contact validation
 if (editUserForm) {
     editUserForm.onsubmit = function(e) {
         const editContactInput = document.getElementById('edit_contact');
