@@ -26,7 +26,7 @@ let stream = null;
 let capturedImageData = null;
 
 // API Base URL - Change this to use relative path (proxied through Apache)
-const API_BASE_URL = '/api/face';
+const API_BASE_URL = '/py-api';
 
 // Main modal controls
 openBtn.onclick = () => modal.classList.add("show");

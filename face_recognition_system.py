@@ -217,29 +217,35 @@ class FaceRecognitionSystem:
     # EXTRACT FACE EMBEDDING (ArcFace)
     # -------------------------------
     def extract_embedding(self, path_or_array):
+        print("[extract_embedding] Calling DeepFace...", flush=True)
         try:
             emb = DeepFace.represent(
                 img_path=path_or_array,
                 model_name="ArcFace",
                 enforce_detection=False
             )
+            print("[extract_embedding] DeepFace returned", flush=True)
             if isinstance(emb, list) and "embedding" in emb[0]:
                 return np.array(emb[0]["embedding"], dtype=np.float32)
             return None
         except Exception as e:
-            print(f"[extract_embedding] error: {e}")
+            print(f"[extract_embedding] error: {e}", flush=True)
             return None
 
     # -------------------------------
     # RECOGNIZE FACE
     # -------------------------------
     def recognize_face(self, image_data):
+        print("[recognize_face] Start...", flush=True)
         try:
             img_bytes = base64.b64decode(image_data.split(",")[1] if "," in image_data else image_data)
             img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
             np_img = np.array(img)
+            print(f"[recognize_face] Image shape: {np_img.shape}", flush=True)
 
             emb = self.extract_embedding(np_img)
+            print("[recognize_face] Embedding extracted", flush=True)
+
             if emb is None:
                 return {"success": False, "message": "Failed to extract face embedding"}
 
@@ -251,6 +257,8 @@ class FaceRecognitionSystem:
                 if sim > best_sim:
                     best_sim = sim
                     best_id = driver_id
+
+            print(f"[recognize_face] Best match: {best_id} (sim: {best_sim})", flush=True)
 
             if not best_id or best_sim < self.similarity_threshold:
                 return {"success": False, "message": "Face not recognized", "similarity": float(best_sim)}
@@ -271,7 +279,7 @@ class FaceRecognitionSystem:
                 }
             }
         except Exception as e:
-            print(f"[recognize_face] error: {e}")
+            print(f"[recognize_face] error: {e}", flush=True)
             return {"success": False, "message": f"Recognition error: {e}"}
 
     def cosine_similarity(self, a, b):
