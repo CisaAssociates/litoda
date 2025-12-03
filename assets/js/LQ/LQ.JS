@@ -26,7 +26,7 @@ function sendNextDriverSMS(driver) {
   console.log('📤 Sending SMS to driver:', driver.id);
 
   $.ajax({
-    url: '../../api/sms/send_sms.php',
+    url: '../../api/auth/send_sms.php',
     type: 'POST',
     data: {
       driver_id: driver.id,
