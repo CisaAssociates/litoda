@@ -1,6 +1,43 @@
 <?php
 date_default_timezone_set('Asia/Manila');
 include('../../database/db.php');
+
+// Fetch the currently serving driver (first in queue)
+$servingSql = "
+    SELECT q.id, q.status, q.queued_at,
+          d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+    FROM queue q
+    LEFT JOIN drivers d ON q.driver_id = d.id
+    WHERE q.status = 'Onqueue'
+    AND DATE(q.queued_at) = CURDATE()
+    ORDER BY q.queued_at ASC
+    LIMIT 1
+";
+$servingResult = $conn->query($servingSql);
+$servingDriver = $servingResult && $servingResult->num_rows > 0 ? $servingResult->fetch_assoc() : null;
+
+// Fetch remaining queued drivers (excluding the first one)
+$queueSql = "
+    SELECT q.id, q.status, q.queued_at,
+          d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic
+    FROM queue q
+    LEFT JOIN drivers d ON q.driver_id = d.id
+    WHERE q.status = 'Onqueue'
+    AND DATE(q.queued_at) = CURDATE()
+    ORDER BY q.queued_at ASC
+    LIMIT 999 OFFSET 1
+";
+$queueResult = $conn->query($queueSql);
+
+// Build array of queued drivers with queue numbers
+$queuedDrivers = [];
+$queueNumber = 2; // Start from 2 since serving driver is #1
+if ($queueResult && $queueResult->num_rows > 0) {
+    while ($row = $queueResult->fetch_assoc()) {
+        $row['queue_number'] = $queueNumber++;
+        $queuedDrivers[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -126,6 +163,7 @@ body {
   box-shadow:0 10px 30px rgba(0,0,0,0.08); 
 }
 
+/* Table responsive wrapper */
 .table-responsive {
   width:100%;
   overflow-x:auto;
@@ -274,63 +312,312 @@ body {
   50% { opacity:0.6; } 
 }
 
-/* Smooth transitions */
-.queue-table tbody tr { opacity: 1; transition: opacity 0.3s ease; }
-.serving-cards-container { transition: opacity 0.3s ease; }
-
 /* ========================================
    RESPONSIVE DESIGN - ALL DEVICES
    ======================================== */
 
+/* Tablet (768px - 1024px) */
 @media screen and (max-width: 1024px) {
-  body { padding:1.5rem; }
-  .now-serving-title { font-size:1.8rem; }
-  .serving-name { font-size:2rem; }
-  .serving-tricycle { font-size:1.3rem; }
-  .serving-profile { width:100px; height:100px; }
-  .queue-table { min-width:650px; }
+  body { 
+    padding:1.5rem; 
+  }
+
+  .now-serving-title {
+    font-size:1.8rem;
+  }
+
+  .serving-name {
+    font-size:2rem;
+  }
+
+  .serving-tricycle {
+    font-size:1.3rem;
+  }
+
+  .serving-profile {
+    width:100px;
+    height:100px;
+  }
+
+  .queue-table {
+    min-width:650px;
+  }
 }
 
+/* Mobile Large (481px - 768px) */
 @media screen and (max-width: 768px) {
-  body { padding:1rem; }
-  .now-serving-section { padding:1.5rem; }
-  .now-serving-title { font-size:1.5rem; margin-bottom:1.5rem; }
-  .serving-cards-container { gap:1rem; }
-  .serving-card { flex-direction:column; text-align:center; padding:1.5rem; gap:1rem; }
-  .serving-info { text-align:center; }
-  .serving-name { font-size:1.8rem; }
-  .serving-tricycle { font-size:1.2rem; }
-  .serving-profile { width:90px; height:90px; }
-  .queue-number-badge { font-size:1rem; padding:6px 18px; }
-  .queue-section { padding:1rem; }
-  .table-responsive { margin:0 -1rem; padding:0 1rem; }
-  .queue-table { font-size:0.85rem; min-width:600px; }
-  .queue-table th, .queue-table td { padding:0.75rem 0.5rem; }
-  .queue-table th { font-size:0.8rem; }
-  .driver-pic { width:40px; height:40px; }
-  .queue-number-cell { font-size:1.2rem; }
-  .status-badge { font-size:0.75rem; padding:4px 12px; }
-  .sms-notification { right:10px; left:10px; max-width:none; }
+  body { 
+    padding:1rem; 
+  }
+
+  .now-serving-section {
+    padding:1.5rem;
+  }
+
+  .now-serving-title {
+    font-size:1.5rem;
+    margin-bottom:1.5rem;
+  }
+
+  .serving-cards-container {
+    gap:1rem;
+  }
+
+  .serving-card { 
+    flex-direction:column; 
+    text-align:center; 
+    padding:1.5rem;
+    gap:1rem;
+  }
+
+  .serving-info { 
+    text-align:center; 
+  }
+
+  .serving-name { 
+    font-size:1.8rem; 
+  }
+
+  .serving-tricycle { 
+    font-size:1.2rem; 
+  }
+
+  .serving-profile {
+    width:90px;
+    height:90px;
+  }
+
+  .queue-number-badge {
+    font-size:1rem;
+    padding:6px 18px;
+  }
+
+  .queue-section {
+    padding:1rem;
+  }
+
+  .table-responsive {
+    margin:0 -1rem;
+    padding:0 1rem;
+  }
+
+  .queue-table { 
+    font-size:0.85rem; 
+    min-width:600px;
+  }
+
+  .queue-table th,
+  .queue-table td {
+    padding:0.75rem 0.5rem;
+  }
+
+  .queue-table th {
+    font-size:0.8rem;
+  }
+
+  .driver-pic { 
+    width:40px; 
+    height:40px; 
+  }
+
+  .queue-number-cell { 
+    font-size:1.2rem; 
+  }
+
+  .status-badge {
+    font-size:0.75rem;
+    padding:4px 12px;
+  }
+
+  .sms-notification {
+    right:10px;
+    left:10px;
+    max-width:none;
+  }
 }
 
+/* Mobile Small (321px - 480px) */
 @media screen and (max-width: 480px) {
-  body { padding:0.75rem; }
-  .now-serving-section { padding:1rem; }
-  .now-serving-title { font-size:1.3rem; margin-bottom:1rem; letter-spacing:1px; }
-  .serving-card { padding:1rem; gap:0.75rem; }
-  .serving-profile { width:80px; height:80px; }
-  .serving-name { font-size:1.5rem; }
-  .serving-tricycle { font-size:1rem; }
-  .queue-number-badge { font-size:0.9rem; padding:5px 15px; }
-  .queue-section { padding:0.75rem; }
-  .table-responsive { margin:0 -0.75rem; padding:0 0.75rem; }
-  .queue-table { font-size:0.75rem; min-width:550px; }
-  .queue-table th, .queue-table td { padding:0.6rem 0.4rem; }
-  .queue-table th { font-size:0.7rem; }
-  .driver-pic { width:35px; height:35px; }
-  .queue-number-cell { font-size:1rem; }
-  .status-badge { font-size:0.7rem; padding:3px 10px; }
-  .no-serving, .no-records { font-size:1rem; padding:1.5rem; }
+  body {
+    padding:0.75rem;
+  }
+
+  .now-serving-section {
+    padding:1rem;
+  }
+
+  .now-serving-title {
+    font-size:1.3rem;
+    margin-bottom:1rem;
+    letter-spacing:1px;
+  }
+
+  .serving-card {
+    padding:1rem;
+    gap:0.75rem;
+  }
+
+  .serving-profile {
+    width:80px;
+    height:80px;
+  }
+
+  .serving-name {
+    font-size:1.5rem;
+  }
+
+  .serving-tricycle {
+    font-size:1rem;
+  }
+
+  .queue-number-badge {
+    font-size:0.9rem;
+    padding:5px 15px;
+  }
+
+  .queue-section {
+    padding:0.75rem;
+  }
+
+  .table-responsive {
+    margin:0 -0.75rem;
+    padding:0 0.75rem;
+  }
+
+  .queue-table {
+    font-size:0.75rem;
+    min-width:550px;
+  }
+
+  .queue-table th,
+  .queue-table td {
+    padding:0.6rem 0.4rem;
+  }
+
+  .queue-table th {
+    font-size:0.7rem;
+  }
+
+  .driver-pic {
+    width:35px;
+    height:35px;
+  }
+
+  .queue-number-cell {
+    font-size:1rem;
+  }
+
+  .status-badge {
+    font-size:0.7rem;
+    padding:3px 10px;
+  }
+
+  .no-serving,
+  .no-records {
+    font-size:1rem;
+    padding:1.5rem;
+  }
+}
+
+/* Extra Small (< 321px) */
+@media screen and (max-width: 320px) {
+  body {
+    padding:0.5rem;
+  }
+
+  .now-serving-section {
+    padding:0.75rem;
+  }
+
+  .now-serving-title {
+    font-size:1.1rem;
+  }
+
+  .serving-card {
+    padding:0.75rem;
+  }
+
+  .serving-profile {
+    width:70px;
+    height:70px;
+  }
+
+  .serving-name {
+    font-size:1.3rem;
+  }
+
+  .serving-tricycle {
+    font-size:0.9rem;
+  }
+
+  .queue-number-badge {
+    font-size:0.8rem;
+    padding:4px 12px;
+  }
+
+  .queue-section {
+    padding:0.5rem;
+  }
+
+  .table-responsive {
+    margin:0 -0.5rem;
+    padding:0 0.5rem;
+  }
+
+  .queue-table {
+    font-size:0.7rem;
+    min-width:500px;
+  }
+
+  .queue-table th,
+  .queue-table td {
+    padding:0.5rem 0.3rem;
+  }
+
+  .driver-pic {
+    width:30px;
+    height:30px;
+  }
+
+  .queue-number-cell {
+    font-size:0.9rem;
+  }
+}
+
+/* Landscape Mode */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  body {
+    padding:1rem;
+  }
+
+  .now-serving-section {
+    padding:1rem;
+  }
+
+  .now-serving-title {
+    font-size:1.3rem;
+    margin-bottom:1rem;
+  }
+
+  .serving-cards-container {
+    gap:1rem;
+  }
+
+  .serving-card {
+    padding:1rem;
+  }
+
+  .serving-profile {
+    width:80px;
+    height:80px;
+  }
+}
+
+/* Touch Devices */
+@media (hover: none) and (pointer: coarse) {
+  .table-responsive {
+    -webkit-overflow-scrolling:touch;
+  }
 }
 </style>
 </head>
@@ -340,7 +627,24 @@ body {
 <!-- Now Serving -->
 <div class="now-serving-section">
   <h2 class="now-serving-title">Now Serving</h2>
-  <div class="no-serving"></div>
+  <?php if($servingDriver): ?>
+  <div class="serving-cards-container">
+    <div class="serving-card">
+      <div class="queue-number-badge">1</div>
+      <img src="<?php 
+        echo !empty($servingDriver['profile_pic']) && file_exists('../../'.$servingDriver['profile_pic']) 
+            ? '../../'.$servingDriver['profile_pic'] 
+            : '../../assets/img/default-profile.png'; 
+      ?>" class="serving-profile" alt="Driver">
+      <div class="serving-info">
+        <div class="serving-name"><?php echo htmlspecialchars($servingDriver['firstname'].' '.$servingDriver['lastname']); ?></div>
+        <div class="serving-tricycle"><?php echo htmlspecialchars($servingDriver['tricycle_number'] ?? ''); ?></div>
+      </div>
+    </div>
+  </div>
+  <?php else: ?>
+    <div class="no-serving"></div>
+  <?php endif; ?>
 </div>
 
 <!-- Remaining Queue Table -->
@@ -358,15 +662,36 @@ body {
         </tr>
       </thead>
       <tbody id="queue-body">
-        <tr><td colspan="6" class="no-records">Loading queue data...</td></tr>
+        <?php if(!empty($queuedDrivers)): ?>
+          <?php foreach($queuedDrivers as $index => $driver): ?>
+          <tr class="<?php echo ($index === 0) ? 'next-in-line' : ''; ?>">
+            <td class="queue-number-cell"><?php echo $driver['queue_number']; ?></td>
+            <td><img src="<?php 
+              echo !empty($driver['profile_pic']) && file_exists('../../'.$driver['profile_pic'])
+                ? '../../'.$driver['profile_pic']
+                : '../../assets/img/default-profile.png'; 
+            ?>" class="driver-pic" alt="Driver"></td>
+            <td class="driver-name-cell">
+              <?php echo htmlspecialchars($driver['firstname'].' '.$driver['lastname']); ?>
+              <?php if($index === 0): ?>
+                <span class="next-badge">Next</span>
+              <?php endif; ?>
+            </td>
+            <td><?php echo htmlspecialchars($driver['tricycle_number'] ?? ''); ?></td>
+            <td><?php echo date('g:i A', strtotime($driver['queued_at'])); ?></td>
+            <td><span class="status-badge status-waiting">Waiting</span></td>
+          </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr><td colspan="6" class="no-records">No more drivers in queue.</td></tr>
+        <?php endif; ?>
       </tbody>
     </table>
   </div>
 </div>
 </div>
 
-<!-- jQuery MUST load first -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../../assets/js/LQ/LQ.js"></script>
 </body>
-</html>
+</html></html>
