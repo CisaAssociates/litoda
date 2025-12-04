@@ -9,7 +9,7 @@ $response = ["success" => false, "message" => "Invalid action"];
 switch ($action) {
 
     /* ===========================================================
-       ADD TO QUEUE (Face Recognition)
+       ADD TO QUEUE (Face Recognition) - WITH PERMANENT QUEUE NUMBER
     =========================================================== */
     case "add_queue":
         $driver_id = intval($_POST['driver_id'] ?? 0);
@@ -28,14 +28,23 @@ switch ($action) {
             if ($exists->num_rows > 0) {
                 $response = ["success" => false, "message" => "Driver already in queue today"];
             } else {
-                $stmt = $conn->prepare("
-                    INSERT INTO queue (driver_id, status, queued_at) 
-                    VALUES (?, 'Onqueue', NOW())
+                // Get next queue number for today
+                $getMaxNum = $conn->query("
+                    SELECT COALESCE(MAX(queue_number), 0) as max_num 
+                    FROM queue 
+                    WHERE DATE(queued_at) = CURDATE()
                 ");
-                $stmt->bind_param("i", $driver_id);
+                $maxRow = $getMaxNum->fetch_assoc();
+                $nextQueueNumber = $maxRow['max_num'] + 1;
+
+                $stmt = $conn->prepare("
+                    INSERT INTO queue (driver_id, queue_number, status, queued_at) 
+                    VALUES (?, ?, 'Onqueue', NOW())
+                ");
+                $stmt->bind_param("ii", $driver_id, $nextQueueNumber);
 
                 $response = $stmt->execute()
-                    ? ["success" => true, "message" => "Driver added to queue"]
+                    ? ["success" => true, "message" => "Driver added as Queue #$nextQueueNumber", "queue_number" => $nextQueueNumber]
                     : ["success" => false, "message" => "DB Error: ".$conn->error];
 
                 $stmt->close();
@@ -76,7 +85,7 @@ switch ($action) {
         exit;
 
     /* ===========================================================
-       ADD DRIVER MANUALLY (Admin)
+       ADD DRIVER MANUALLY (Admin) - WITH PERMANENT QUEUE NUMBER
     =========================================================== */
     case "add":
         $driver = trim($_POST['driver_name'] ?? '');
@@ -84,14 +93,23 @@ switch ($action) {
         $contact = trim($_POST['contact_no'] ?? '');
 
         if (!empty($driver) && !empty($tricycle)) {
-            $stmt = $conn->prepare("
-                INSERT INTO queue (driver_name, tricycle_number, contact_no, status, queued_at)
-                VALUES (?, ?, ?, 'Onqueue', NOW())
+            // Get next queue number for today
+            $getMaxNum = $conn->query("
+                SELECT COALESCE(MAX(queue_number), 0) as max_num 
+                FROM queue 
+                WHERE DATE(queued_at) = CURDATE()
             ");
-            $stmt->bind_param("sss", $driver, $tricycle, $contact);
+            $maxRow = $getMaxNum->fetch_assoc();
+            $nextQueueNumber = $maxRow['max_num'] + 1;
+
+            $stmt = $conn->prepare("
+                INSERT INTO queue (driver_name, tricycle_number, contact_no, queue_number, status, queued_at)
+                VALUES (?, ?, ?, ?, 'Onqueue', NOW())
+            ");
+            $stmt->bind_param("sssi", $driver, $tricycle, $contact, $nextQueueNumber);
 
             $response = $stmt->execute()
-                ? ["success" => true, "message" => "Driver added to queue"]
+                ? ["success" => true, "message" => "Driver added as Queue #$nextQueueNumber", "queue_number" => $nextQueueNumber]
                 : ["success" => false, "message" => "Failed to manually add driver"];
 
             $stmt->close();
@@ -102,7 +120,7 @@ switch ($action) {
         exit;
 
     /* ===========================================================
-       SERVE DRIVER (Update to SERVING)
+       SERVE DRIVER
     =========================================================== */
     case "serve":
         $id = intval($_POST['id'] ?? 0);
@@ -146,7 +164,7 @@ switch ($action) {
         exit;
 
     /* ===========================================================
-       FETCH QUEUE LIST
+       FETCH QUEUE LIST - WITH PERMANENT QUEUE NUMBERS
     =========================================================== */
     case "fetch":
         $sql = "
@@ -157,7 +175,7 @@ switch ($action) {
             FROM queue q
             LEFT JOIN drivers d ON q.driver_id = d.id
             WHERE DATE(q.queued_at) = CURDATE()
-            ORDER BY q.queued_at ASC
+            ORDER BY q.queue_number ASC
         ";
 
         $result = $conn->query($sql);
@@ -180,3 +198,4 @@ switch ($action) {
         echo json_encode($response);
         exit;
 }
+?>
