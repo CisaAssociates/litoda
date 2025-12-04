@@ -2,7 +2,7 @@ let currentDispatchQueueId = null;
 let previousQueueState = null;
 let lastSMSSentTo = null;
 let smsInProgress = false;
-let isUpdating = false; // Prevent concurrent updates
+let isUpdating = false;
 
 console.log('🚀 LITODA Queue System Starting...');
 console.log('📍 jQuery loaded:', typeof jQuery !== 'undefined');
@@ -31,34 +31,30 @@ function sendNextDriverSMS(driver) {
       driver_id: driver.id,
       driver_name: driver.firstname + " " + driver.lastname,
       tricycle_number: driver.tricycle_number,
-      contact_no: driver.contact_no
+      contact_no: driver.contact_no,
+      queue_number: driver.queue_number
     },
     dataType: 'json',
-    timeout: 10000, // 10 second timeout for SMS
+    timeout: 10000,
     success: function(response) {
       console.log("📩 SMS Response:", response);
       
       if (response.success) {
         lastSMSSentTo = driver.id;
-        showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname}`, 'success');
+        showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname} (Queue #${driver.queue_number})`, 'success');
       } else if (response.duplicate) {
         console.log('⚠️ Duplicate SMS prevented by server');
         lastSMSSentTo = driver.id;
-        // Don't show notification for duplicates to reduce spam
         console.log(`✓ ${driver.firstname} ${driver.lastname} already notified`);
       } else {
         console.error('❌ SMS Failed:', response.message);
-        // Mark as sent anyway to prevent retry spam
         lastSMSSentTo = driver.id;
-        // Only show error once
         showNotification(`⚠ SMS delivery pending`, 'info');
       }
     },
     error: function(xhr, status, error) {
       console.error("❌ SMS AJAX Error:", error, status);
-      // Mark as sent to prevent repeated error notifications
       lastSMSSentTo = driver.id;
-      // Only show error notification if it's a real connection error
       if (status !== 'timeout' && status !== 'abort') {
         showNotification("⚠ SMS service temporarily unavailable", "error");
       }
@@ -84,7 +80,6 @@ function detectQueueChanges(currentData) {
   const added = currIds.filter(id => !prevIds.includes(id));
   const removed = prevIds.filter(id => !currIds.includes(id));
   
-  // Check if order changed (without additions/removals)
   const orderChanged = prevIds.length === currIds.length && 
                        prevIds.some((id, idx) => id !== currIds[idx]);
 
@@ -97,29 +92,25 @@ function detectQueueChanges(currentData) {
       orderChanged 
     });
     
-    // ONLY show ONE notification for the most important change
+    // Show notification for driver added
     if (added.length > 0) {
-      // New driver added - show only the first one
       const newDriver = currentData.find(d => d.id === added[0]);
       if (newDriver) {
         const name = `${newDriver.firstname || ''} ${newDriver.lastname || ''}`.trim();
-        showNotification(`✅ ${name} joined the queue`, 'success');
+        showNotification(`✅ ${name} joined as Queue #${newDriver.queue_number}`, 'success');
       }
-    } else if (removed.length > 0) {
-      // Driver removed/dispatched
-      removed.forEach(id => {
-        const removedDriver = previousQueueState.find(d => d.id === id);
-        if (removedDriver && lastSMSSentTo === removedDriver.id) {
-          console.log('🔄 Resetting SMS tracking - driver removed');
-          lastSMSSentTo = null;
-        }
-      });
-      // Show notification only once
-      showNotification(`🚗 Driver dispatched from queue`, 'info');
+    } 
+    
+    // Driver removed/dispatched
+    if (removed.length > 0) {
+      const removedDriver = previousQueueState.find(d => d.id === removed[0]);
+      console.log('🚗 Queue #' + (removedDriver?.queue_number || '?') + ' was dispatched');
+      lastSMSSentTo = null;
+      showNotification(`🚗 Queue #${removedDriver?.queue_number || '?'} dispatched - Next driver notified`, 'info');
     }
   }
 
-  previousQueueState = JSON.parse(JSON.stringify(currentData)); // Deep clone
+  previousQueueState = JSON.parse(JSON.stringify(currentData));
   return { hasChanges, added, removed, orderChanged };
 }
 
@@ -127,7 +118,6 @@ function detectQueueChanges(currentData) {
 // LOAD QUEUE DATA (NO PAGE RELOAD)
 // ================================
 function loadQueueData() {
-  // Prevent concurrent updates
   if (isUpdating) {
     console.log('⏸️ Update already in progress, skipping...');
     return;
@@ -141,7 +131,7 @@ function loadQueueData() {
     type: 'GET',
     data: { action: 'fetch' },
     dataType: 'json',
-    cache: false, // Prevent caching
+    cache: false,
     success: function(response) {
       console.log('✅ Queue data received:', response.data?.length || 0, 'drivers');
       
@@ -157,14 +147,12 @@ function loadQueueData() {
           if (remainingDrivers.length > 0) {
             const nextDriver = remainingDrivers[0];
             
-            // 📩 SEND SMS ONLY when "Now Serving" driver was removed/dispatched
-            // This means the next driver just became #2 and needs notification
+            // Send SMS ONLY when driver dispatched
             if (nextDriver && nextDriver.contact_no && 
                 changes.hasChanges && changes.removed.length > 0) {
               
-              // Only send if we haven't already sent to this driver
               if (lastSMSSentTo !== nextDriver.id) {
-                console.log('🚗 Now Serving dispatched! Notifying next driver...');
+                console.log('🚗 Now Serving dispatched! Notifying Queue #' + nextDriver.queue_number);
                 sendNextDriverSMS(nextDriver);
               }
             }
@@ -184,7 +172,6 @@ function loadQueueData() {
     },
     error: function(xhr, status, error) {
       console.error('❌ Error loading queue:', error);
-      // Only show error notification if it's not a timeout
       if (status !== 'timeout') {
         showNotification('❌ Connection error. Retrying...', 'error');
       }
@@ -192,15 +179,14 @@ function loadQueueData() {
     complete: function() {
       isUpdating = false;
     },
-    timeout: 5000 // 5 second timeout
+    timeout: 5000
   });
 }
 
 // ================================
-// SHOW NOTIFICATION (ONLY ONE AT A TIME)
+// SHOW NOTIFICATION (ONLY ONE)
 // ================================
 function showNotification(message, type) {
-  // Remove ALL existing notifications (only show one at a time)
   $('.sms-notification').remove();
 
   const icons = {
@@ -228,18 +214,19 @@ function showNotification(message, type) {
 }
 
 // ================================
-// UPDATE NOW SERVING SECTION (SMOOTH)
+// UPDATE NOW SERVING (WITH PERMANENT QUEUE NUMBER)
 // ================================
 function updateServingSection(driver) {
   const profileImg = driver.profile_pic ? '../../' + driver.profile_pic : '../../assets/img/default-profile.png';
   const driverName = `${driver.firstname || ''} ${driver.lastname || ''}`.trim();
   const tricycleNo = driver.tricycle_number || driver.tricycle_no || 'N/A';
+  const queueNum = driver.queue_number || '?';
 
   const servingHTML = `
     <h2 class="now-serving-title">Now Serving</h2>
     <div class="serving-cards-container">
       <div class="serving-card">
-        <div class="queue-number-badge">1</div>
+        <div class="queue-number-badge">${queueNum}</div>
         <img src="${profileImg}" alt="Profile" class="serving-profile" 
              onerror="this.src='../../assets/img/default-profile.png'">
         <div class="serving-info">
@@ -250,7 +237,6 @@ function updateServingSection(driver) {
     </div>
   `;
 
-  // Only update if content changed to avoid flickering
   const currentHTML = $('.now-serving-section').html();
   if (currentHTML !== servingHTML) {
     $('.now-serving-section').html(servingHTML);
@@ -281,13 +267,13 @@ function formatQueueTime(queuedAt) {
 }
 
 // ================================
-// UPDATE QUEUE TABLE (OPTIMIZED)
+// UPDATE QUEUE TABLE (WITH PERMANENT NUMBERS)
 // ================================
 function updateQueueTable(drivers) {
   let html = '';
   
   drivers.forEach((driver, index) => {
-    const queueNumber = index + 2;
+    const queueNumber = driver.queue_number || '?';
     const profileImg = driver.profile_pic ? '../../' + driver.profile_pic : '../../assets/img/default-profile.png';
     const driverName = `${driver.firstname || ''} ${driver.lastname || ''}`.trim();
     const tricycleNo = driver.tricycle_number || driver.tricycle_no || 'N/A';
@@ -310,7 +296,6 @@ function updateQueueTable(drivers) {
 
   const finalHTML = html || '<tr><td colspan="6" class="no-records">No drivers waiting in queue</td></tr>';
   
-  // Only update if content changed
   const currentHTML = $('#queue-body').html();
   if (currentHTML !== finalHTML) {
     $('#queue-body').html(finalHTML);
@@ -326,21 +311,18 @@ function showEmptyQueue() {
 }
 
 // ================================
-// INITIALIZE ON DOCUMENT READY
+// INITIALIZE
 // ================================
 $(document).ready(function() {
   console.log('✅ Document ready - Starting queue system');
   console.log('🔄 Loading initial queue data...');
   
-  // Initial load
   loadQueueData();
   
-  // Auto-refresh every 3 seconds (NO PAGE RELOAD)
   setInterval(function() {
     loadQueueData();
   }, 3000);
   
-  // Reload on window focus (when user returns to tab)
   $(window).on('focus', function() {
     console.log('👁️ Window focused - refreshing data');
     loadQueueData();
@@ -349,5 +331,5 @@ $(document).ready(function() {
   console.log('📱 Real-time updates: ACTIVE');
   console.log('⏱️ Refresh interval: 3 seconds');
   console.log('📩 SMS System: PhilSMS Integrated');
-  console.log('🚫 Page reload: DISABLED (AJAX only)');
+  console.log('🔢 Queue Numbers: PERMANENT');
 });
