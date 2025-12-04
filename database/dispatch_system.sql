@@ -359,7 +359,25 @@ ALTER TABLE `sms_logs`
 --
 -- Constraints for dumped tables
 --
+-- Add queue_number column to queue table
+ALTER TABLE queue 
+ADD COLUMN queue_number INT DEFAULT NULL AFTER driver_id;
 
+-- Add index for better performance
+CREATE INDEX idx_queue_number ON queue(queue_number);
+
+-- Update existing records with sequential numbers (if you have existing data today)
+SET @num := 0;
+UPDATE queue 
+SET queue_number = (@num := @num + 1)
+WHERE DATE(queued_at) = CURDATE()
+ORDER BY queued_at ASC;
+
+-- Verify the changes
+SELECT id, driver_id, queue_number, status, queued_at 
+FROM queue 
+WHERE DATE(queued_at) = CURDATE()
+ORDER BY queue_number ASC;
 --
 -- Constraints for table `login_logs`
 --
