@@ -246,7 +246,7 @@ function updateServingSection(driver) {
 function showNoServing() {
   const noServingHTML = `
     <h2 class="now-serving-title">Now Serving</h2>
-    <div class="no-serving">No driver currently serving</div>
+    <div class="no-serving"></div>
   `;
   
   const currentHTML = $('.now-serving-section').html();
