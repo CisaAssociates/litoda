@@ -5,8 +5,8 @@ include('../../database/db.php');
 // ============================================
 // PHILSMS CONFIGURATION
 // ============================================
-define('PHILSMS_API_KEY', 'YOUR_PHILSMS_API_KEY'); // Replace with your PhilSMS API Key
-define('PHILSMS_SENDER_NAME', 'LITODA'); // Sender ID
+define('PHILSMS_API_KEY', '456|1mtvMnSeyJkCzlVpXxxgRb2hGg9uXpHUeRKSPIlod9ae86d7'); // Your PhilSMS API Token
+define('PHILSMS_SENDER_NAME', 'PhilSMS'); // Default sender (Globe only) - Change to 'LITODA' after registration
 
 /**
  * Format phone number for Philippines
