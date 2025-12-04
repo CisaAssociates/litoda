@@ -692,6 +692,6 @@ body {
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../../assets/js/LQ/LQ.js"></script>
+<script src="../../assets/js/LQ/LQ.JS"></script>
 </body>
 </html></html>
