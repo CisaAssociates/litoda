@@ -34,6 +34,7 @@ function sendNextDriverSMS(driver) {
       contact_no: driver.contact_no
     },
     dataType: 'json',
+    timeout: 10000, // 10 second timeout for SMS
     success: function(response) {
       console.log("📩 SMS Response:", response);
       
@@ -43,15 +44,24 @@ function sendNextDriverSMS(driver) {
       } else if (response.duplicate) {
         console.log('⚠️ Duplicate SMS prevented by server');
         lastSMSSentTo = driver.id;
-        showNotification(`✓ ${driver.firstname} ${driver.lastname} already notified`, 'info');
+        // Don't show notification for duplicates to reduce spam
+        console.log(`✓ ${driver.firstname} ${driver.lastname} already notified`);
       } else {
         console.error('❌ SMS Failed:', response.message);
-        showNotification(`⚠ SMS failed: ${response.message}`, 'error');
+        // Mark as sent anyway to prevent retry spam
+        lastSMSSentTo = driver.id;
+        // Only show error once
+        showNotification(`⚠ SMS delivery pending`, 'info');
       }
     },
     error: function(xhr, status, error) {
-      console.error("❌ SMS AJAX Error:", error);
-      showNotification("❌ Failed to send SMS", "error");
+      console.error("❌ SMS AJAX Error:", error, status);
+      // Mark as sent to prevent repeated error notifications
+      lastSMSSentTo = driver.id;
+      // Only show error notification if it's a real connection error
+      if (status !== 'timeout' && status !== 'abort') {
+        showNotification("⚠ SMS service temporarily unavailable", "error");
+      }
     },
     complete: function() {
       smsInProgress = false;
@@ -87,19 +97,16 @@ function detectQueueChanges(currentData) {
       orderChanged 
     });
     
-    // New driver added
+    // ONLY show ONE notification for the most important change
     if (added.length > 0) {
-      added.forEach(id => {
-        const newDriver = currentData.find(d => d.id === id);
-        if (newDriver) {
-          const name = `${newDriver.firstname || ''} ${newDriver.lastname || ''}`.trim();
-          showNotification(`✅ ${name} joined the queue`, 'success');
-        }
-      });
-    }
-    
-    // Driver removed/dispatched
-    if (removed.length > 0) {
+      // New driver added - show only the first one
+      const newDriver = currentData.find(d => d.id === added[0]);
+      if (newDriver) {
+        const name = `${newDriver.firstname || ''} ${newDriver.lastname || ''}`.trim();
+        showNotification(`✅ ${name} joined the queue`, 'success');
+      }
+    } else if (removed.length > 0) {
+      // Driver removed/dispatched
       removed.forEach(id => {
         const removedDriver = previousQueueState.find(d => d.id === id);
         if (removedDriver && lastSMSSentTo === removedDriver.id) {
@@ -107,6 +114,7 @@ function detectQueueChanges(currentData) {
           lastSMSSentTo = null;
         }
       });
+      // Show notification only once
       showNotification(`🚗 Driver dispatched from queue`, 'info');
     }
   }
@@ -149,10 +157,14 @@ function loadQueueData() {
           if (remainingDrivers.length > 0) {
             const nextDriver = remainingDrivers[0];
             
-            // Send SMS to next driver only on significant changes
-            if (nextDriver && nextDriver.contact_no) {
-              if ((changes.hasChanges && changes.removed.length > 0) || 
-                  lastSMSSentTo !== nextDriver.id) {
+            // 📩 SEND SMS ONLY when "Now Serving" driver was removed/dispatched
+            // This means the next driver just became #2 and needs notification
+            if (nextDriver && nextDriver.contact_no && 
+                changes.hasChanges && changes.removed.length > 0) {
+              
+              // Only send if we haven't already sent to this driver
+              if (lastSMSSentTo !== nextDriver.id) {
+                console.log('🚗 Now Serving dispatched! Notifying next driver...');
                 sendNextDriverSMS(nextDriver);
               }
             }
@@ -185,11 +197,11 @@ function loadQueueData() {
 }
 
 // ================================
-// SHOW NOTIFICATION (IMPROVED)
+// SHOW NOTIFICATION (ONLY ONE AT A TIME)
 // ================================
 function showNotification(message, type) {
-  // Remove existing notifications of the same type to avoid spam
-  $(`.sms-notification-${type}`).remove();
+  // Remove ALL existing notifications (only show one at a time)
+  $('.sms-notification').remove();
 
   const icons = {
     success: 'check-circle',
