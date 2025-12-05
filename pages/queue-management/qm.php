@@ -220,9 +220,8 @@ body {
 
 /* Modal Styles */
 .modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: none;
+  position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
