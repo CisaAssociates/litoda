@@ -86,9 +86,9 @@ body {
 }
 
 .queue-number-badge {
-  position: absolute;
+   position: absolute;
   top: -12px;
-  left: 20px;
+  left: 50%;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   padding: 6px 18px;
@@ -96,6 +96,7 @@ body {
   font-size: 1rem;
   font-weight: 700;
   box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+  transform: translateX(-50%);
 }
 
 .serving-pic {
@@ -220,7 +221,9 @@ body {
 /* Modal Styles */
 .modal {
   display: none;
-  position: fixed;
+   display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
   left: 0;
   top: 0;
@@ -232,7 +235,7 @@ body {
 
 .modal-content {
   background-color: #ffffff;
-  margin: 15% auto;
+  margin: 0% auto;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
