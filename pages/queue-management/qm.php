@@ -221,7 +221,7 @@ body {
 /* Modal Styles */
 .modal {
   display: none;
-   display: flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
