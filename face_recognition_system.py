@@ -608,10 +608,9 @@ def recognize():
     return jsonify(face_system.recognize_face(data["image"]))
 
 
-# Add this to your Flask API endpoints
-
 @app.route('/inqueue', methods=['POST'])
-def add_to_queue():
+def inqueue():
+    """Add driver to queue with permanent queue number"""
     try:
         data = request.get_json()
         driver_id = data.get('driver_id')
@@ -622,50 +621,103 @@ def add_to_queue():
                 'message': 'Driver ID required'
             }), 400
         
-        # Check if driver already in queue today
-        check_query = """
-            SELECT id FROM queue 
-            WHERE driver_id = %s 
-            AND status = 'Onqueue' 
-            AND DATE(queued_at) = CURDATE()
-        """
-        cursor = db.cursor(dictionary=True)
-        cursor.execute(check_query, (driver_id,))
-        existing = cursor.fetchone()
-        
-        if existing:
+        # Get database connection
+        conn = face_system.get_db_connection()
+        if not conn:
             return jsonify({
                 'success': False,
-                'message': 'Driver already in queue today'
-            }), 400
+                'message': 'Database connection failed'
+            }), 500
         
-        # Get next queue number for today
-        max_num_query = """
-            SELECT COALESCE(MAX(queue_number), 0) as max_num 
-            FROM queue 
-            WHERE DATE(queued_at) = CURDATE()
-        """
-        cursor.execute(max_num_query)
-        max_row = cursor.fetchone()
-        next_queue_number = max_row['max_num'] + 1
-        
-        # Insert into queue with queue number
-        insert_query = """
-            INSERT INTO queue (driver_id, queue_number, status, queued_at)
-            VALUES (%s, %s, 'Onqueue', NOW())
-        """
-        cursor.execute(insert_query, (driver_id, next_queue_number))
-        db.commit()
-        cursor.close()
-        
-        return jsonify({
-            'success': True,
-            'message': f'Driver added to queue as #{next_queue_number}',
-            'queue_number': next_queue_number
-        }), 200
-        
+        try:
+            cursor = conn.cursor(dictionary=True)
+            
+            # Get driver info
+            cursor.execute(
+                "SELECT id, firstname, lastname, tricycle_number FROM drivers WHERE id=%s LIMIT 1",
+                (driver_id,)
+            )
+            driver = cursor.fetchone()
+            
+            if not driver:
+                cursor.close()
+                conn.close()
+                return jsonify({
+                    'success': False,
+                    'message': 'Driver not found'
+                }), 404
+            
+            driver_name = f"{driver['firstname']} {driver['lastname']}"
+            tricycle_number = driver.get("tricycle_number", "")
+            
+            # Check if already in queue today
+            cursor.execute("""
+                SELECT id, queue_number FROM queue 
+                WHERE driver_id = %s 
+                AND status = 'Onqueue' 
+                AND DATE(queued_at) = CURDATE()
+            """, (driver_id,))
+            existing = cursor.fetchone()
+            
+            if existing:
+                cursor.close()
+                conn.close()
+                return jsonify({
+                    'success': False,
+                    'message': f'Already in queue as #{existing["queue_number"]}',
+                    'queue_number': existing['queue_number']
+                }), 400
+            
+            # Get next queue number for today
+            cursor.execute("""
+                SELECT COALESCE(MAX(queue_number), 0) as max_num 
+                FROM queue 
+                WHERE DATE(queued_at) = CURDATE()
+            """)
+            max_row = cursor.fetchone()
+            next_queue_number = max_row['max_num'] + 1
+            
+            now = datetime.now()
+            
+            # Insert into queue with queue number
+            cursor.execute("""
+                INSERT INTO queue (driver_id, driver_name, tricycle_number, queue_number, queued_at, status)
+                VALUES (%s, %s, %s, %s, %s, 'Onqueue')
+            """, (driver_id, driver_name, tricycle_number, next_queue_number, now))
+            
+            queue_id = cursor.lastrowid
+            
+            # Insert into history
+            cursor.execute("""
+                INSERT INTO history (driver_id, driver_name, tricycle_number, queue_time, queue_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (driver_id, driver_name, tricycle_number, now, queue_id))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
+            print(f"[INQUEUE] Driver {driver_name} added as Queue #{next_queue_number}")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Added to queue as #{next_queue_number}',
+                'queue_number': next_queue_number
+            }), 200
+            
+        except Exception as e:
+            print(f"[inqueue] Database error: {e}")
+            try:
+                conn.close()
+            except:
+                pass
+            return jsonify({
+                'success': False,
+                'message': f'Database error: {str(e)}'
+            }), 500
+            
     except Exception as e:
-        print(f"Error adding to queue: {e}")
+        print(f"[inqueue] Error: {e}")
         return jsonify({
             'success': False,
             'message': 'Server error occurred'
@@ -673,7 +725,8 @@ def add_to_queue():
 
 
 @app.route('/dispatch', methods=['POST'])
-def dispatch_driver():
+def dispatch():
+    """Dispatch driver from queue"""
     try:
         data = request.get_json()
         driver_id = data.get('driver_id')
@@ -684,35 +737,96 @@ def dispatch_driver():
                 'message': 'Driver ID required'
             }), 400
         
-        # Update driver status to Dispatched
-        update_query = """
-            UPDATE queue
-            SET status = 'Dispatched', dispatch_at = NOW()
-            WHERE driver_id = %s 
-            AND status = 'Onqueue' 
-            AND DATE(queued_at) = CURDATE()
-            ORDER BY queued_at ASC
-            LIMIT 1
-        """
-        cursor = db.cursor()
-        cursor.execute(update_query, (driver_id,))
-        db.commit()
-        affected_rows = cursor.rowcount
-        cursor.close()
-        
-        if affected_rows > 0:
-            return jsonify({
-                'success': True,
-                'message': 'Driver dispatched successfully'
-            }), 200
-        else:
+        # Get database connection
+        conn = face_system.get_db_connection()
+        if not conn:
             return jsonify({
                 'success': False,
-                'message': 'Driver not in queue or already dispatched'
-            }), 400
+                'message': 'Database connection failed'
+            }), 500
+        
+        try:
+            cursor = conn.cursor(dictionary=True)
+            
+            # Get driver info
+            cursor.execute(
+                "SELECT id, firstname, lastname, tricycle_number FROM drivers WHERE id=%s LIMIT 1",
+                (driver_id,)
+            )
+            driver = cursor.fetchone()
+            
+            if not driver:
+                cursor.close()
+                conn.close()
+                return jsonify({
+                    'success': False,
+                    'message': 'Driver not found'
+                }), 404
+            
+            driver_name = f"{driver['firstname']} {driver['lastname']}"
+            tricycle_number = driver.get("tricycle_number", "")
+            
+            # Find queue entry
+            cursor.execute("""
+                SELECT id, queue_number FROM queue 
+                WHERE driver_id = %s 
+                AND status = 'Onqueue' 
+                AND DATE(queued_at) = CURDATE()
+                ORDER BY queued_at ASC 
+                LIMIT 1
+            """, (driver_id,))
+            queue_entry = cursor.fetchone()
+            
+            if not queue_entry:
+                cursor.close()
+                conn.close()
+                return jsonify({
+                    'success': False,
+                    'message': 'Driver not in queue'
+                }), 400
+            
+            queue_id = queue_entry["id"]
+            queue_number = queue_entry["queue_number"]
+            now = datetime.now()
+            
+            # Update queue status to Dispatched
+            cursor.execute("""
+                UPDATE queue 
+                SET status = 'Dispatched', dispatch_at = %s 
+                WHERE id = %s
+            """, (now, queue_id))
+            
+            # Insert dispatch record into history
+            cursor.execute("""
+                INSERT INTO history (driver_id, driver_name, tricycle_number, dispatch_time, queue_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (driver_id, driver_name, tricycle_number, now, queue_id))
+            
+            conn.commit()
+            affected_rows = cursor.rowcount
+            cursor.close()
+            conn.close()
+            
+            print(f"[DISPATCH] Queue #{queue_number} ({driver_name}) dispatched successfully")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Queue #{queue_number} dispatched successfully'
+            }), 200
+            
+        except Exception as e:
+            print(f"[dispatch] Database error: {e}")
+            try:
+                conn.close()
+            except:
+                pass
+            return jsonify({
+                'success': False,
+                'message': f'Database error: {str(e)}'
+            }), 500
             
     except Exception as e:
-        print(f"Error dispatching driver: {e}")
+        print(f"[dispatch] Error: {e}")
         return jsonify({
             'success': False,
             'message': 'Server error occurred'
