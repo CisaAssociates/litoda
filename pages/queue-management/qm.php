@@ -220,7 +220,6 @@ body {
 
 /* Modal Styles */
 .modal {
-  display: none;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -235,7 +234,7 @@ body {
 
 .modal-content {
   background-color: #ffffff;
-  margin: 0% auto;
+  margin: 15% auto;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
