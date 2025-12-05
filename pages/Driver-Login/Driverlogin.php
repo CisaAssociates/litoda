@@ -96,42 +96,6 @@
         .info-label { color: #6b7280; font-size: 14px; }
         .info-value { color: #1f2937; font-size: 14px; font-weight: 600; }
 
-        /* Queue Number Badge - BIG and PROMINENT */
-        .queue-number-display {
-            text-align: center;
-            padding: 20px;
-            margin: 15px 0;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 12px;
-            display: none;
-        }
-
-        .queue-number-display.show {
-            display: block;
-            animation: bounceIn 0.5s;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .queue-label {
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .queue-number-big {
-            color: white;
-            font-size: 48px;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
         .status-message {
             text-align: center;
             font-size: 14px;
@@ -245,13 +209,6 @@
                 <span class="info-label">Status:</span>
                 <span class="info-value" id="driverStatusValue">-</span>
             </div>
-            
-            <!-- BIG QUEUE NUMBER DISPLAY -->
-            <div class="queue-number-display" id="queueNumberDisplay">
-                <div class="queue-label">Your Queue Number</div>
-                <div class="queue-number-big" id="queueNumberBig">-</div>
-            </div>
-            
             <div class="status-message" id="driverMessage"></div>
         </div>
         
@@ -261,7 +218,6 @@
         </div>
     </div>
     
-    <script src="../../assets/js/config.js.php"></script>
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
@@ -273,15 +229,13 @@
         const driverContact = document.getElementById('driverContact');
         const driverStatusValue = document.getElementById('driverStatusValue');
         const driverMessage = document.getElementById('driverMessage');
-        const queueNumberDisplay = document.getElementById('queueNumberDisplay');
-        const queueNumberBig = document.getElementById('queueNumberBig');
         const inqueueBt = document.getElementById('inqueueBt');
         const dispatchBtn = document.getElementById('dispatchBtn');
         
         let currentDriver = null;
         let isProcessing = false;
 
-        const API_URL = FLASK_API_URL;
+        const API_URL = 'http://127.0.0.1:5000';
 
         async function startCamera() {
             try {
@@ -324,7 +278,7 @@
                 return await res.json();
             } catch (error) {
                 console.error('API connection error:', error);
-                return { success: false, message: 'Cannot connect to face recognition service.' };
+                return { success: false, message: 'Cannot connect to face recognition service. Make sure Python server is running.' };
             }
         }
 
@@ -337,15 +291,6 @@
             currentDriver = driver;
         }
 
-        function showQueueNumber(queueNum) {
-            queueNumberBig.textContent = queueNum;
-            queueNumberDisplay.classList.add('show');
-        }
-
-        function hideQueueNumber() {
-            queueNumberDisplay.classList.remove('show');
-        }
-
         function updateDriverMessage(msg, type = 'info') {
             driverMessage.textContent = msg;
             driverMessage.className = `status-message status-${type}`;
@@ -353,7 +298,6 @@
 
         function resetToOriginal() {
             driverInfo.classList.remove('show');
-            hideQueueNumber();
             driverName.textContent = '-';
             driverTricycle.textContent = '-';
             driverContact.textContent = '-';
@@ -370,7 +314,6 @@
             inqueueBt.innerHTML = '<span class="loading-spinner"></span>Scanning...';
             updateDriverMessage('');
             driverInfo.classList.remove('show');
-            hideQueueNumber();
             statusOverlay.textContent = 'Scanning face...';
 
             try {
@@ -394,23 +337,15 @@
 
                 if (queueData.success) {
                     driverStatusValue.textContent = 'Onqueue';
-                    
-                    // SHOW QUEUE NUMBER - BIG!
-                    if (queueData.queue_number) {
-                        showQueueNumber(queueData.queue_number);
-                        updateDriverMessage(`✅ Added as Queue #${queueData.queue_number}`, 'success');
-                        statusOverlay.textContent = `Added to queue as #${queueData.queue_number}!`;
-                    } else {
-                        updateDriverMessage(`Added to queue successfully.`, 'success');
-                        statusOverlay.textContent = 'Added to queue successfully!';
-                    }
+                    updateDriverMessage(`${result.driver.name} added to queue successfully.`, 'success');
+                    statusOverlay.textContent = 'Added to queue successfully!';
                     
                     setTimeout(() => {
                         statusOverlay.textContent = 'Auto reload...';
                         setTimeout(() => {
                             resetToOriginal();
                         }, 500);
-                    }, 3000); // Show for 3 seconds
+                    }, 2000);
                 } else {
                     driverStatusValue.textContent = 'Onqueue';
                     updateDriverMessage(queueData.message || 'Already in queue.', 'warning');
@@ -435,7 +370,6 @@
             dispatchBtn.innerHTML = '<span class="loading-spinner"></span>Scanning...';
             updateDriverMessage('');
             driverInfo.classList.remove('show');
-            hideQueueNumber();
             statusOverlay.textContent = 'Scanning face for dispatch...';
 
             try {
