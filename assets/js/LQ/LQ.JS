@@ -41,7 +41,7 @@ function sendNextDriverSMS(driver) {
       
       if (response.success) {
         lastSMSSentTo = driver.id;
-        showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname} (Queue #${driver.queue_number})`, 'success');
+        showNotification(`📩 SMS sent to ${driver.firstname} ${driver.lastname} (Queue ${driver.queue_number})`, 'success');
       } else if (response.duplicate) {
         console.log('⚠️ Duplicate SMS prevented by server');
         lastSMSSentTo = driver.id;
@@ -97,16 +97,16 @@ function detectQueueChanges(currentData) {
       const newDriver = currentData.find(d => d.id === added[0]);
       if (newDriver) {
         const name = `${newDriver.firstname || ''} ${newDriver.lastname || ''}`.trim();
-        showNotification(`✅ ${name} joined as Queue #${newDriver.queue_number}`, 'success');
+        showNotification(`✅ ${name} joined as Queue ${newDriver.queue_number}`, 'success');
       }
     } 
     
     // Driver removed/dispatched
     if (removed.length > 0) {
       const removedDriver = previousQueueState.find(d => d.id === removed[0]);
-      console.log('🚗 Queue #' + (removedDriver?.queue_number || '?') + ' was dispatched');
+      console.log('Queue ' + (removedDriver?.queue_number || '?') + ' was dispatched');
       lastSMSSentTo = null;
-      showNotification(`🚗 Queue #${removedDriver?.queue_number || '?'} dispatched - Next driver notified`, 'info');
+      showNotification(`Queue ${removedDriver?.queue_number || '?'} dispatched - Next driver notified`, 'info');
     }
   }
 
@@ -152,7 +152,7 @@ function loadQueueData() {
                 changes.hasChanges && changes.removed.length > 0) {
               
               if (lastSMSSentTo !== nextDriver.id) {
-                console.log('🚗 Now Serving dispatched! Notifying Queue #' + nextDriver.queue_number);
+                console.log('Now Serving dispatched! Notifying Queue ' + nextDriver.queue_number);
                 sendNextDriverSMS(nextDriver);
               }
             }
