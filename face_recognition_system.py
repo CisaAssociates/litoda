@@ -608,21 +608,115 @@ def recognize():
     return jsonify(face_system.recognize_face(data["image"]))
 
 
-@app.route("/inqueue", methods=["POST"])
-def inqueue():
-    data = request.get_json()
-    if not data or "driver_id" not in data:
-        return jsonify({"success": False, "message": "Driver ID required"})
-    return jsonify(face_system.add_to_queue(data["driver_id"]))
+# Add this to your Flask API endpoints
+
+@app.route('/inqueue', methods=['POST'])
+def add_to_queue():
+    try:
+        data = request.get_json()
+        driver_id = data.get('driver_id')
+        
+        if not driver_id:
+            return jsonify({
+                'success': False,
+                'message': 'Driver ID required'
+            }), 400
+        
+        # Check if driver already in queue today
+        check_query = """
+            SELECT id FROM queue 
+            WHERE driver_id = %s 
+            AND status = 'Onqueue' 
+            AND DATE(queued_at) = CURDATE()
+        """
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(check_query, (driver_id,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            return jsonify({
+                'success': False,
+                'message': 'Driver already in queue today'
+            }), 400
+        
+        # Get next queue number for today
+        max_num_query = """
+            SELECT COALESCE(MAX(queue_number), 0) as max_num 
+            FROM queue 
+            WHERE DATE(queued_at) = CURDATE()
+        """
+        cursor.execute(max_num_query)
+        max_row = cursor.fetchone()
+        next_queue_number = max_row['max_num'] + 1
+        
+        # Insert into queue with queue number
+        insert_query = """
+            INSERT INTO queue (driver_id, queue_number, status, queued_at)
+            VALUES (%s, %s, 'Onqueue', NOW())
+        """
+        cursor.execute(insert_query, (driver_id, next_queue_number))
+        db.commit()
+        cursor.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Driver added to queue as #{next_queue_number}',
+            'queue_number': next_queue_number
+        }), 200
+        
+    except Exception as e:
+        print(f"Error adding to queue: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Server error occurred'
+        }), 500
 
 
-@app.route("/dispatch", methods=["POST"])
-def dispatch():
-    data = request.get_json()
-    if not data or "driver_id" not in data:
-        return jsonify({"success": False, "message": "Driver ID required"})
-    return jsonify(face_system.dispatch_driver(data["driver_id"]))
-
+@app.route('/dispatch', methods=['POST'])
+def dispatch_driver():
+    try:
+        data = request.get_json()
+        driver_id = data.get('driver_id')
+        
+        if not driver_id:
+            return jsonify({
+                'success': False,
+                'message': 'Driver ID required'
+            }), 400
+        
+        # Update driver status to Dispatched
+        update_query = """
+            UPDATE queue
+            SET status = 'Dispatched', dispatch_at = NOW()
+            WHERE driver_id = %s 
+            AND status = 'Onqueue' 
+            AND DATE(queued_at) = CURDATE()
+            ORDER BY queued_at ASC
+            LIMIT 1
+        """
+        cursor = db.cursor()
+        cursor.execute(update_query, (driver_id,))
+        db.commit()
+        affected_rows = cursor.rowcount
+        cursor.close()
+        
+        if affected_rows > 0:
+            return jsonify({
+                'success': True,
+                'message': 'Driver dispatched successfully'
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Driver not in queue or already dispatched'
+            }), 400
+            
+    except Exception as e:
+        print(f"Error dispatching driver: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Server error occurred'
+        }), 500
 
 @app.route("/reload", methods=["POST"])
 def reload_drivers():
