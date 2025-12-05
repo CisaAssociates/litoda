@@ -362,7 +362,7 @@ body {
     
     <?php if ($servingDriver): ?>
       <div class="serving-card">
-        <div class="queue-number-badge">#<?php echo $servingDriver['queue_number'] ?? '?'; ?></div>
+        <div class="queue-number-badge"><?php echo $servingDriver['queue_number'] ?? '?'; ?></div>
         
         <img src="<?php 
           echo !empty($servingDriver['profile_pic']) && file_exists('../../' . $servingDriver['profile_pic']) 
@@ -381,7 +381,7 @@ body {
         </button>
       </div>
     <?php else: ?>
-      <p class="no-records">No driver currently serving</p>
+      <p class="no-records"></p>
     <?php endif; ?>
   </div>
 
@@ -537,7 +537,7 @@ function updateQueueDisplay(queueData) {
     const servingHTML = `
       <h3>Now Serving</h3>
       <div class="serving-card">
-        <div class="queue-number-badge">#${serving.queue_number || '?'}</div>
+        <div class="queue-number-badge">${serving.queue_number || '?'}</div>
         <img src="${serving.profile_pic ? '../../' + serving.profile_pic : '../../assets/img/default-profile.png'}" 
              alt="Profile" class="serving-pic" onerror="this.src='../../assets/img/default-profile.png'">
         <div class="serving-info">
@@ -578,7 +578,7 @@ function updateQueueDisplay(queueData) {
     $('#queue-body').html(tableHTML);
     
   } else {
-    $('#serving-section').html('<h3>Now Serving</h3><p class="no-records">No driver currently serving</p>');
+    $('#serving-section').html('<h3>Now Serving</h3><p class="no-records"></p>');
     $('#queue-body').html('<tr><td colspan="6" class="no-records">No drivers waiting in queue</td></tr>');
   }
 }
