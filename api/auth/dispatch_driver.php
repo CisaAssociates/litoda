@@ -42,18 +42,20 @@ if ($queue_id <= 0) {
 try {
     // Start transaction
     $conn->begin_transaction();
-
-    // Fetch queue entry with driver details
-    $sql = "SELECT q.id, q.driver_id, q.status, d.firstname, d.lastname, d.tricycle_number
+    
+    // Fetch queue entry with driver details and queue number
+    $sql = "SELECT q.id, q.driver_id, q.queue_number, q.status, 
+                   d.firstname, d.lastname, d.tricycle_number
             FROM queue q
             LEFT JOIN drivers d ON q.driver_id = d.id
             WHERE q.id = ? AND q.status = 'Onqueue'
             LIMIT 1";
+    
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $queue_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
+    
     if ($result->num_rows === 0) {
         $conn->rollback();
         echo json_encode([
@@ -62,40 +64,46 @@ try {
         ]);
         exit;
     }
-
+    
     $queueData = $result->fetch_assoc();
     $driver_id = $queueData['driver_id'];
+    $queue_number = $queueData['queue_number'];
     $driver_name = trim($queueData['firstname'] . ' ' . $queueData['lastname']);
     $tricycle_number = $queueData['tricycle_number'] ?? 'N/A';
-
+    
     // Update queue status to Dispatched
-    $updateSql = "UPDATE queue SET status = 'Dispatched', dispatch_at = NOW() WHERE id = ?";
+    $updateSql = "UPDATE queue 
+                  SET status = 'Dispatched', dispatch_at = NOW() 
+                  WHERE id = ?";
     $updateStmt = $conn->prepare($updateSql);
     $updateStmt->bind_param("i", $queue_id);
+    
     if (!$updateStmt->execute()) {
         throw new Exception('Failed to update queue status');
     }
-
+    
     // Insert into history table
     $historySql = "INSERT INTO history (driver_id, driver_name, tricycle_number, dispatch_time, queue_id)
                    VALUES (?, ?, ?, NOW(), ?)";
     $historyStmt = $conn->prepare($historySql);
     $historyStmt->bind_param("issi", $driver_id, $driver_name, $tricycle_number, $queue_id);
+    
     if (!$historyStmt->execute()) {
         throw new Exception('Failed to log dispatch history');
     }
-
+    
     // Commit transaction
     $conn->commit();
-
+    
     echo json_encode([
         'success' => true,
-        'message' => 'Driver dispatched successfully',
+        'message' => "Queue #$queue_number dispatched successfully",
         'queue_id' => $queue_id,
+        'queue_number' => $queue_number,
         'driver_id' => $driver_id,
         'driver_name' => $driver_name
     ]);
-
+    
 } catch (Exception $e) {
     $conn->rollback();
     echo json_encode([
