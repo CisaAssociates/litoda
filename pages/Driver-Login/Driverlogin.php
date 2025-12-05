@@ -232,10 +232,10 @@
         const inqueueBt = document.getElementById('inqueueBt');
         const dispatchBtn = document.getElementById('dispatchBtn');
         
-        let currentDriver = null;
+      let currentDriver = null;
         let isProcessing = false;
 
-        const API_URL = 'http://127.0.0.1:5000';
+        const API_URL = FLASK_API_URL;
 
         async function startCamera() {
             try {
@@ -278,7 +278,7 @@
                 return await res.json();
             } catch (error) {
                 console.error('API connection error:', error);
-                return { success: false, message: 'Cannot connect to face recognition service. Make sure Python server is running.' };
+                return { success: false, message: 'Cannot connect to face recognition service.' };
             }
         }
 
@@ -291,6 +291,15 @@
             currentDriver = driver;
         }
 
+        function showQueueNumber(queueNum) {
+            queueNumberBig.textContent = queueNum;
+            queueNumberDisplay.classList.add('show');
+        }
+
+        function hideQueueNumber() {
+            queueNumberDisplay.classList.remove('show');
+        }
+
         function updateDriverMessage(msg, type = 'info') {
             driverMessage.textContent = msg;
             driverMessage.className = `status-message status-${type}`;
@@ -298,6 +307,7 @@
 
         function resetToOriginal() {
             driverInfo.classList.remove('show');
+            hideQueueNumber();
             driverName.textContent = '-';
             driverTricycle.textContent = '-';
             driverContact.textContent = '-';
@@ -314,6 +324,7 @@
             inqueueBt.innerHTML = '<span class="loading-spinner"></span>Scanning...';
             updateDriverMessage('');
             driverInfo.classList.remove('show');
+            hideQueueNumber();
             statusOverlay.textContent = 'Scanning face...';
 
             try {
@@ -337,15 +348,23 @@
 
                 if (queueData.success) {
                     driverStatusValue.textContent = 'Onqueue';
-                    updateDriverMessage(`${result.driver.name} added to queue successfully.`, 'success');
-                    statusOverlay.textContent = 'Added to queue successfully!';
+                    
+                    // SHOW QUEUE NUMBER - BIG!
+                    if (queueData.queue_number) {
+                        showQueueNumber(queueData.queue_number);
+                        updateDriverMessage(`✅ Added as Queue #${queueData.queue_number}`, 'success');
+                        statusOverlay.textContent = `Added to queue as #${queueData.queue_number}!`;
+                    } else {
+                        updateDriverMessage(`Added to queue successfully.`, 'success');
+                        statusOverlay.textContent = 'Added to queue successfully!';
+                    }
                     
                     setTimeout(() => {
                         statusOverlay.textContent = 'Auto reload...';
                         setTimeout(() => {
                             resetToOriginal();
                         }, 500);
-                    }, 2000);
+                    }, 3000); // Show for 3 seconds
                 } else {
                     driverStatusValue.textContent = 'Onqueue';
                     updateDriverMessage(queueData.message || 'Already in queue.', 'warning');
@@ -370,6 +389,7 @@
             dispatchBtn.innerHTML = '<span class="loading-spinner"></span>Scanning...';
             updateDriverMessage('');
             driverInfo.classList.remove('show');
+            hideQueueNumber();
             statusOverlay.textContent = 'Scanning face for dispatch...';
 
             try {
