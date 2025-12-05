@@ -218,6 +218,7 @@
         </div>
     </div>
     
+    <script src="../../assets/js/config.js.php"></script>
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
@@ -235,7 +236,7 @@
         let currentDriver = null;
         let isProcessing = false;
 
-        const API_URL = 'http://127.0.0.1:5000';
+        const API_URL = FLASK_API_URL;
 
         async function startCamera() {
             try {
