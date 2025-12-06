@@ -4,6 +4,9 @@ date_default_timezone_set('Asia/Manila');
 
 require_once '../../database/db.php';
 
+// ✅ CORRECTED: Flask API Configuration
+$flask_api_url = 'http://127.0.0.1:5000'; // Update this if your Flask server is on a different host/port
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $driver_id = intval($_POST['driver_id']);
     $firstname = trim($_POST['firstname']);
@@ -92,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 🔹 STEP 1: Validate that exactly ONE face is present
-            $flask_api_url = 'http://127.0.0.1:5000'; 
             $flask_validate_url = $flask_api_url . "/validate_single_face";
             $validate_payload = json_encode([
                 "image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
@@ -120,18 +122,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
 
-            // 🔹 STEP 2: ✅ FIXED - Check if face matches existing driver (MUST BE SAME PERSON)
+            // 🔹 STEP 2: ✅ Check if face matches existing driver (MUST BE SAME PERSON)
             if (!empty($existing_image) && file_exists('../../' . $existing_image)) {
                 $existing_image_full_path = realpath('../../' . $existing_image);
 
                 // Check face match with existing profile
-                $flask_url = "http://127.0.0.1:5000/check_face_match";
+                $flask_match_url = $flask_api_url . "/check_face_match";
                 $payload = json_encode([
                     "existing_image_path" => $existing_image_full_path,
                     "new_image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
                 ]);
 
-                $ch = curl_init($flask_url);
+                $ch = curl_init($flask_match_url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
