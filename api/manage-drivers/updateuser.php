@@ -92,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 🔹 STEP 1: Validate that exactly ONE face is present
-            // ✅ Use relative API path for production
             $flask_api_url = 'http://127.0.0.1:5000'; 
             $flask_validate_url = $flask_api_url . "/validate_single_face";
             $validate_payload = json_encode([
@@ -121,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
 
-            // 🔹 STEP 2: Check if face matches existing driver OR not a duplicate of another driver
+            // 🔹 STEP 2: ✅ FIXED - Check if face matches existing driver (MUST BE SAME PERSON)
             if (!empty($existing_image) && file_exists('../../' . $existing_image)) {
                 $existing_image_full_path = realpath('../../' . $existing_image);
 
@@ -148,34 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $flaskResult = json_decode($response, true);
 
-                // If NOT the same face, check if it's registered to someone else
-                if (isset($flaskResult["same_face"]) && $flaskResult["same_face"] === false) {
-                    // Check for duplicate registration
-                    $flask_duplicate_url = "http://127.0.0.1:5000/check_face_duplicate";
-                    $duplicate_payload = json_encode([
-                        "image" => "data:image/jpeg;base64," . base64_encode($base64_image_data),
-                        "exclude_driver_id" => $driver_id
-                    ]);
-
-                    $ch_dup = curl_init($flask_duplicate_url);
-                    curl_setopt($ch_dup, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch_dup, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-                    curl_setopt($ch_dup, CURLOPT_POSTFIELDS, $duplicate_payload);
-                    curl_setopt($ch_dup, CURLOPT_TIMEOUT, 10);
-                    $dup_response = curl_exec($ch_dup);
-                    $dup_http_code = curl_getinfo($ch_dup, CURLINFO_HTTP_CODE);
-                    curl_close($ch_dup);
-
-                    if ($dup_response !== false && $dup_http_code == 200) {
-                        $dupResult = json_decode($dup_response, true);
-                        if (isset($dupResult["duplicate"]) && $dupResult["duplicate"] === true) {
-                            // Face is registered to another driver
-                            header("Location: ../../pages/manage-drivers/managedrivers.php?error=duplicate_face");
-                            exit();
-                        }
-                        // If not a duplicate, allow the update (different person replacing)
-                    }
+                // ✅ CRITICAL FIX: ONLY allow update if it's the SAME person
+                if (!isset($flaskResult["same_face"]) || $flaskResult["same_face"] !== true) {
+                    // This is NOT the same person - REJECT the update
+                    header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_mismatch");
+                    exit();
                 }
+                
+                // If we reach here, it's the same face - allow the update to proceed
             }
 
             // ✅ ALL VALIDATIONS PASSED - Replace the image
