@@ -322,6 +322,8 @@ document.addEventListener('DOMContentLoaded', function() {
             errorMessage = 'Driver with same name and plate number already exists';
         } else if (error === 'duplicate_face') {
             errorMessage = 'This face is already registered to another driver';
+        } else if (error === 'face_mismatch') {
+            errorMessage = 'Face mismatch! The new photo must be of the same registered driver.';
         } else {
             switch(error) {
                 case 'missing_fields':
@@ -353,6 +355,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'database_insert_failed':
                     errorMessage = 'Failed to add driver to database';
+                    break;
+                case 'duplicate_fullname':
+                    errorMessage = 'A driver with this full name already exists';
+                    break;
+                case 'duplicate_contact':
+                    errorMessage = 'This contact number is already registered to another driver';
                     break;
                 default:
                     errorMessage = 'An error occurred';
@@ -440,7 +448,7 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Delete driver function
+// ✅ FIXED: Delete driver function - Single click, no double notifications
 function deleteDriver(driverId) {
     Swal.fire({
         title: "Are you sure?",
@@ -449,35 +457,47 @@ function deleteDriver(driverId) {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Yes, delete it!",
+        allowOutsideClick: false
     }).then((result) => {
         if (result.isConfirmed) {
+            // Show loading state
             Swal.fire({
                 title: 'Deleting...',
                 text: 'Please wait',
                 allowOutsideClick: false,
+                allowEscapeKey: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
             });
             
+            // Delete the driver
             fetch(`../../api/manage-drivers/deletedriver.php?id=${driverId}`)
                 .then(response => response.json())
                 .then(data => {
-                    Swal.close();
                     if (data.success) {
-                        showGlobalStatus('Driver deleted successfully!', 'success');
-                        setTimeout(() => {
-                            window.location.href = window.location.pathname + '?success=user_deleted';
-                        }, 1000);
+                        // Close loading and redirect immediately
+                        Swal.close();
+                        window.location.href = window.location.pathname + '?success=user_deleted';
                     } else {
-                        showGlobalStatus(data.message || 'Failed to delete driver', 'error');
+                        // Show error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Delete Failed',
+                            text: data.message || 'Failed to delete driver',
+                            confirmButtonColor: "#3085d6"
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.close();
-                    showGlobalStatus('An error occurred while deleting the driver', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while deleting the driver',
+                        confirmButtonColor: "#3085d6"
+                    });
                 });
         }
     });
@@ -612,6 +632,7 @@ function closeEditCameraModal() {
     editVideo.srcObject = null;
 }
 
+// ✅ FIXED: Only allow same-person face updates
 async function captureEditPhoto() {
     const context = editCanvas.getContext('2d');
     editCanvas.width = editVideo.videoWidth;
@@ -654,7 +675,7 @@ async function captureEditPhoto() {
                 const matchResult = await matchResponse.json();
                 
                 if (matchResult.same_face) {
-                    // Same person - allow update
+                    // ✅ Same person - allow update
                     editVideo.style.display = 'none';
                     editCanvas.style.display = 'block';
                     editCaptureBtn.style.display = 'none';
@@ -664,36 +685,11 @@ async function captureEditPhoto() {
                     showEditStatus("✓ Same person detected! Face verified successfully.", "success");
                     showGlobalStatus("✓ Face matched! This is the same person. You can proceed with the update.", "success");
                 } else {
-                    // Different person - check if it's registered to someone else
-                    showEditStatus("Checking for duplicate registration...", "info");
-                    
-                    const duplicateResponse = await fetch(`${API_BASE_URL}/check_face_duplicate`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ 
-                            image: imageData,
-                            exclude_driver_id: currentEditDriverId
-                        })
-                    });
-                    
-                    const duplicateResult = await duplicateResponse.json();
-                    
-                    if (duplicateResult.duplicate) {
-                        showEditStatus(`This face is registered to: ${duplicateResult.matched_driver}`, "error");
-                        showGlobalStatus(`This face is already registered to ${duplicateResult.matched_driver}. Cannot update.`, "error");
-                        editCaptureBtn.disabled = false;
-                        editCaptureBtn.textContent = "Capture";
-                    } else {
-                        // Not a duplicate, but different from original
-                        editVideo.style.display = 'none';
-                        editCanvas.style.display = 'block';
-                        editCaptureBtn.style.display = 'none';
-                        editRetakeBtn.style.display = 'inline-block';
-                        editConfirmBtn.style.display = 'inline-block';
-                        editCapturedImageData = imageData;
-                        showEditStatus("New face validated! You can confirm the update.", "success");
-                        showGlobalStatus("⚠️ Warning: This appears to be a different person. Proceeding with update.", "info");
-                    }
+                    // ❌ Different person - REJECT (don't allow any updates)
+                    showEditStatus("This is not the same person as the registered driver!", "error");
+                    showGlobalStatus("❌ Face mismatch! The new photo must be of the same registered driver. Update blocked.", "error");
+                    editCaptureBtn.disabled = false;
+                    editCaptureBtn.textContent = "Capture";
                 }
             } else {
                 // No existing image, just proceed
