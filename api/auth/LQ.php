@@ -164,31 +164,53 @@ switch ($action) {
         exit;
 
     /* ===========================================================
-       FETCH QUEUE LIST - WITH PERMANENT QUEUE NUMBERS
+       FETCH QUEUE LIST - WITH FULL DRIVER INFO FOR SMS
     =========================================================== */
     case "fetch":
         $sql = "
             SELECT 
                 q.*, 
-                d.firstname, d.lastname, d.tricycle_number, d.contact_no, d.profile_pic,
+                d.id as driver_id,
+                d.firstname, 
+                d.lastname, 
+                d.tricycle_number, 
+                d.contact_no, 
+                d.profile_pic,
                 CONCAT(d.firstname, ' ', d.lastname) AS driver_name
             FROM queue q
             LEFT JOIN drivers d ON q.driver_id = d.id
-            WHERE DATE(q.queued_at) = CURDATE()
+            WHERE q.status = 'Onqueue'
+            AND DATE(q.queued_at) = CURDATE()
             ORDER BY q.queue_number ASC
         ";
 
         $result = $conn->query($sql);
         $rows = [];
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
+        
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                // Ensure driver_id is set for SMS functionality
+                if (empty($row['driver_id']) && !empty($row['id'])) {
+                    $row['driver_id'] = $row['id'];
+                }
+                $rows[] = $row;
+            }
+        }
+
+        $serving = null;
+        $waiting = [];
+
+        if (count($rows) > 0) {
+            $serving = $rows[0];
+            $waiting = array_slice($rows, 1);
         }
 
         $response = [
             "success" => true,
-            "serving" => $rows[0] ?? null,
-            "waiting" => array_slice($rows, 1),
-            "data"    => $rows
+            "serving" => $serving,
+            "waiting" => $waiting,
+            "data" => $rows,
+            "total_count" => count($rows)
         ];
 
         echo json_encode($response);
