@@ -197,9 +197,9 @@ try {
     // Create message
     $message = "Hello {$driverName}! You are the NEXT driver in the queue";
     if (!empty($tricycleNumber)) {
-        $message .= " (Tricycle #{$tricycleNumber})";
+        $message .= " (Tricycle {$tricycleNumber})";
     }
-    $message .= ". Please prepare and proceed to the loading area now. Thank you! - LITODA Queue System";
+    $message .= ". Please prepare and proceed to the Libas Terminal. Thank you! - LITODA ";
 
     // Send SMS
     $result = sendPhilSMS($formattedPhone, $message);
