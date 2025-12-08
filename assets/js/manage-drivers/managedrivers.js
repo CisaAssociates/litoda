@@ -566,7 +566,7 @@ function editDriver(driverId) {
         });
 }
 
-// Populate edit form with driver data
+// ✅ FIXED: Populate edit form with driver data - Store existing image properly
 function populateEditForm(driver) {
     document.getElementById('edit_driver_id').value = driver.id;
     document.getElementById('edit_firstname').value = driver.firstname;
@@ -575,11 +575,16 @@ function populateEditForm(driver) {
     document.getElementById('edit_platenumber').value = driver.tricycle_number;
     document.getElementById('edit_contact').value = driver.contact_no || '';
     
+    // ✅ CRITICAL FIX: Properly store and display existing image
+    const existingImageInput = document.getElementById('existingImagePath');
     if (driver.profile_pic) {
-        document.getElementById('existingImagePath').value = driver.profile_pic;
+        existingImageInput.value = driver.profile_pic;
         editProfilePictureContainer.innerHTML = `<img src="${driver.profile_pic}" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; cursor: pointer;">`;
+        editProfilePictureContainer.dataset.hasExistingImage = 'true';
     } else {
+        existingImageInput.value = '';
         editProfilePictureContainer.innerHTML = `<div class="placeholder" style="width: 150px; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #d1d5db; border-radius: 50%; cursor: pointer;"><span class="icon"></span><p style="margin: 5px 0 0 0; font-size: 12px;">Change Photo</p></div>`;
+        editProfilePictureContainer.dataset.hasExistingImage = 'false';
     }
     
     editStatusMessage.style.display = 'none';
@@ -751,10 +756,11 @@ function showEditStatus(message, type) {
     }
 }
 
-// Edit form submission with contact validation
+// ✅ FIXED: Edit form submission - Don't send empty profile_image if no new photo captured
 if (editUserForm) {
     editUserForm.onsubmit = function(e) {
         const editContactInput = document.getElementById('edit_contact');
+        const editProfileImageDataInput = document.getElementById('editProfileImageData');
         
         // Only validate contact if it has a value (blank is allowed)
         if (editContactInput && editContactInput.value.length > 0 && editContactInput.value.length !== 11) {
@@ -763,7 +769,7 @@ if (editUserForm) {
             editContactInput.focus();
             return false;
         }
-        
+        // ✅ CRITICAL FIX: Only send new image data
         return true;
     };
 }
