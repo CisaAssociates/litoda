@@ -69,11 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $duplicateContactCheck->close();
     }
 
-    // Handle image update
+    // ✅ CRITICAL FIX: Handle image update - preserve existing if no new image provided
     $profile_picture_path = $existing_image;
     $base64_image_data = null;
+    $new_image_provided = false;
 
+    // Check if new image data was provided
     if (!empty($_POST['profile_image'])) {
+        $new_image_provided = true;
         $base64_image = $_POST['profile_image'];
 
         if (preg_match('/^data:image\/(\w+);base64,/', $base64_image, $type)) {
@@ -179,13 +182,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // 🔹 STEP 3: Update driver info in database
-    $stmt = $conn->prepare("
-        UPDATE drivers 
-        SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=?, profile_pic=? 
-        WHERE id=?
-    ");
-    $stmt->bind_param("ssssssi", $firstname, $middlename, $lastname, $platenumber, $contact, $profile_picture_path, $driver_id);
+    // 🔹 STEP 3: ✅ FIXED - Update driver info in database (preserve image if no new one provided)
+    if ($new_image_provided) {
+        // New image was provided - update everything including profile_pic
+        $stmt = $conn->prepare("
+            UPDATE drivers 
+            SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=?, profile_pic=? 
+            WHERE id=?
+        ");
+        $stmt->bind_param("ssssssi", $firstname, $middlename, $lastname, $platenumber, $contact, $profile_picture_path, $driver_id);
+    } else {
+        // ✅ NO new image - update everything EXCEPT profile_pic (preserve existing image)
+        $stmt = $conn->prepare("
+            UPDATE drivers 
+            SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=?
+            WHERE id=?
+        ");
+        $stmt->bind_param("sssssi", $firstname, $middlename, $lastname, $platenumber, $contact, $driver_id);
+    }
 
     if ($stmt->execute()) {
         header("Location: ../../pages/manage-drivers/managedrivers.php?success=user_updated");
