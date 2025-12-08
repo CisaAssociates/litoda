@@ -31,8 +31,7 @@ function sendNextDriverSMS(driver) {
       driver_id: driver.id,
       driver_name: driver.firstname + " " + driver.lastname,
       tricycle_number: driver.tricycle_number,
-      contact_no: driver.contact_no,
-      queue_number: driver.queue_number
+      contact_no: driver.contact_no
     },
     dataType: 'json',
     timeout: 10000,
