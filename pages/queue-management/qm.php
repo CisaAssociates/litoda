@@ -499,7 +499,7 @@ function confirmDispatch() {
     success: function(response) {
       closeModal();
       if (response.success) {
-        showNotification(`✅ Queue #${currentQueueNumber} dispatched successfully!`, 'success');
+        showNotification(`✅ dispatched successfully!`, 'success');
         fetchQueue(); // Update queue immediately
       } else {
         showNotification('❌ Error: ' + (response.message || 'Failed to dispatch driver'), 'error');
