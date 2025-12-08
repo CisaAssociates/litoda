@@ -61,16 +61,28 @@ function sendPhilSMS($toNumber, $message) {
 }
 
 /**
- * Log SMS to database
+ * Log SMS to database - FIXED VERSION
  */
 function logSMS($conn, $driverId, $phoneNumber, $message, $status, $response) {
+    $responseJson = is_string($response) ? $response : json_encode($response);
+    
     $sql = "INSERT INTO sms_logs (driver_id, phone_number, message, status, response, sent_at) 
             VALUES (?, ?, ?, ?, ?, NOW())";
+    
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("issss", $driverId, $phoneNumber, $message, $status, json_encode($response));
-        $stmt->execute();
+        $stmt->bind_param("issss", $driverId, $phoneNumber, $message, $status, $responseJson);
+        $result = $stmt->execute();
+        
+        if (!$result) {
+            error_log("SMS Log Error: " . $stmt->error);
+        }
+        
         $stmt->close();
+        return $result;
+    } else {
+        error_log("SMS Log Prepare Error: " . $conn->error);
+        return false;
     }
 }
 
@@ -139,7 +151,8 @@ try {
     $result = sendPhilSMS($formattedPhone, $message);
     $status = $result['success'] ? 'sent' : 'failed';
 
-    logSMS($conn, $driverId, $formattedPhone, $message, $status, $result['response']);
+    // Log to database
+    $logResult = logSMS($conn, $driverId, $formattedPhone, $message, $status, $result['response']);
 
     if ($result['success']) {
         $response = [
@@ -148,14 +161,16 @@ try {
             'driver_name' => $driverName,
             'phone_number' => $formattedPhone,
             'sms_message' => $message,
-            'timestamp' => date('Y-m-d H:i:s')
+            'timestamp' => date('Y-m-d H:i:s'),
+            'logged' => $logResult
         ];
     } else {
         $response = [
             'success' => false,
             'message' => isset($result['response']['message']) ? $result['response']['message'] : 'Failed to send SMS',
             'http_code' => $result['http_code'],
-            'error_details' => $result['response']
+            'error_details' => $result['response'],
+            'logged' => $logResult
         ];
     }
 
