@@ -13,6 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $contact = trim($_POST['contact']);
     $existing_image = $_POST['existing_image'];
 
+    // ✅ Get Flask API URL from environment (Railway) or use localhost
+    $flask_api_url = getenv('FLASK_API_URL') ?: 'http://127.0.0.1:5000';
+    $is_railway = getenv('RAILWAY_ENVIRONMENT') ? true : false;
+
     // Validate required fields (contact is now optional)
     if (empty($firstname) || empty($lastname) || empty($platenumber)) {
         header("Location: ../../pages/manage-drivers/managedrivers.php?error=missing_fields");
@@ -92,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 🔹 STEP 1: Validate that exactly ONE face is present
-            $flask_api_url = 'http://127.0.0.1:5000'; 
             $flask_validate_url = $flask_api_url . "/validate_single_face";
             $validate_payload = json_encode([
                 "image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
@@ -102,12 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             curl_setopt($ch_validate, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch_validate, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
             curl_setopt($ch_validate, CURLOPT_POSTFIELDS, $validate_payload);
-            curl_setopt($ch_validate, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch_validate, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch_validate, CURLOPT_CONNECTTIMEOUT, 10);
             $validate_response = curl_exec($ch_validate);
             $validate_http_code = curl_getinfo($ch_validate, CURLINFO_HTTP_CODE);
+            $validate_error = curl_error($ch_validate);
             curl_close($ch_validate);
 
             if ($validate_response === false || $validate_http_code != 200) {
+                error_log("Flask validation failed: " . $validate_error);
                 header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_validation_failed");
                 exit();
             }
@@ -120,41 +126,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
 
-            // 🔹 STEP 2: ✅ FIXED - Check if face matches existing driver (MUST BE SAME PERSON)
+            // 🔹 STEP 2: ✅ Check if face matches existing driver (MUST BE SAME PERSON)
             if (!empty($existing_image) && file_exists('../../' . $existing_image)) {
                 $existing_image_full_path = realpath('../../' . $existing_image);
 
+                // Prepare payload based on environment
+                if ($is_railway) {
+                    // ✅ Railway: Send both images as base64
+                    $existing_image_base64 = base64_encode(file_get_contents($existing_image_full_path));
+                    $existing_image_mime = mime_content_type($existing_image_full_path);
+                    
+                    $payload = json_encode([
+                        "existing_image" => "data:" . $existing_image_mime . ";base64," . $existing_image_base64,
+                        "new_image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
+                    ]);
+                } else {
+                    // ✅ Localhost: Send file path for existing image
+                    $payload = json_encode([
+                        "existing_image_path" => $existing_image_full_path,
+                        "new_image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
+                    ]);
+                }
+
                 // Check face match with existing profile
-                $flask_url = "http://127.0.0.1:5000/check_face_match";
-                $payload = json_encode([
-                    "existing_image_path" => $existing_image_full_path,
-                    "new_image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
-                ]);
+                $flask_url = $flask_api_url . "/check_face_match";
 
                 $ch = curl_init($flask_url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
                 $response = curl_exec($ch);
                 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curl_error = curl_error($ch);
                 curl_close($ch);
 
                 if ($response === false || $http_code != 200) {
+                    error_log("Flask face match failed: " . $curl_error . " (HTTP: " . $http_code . ")");
                     header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_match_check_failed");
                     exit();
                 }
 
                 $flaskResult = json_decode($response, true);
 
-                // ✅ CRITICAL FIX: ONLY allow update if it's the SAME person
+                // ✅ CRITICAL: ONLY allow update if it's the SAME person
                 if (!isset($flaskResult["same_face"]) || $flaskResult["same_face"] !== true) {
                     // This is NOT the same person - REJECT the update
+                    $similarity = isset($flaskResult["similarity"]) ? round($flaskResult["similarity"] * 100, 1) : 0;
+                    error_log("Face mismatch detected. Similarity: " . $similarity . "%");
                     header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_mismatch");
                     exit();
                 }
                 
-                // If we reach here, it's the same face - allow the update to proceed
+                // ✅ If we reach here, it's the same face - allow the update to proceed
+                error_log("Face match verified. Similarity: " . round($flaskResult["similarity"] * 100, 1) . "%");
             }
 
             // ✅ ALL VALIDATIONS PASSED - Replace the image
@@ -190,6 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         header("Location: ../../pages/manage-drivers/managedrivers.php?success=user_updated");
     } else {
+        error_log("Database update failed: " . $stmt->error);
         header("Location: ../../pages/manage-drivers/managedrivers.php?error=update_failed");
     }
 
