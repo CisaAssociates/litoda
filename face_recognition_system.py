@@ -423,6 +423,58 @@ def check_face_duplicate():
     except Exception as e:
         return jsonify({'error': f'Error processing image: {str(e)}'}), 500
 
+@app.route('/check_face_match', methods=['POST'])
+def check_face_match():
+    """
+    Check if a new face matches an existing driver's face (for edit/update)
+    """
+    data = request.get_json()
+    existing_path = data.get("existing_image_path")
+    new_image_data = data.get("new_image")
+
+    if not existing_path or not new_image_data:
+        return jsonify({"error": "Missing data"}), 400
+
+    try:
+        # Decode new image
+        image_bytes = base64.b64decode(new_image_data.split(",")[1] if "," in new_image_data else new_image_data)
+        new_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        np_new = np.array(new_image)
+
+        # Detect face in new image
+        gray = cv2.cvtColor(np_new, cv2.COLOR_RGB2GRAY)
+        faces = face_system.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+        if len(faces) == 0:
+            return jsonify({"same_face": False, "error": "No face detected in new image"}), 400
+
+        # Extract embeddings
+        new_emb = face_system.extract_embedding(np_new)
+        if new_emb is None:
+            return jsonify({"same_face": False, "error": "Failed to extract embedding from new image"}), 400
+        new_emb /= (np.linalg.norm(new_emb) + 1e-8)
+
+        # Load existing image
+        if not os.path.exists(existing_path):
+            return jsonify({"same_face": False, "error": "Existing image not found"}), 400
+        existing_emb = face_system.extract_embedding(existing_path)
+        if existing_emb is None:
+            return jsonify({"same_face": False, "error": "Failed to extract embedding from existing image"}), 400
+        existing_emb /= (np.linalg.norm(existing_emb) + 1e-8)
+
+        # Compute similarity
+        similarity = float(face_system.cosine_similarity(new_emb, existing_emb))
+        SAME_FACE_THRESHOLD = 0.60  # Adjust this as needed (ArcFace cosine similarity)
+
+        is_same = similarity >= SAME_FACE_THRESHOLD
+
+        return jsonify({
+            "same_face": is_same,
+            "similarity": similarity
+        })
+
+    except Exception as e:
+        print(f"[check_face_match] Error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/recognize", methods=["POST"])
 def recognize():
