@@ -1,7 +1,7 @@
 FROM php:8.2-apache
 
-# Enable Apache rewrite
-RUN a2enmod rewrite
+# Enable Apache modules
+RUN a2enmod rewrite proxy proxy_http
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -11,11 +11,10 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /var/www/html
 
 # Copy project files
-COPY . /var/www/html/
+COPY . .
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -24,12 +23,8 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod +x start.sh
+RUN chmod +x start.sh && chown -R www-data:www-data /var/www/html
 
-# Expose web port
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
-
+CMD ["bash", "start.sh"]
