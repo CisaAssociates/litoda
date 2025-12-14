@@ -4,10 +4,12 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: pip install -r requirements.txt
+    branch: main
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: gunicorn face_recognition_system:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --log-level info
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: "3.10.0"
       - key: PORT
         generateValue: true
+    healthCheckPath: /health
