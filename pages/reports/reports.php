@@ -9,7 +9,6 @@ include('../../database/db.php');
 date_default_timezone_set('Asia/Manila');
 $conn->query("SET time_zone = '+08:00'");
 
-
 // Get filter parameters
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : 'all';
 $filterDate = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
@@ -33,7 +32,20 @@ if (!empty($searchDriver)) {
 }
 $whereClause = !empty($whereConditions) ? "WHERE " . implode(" AND ", $whereConditions) : '';
 
-// ✅ Updated query — include dispatch_at
+// Get summary counts
+$summaryQuery = "
+    SELECT 
+        COUNT(*) as total_queued,
+        SUM(CASE WHEN status = 'Dispatched' THEN 1 ELSE 0 END) as total_dispatched,
+        SUM(CASE WHEN status = 'Removed' THEN 1 ELSE 0 END) as total_removed
+    FROM queue q
+    INNER JOIN drivers d ON q.driver_id = d.id
+    $whereClause
+";
+$summaryResult = $conn->query($summaryQuery);
+$summary = $summaryResult->fetch_assoc();
+
+// Main query
 $sql = "
     SELECT q.id, q.status, q.queued_at, q.dispatch_at,
            d.firstname, d.lastname, d.tricycle_number, d.profile_pic
@@ -80,6 +92,122 @@ body{
     max-width:1400px;
     margin:0 auto;
     padding:2rem;
+}
+
+/* PAGE HEADER */
+.page-header{
+    margin-bottom:2rem;
+}
+
+.page-header h1{
+    font-size:2rem;
+    color:#065f46;
+    margin-bottom:0.5rem;
+}
+
+.page-header p{
+    color:#6b7280;
+    font-size:0.95rem;
+}
+
+/* SUMMARY CARDS */
+.summary-section{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:1.5rem;
+    margin-bottom:2rem;
+}
+
+.summary-card{
+    background:white;
+    border-radius:12px;
+    padding:1.5rem;
+    box-shadow:0 4px 20px rgba(0,0,0,0.08);
+    border-left:4px solid;
+    transition:transform 0.2s;
+}
+
+.summary-card:hover{
+    transform:translateY(-5px);
+}
+
+.summary-card.total{
+    border-left-color:#3b82f6;
+    background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.summary-card.dispatched{
+    border-left-color:#10b981;
+    background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.summary-card.removed{
+    border-left-color:#ef4444;
+    background:linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.summary-card-header{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    margin-bottom:0.75rem;
+}
+
+.summary-icon{
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+}
+
+.summary-card.total .summary-icon{
+    background:#3b82f6;
+    color:white;
+}
+
+.summary-card.dispatched .summary-icon{
+    background:#10b981;
+    color:white;
+}
+
+.summary-card.removed .summary-icon{
+    background:#ef4444;
+    color:white;
+}
+
+.summary-label{
+    font-size:0.85rem;
+    color:#6b7280;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
+.summary-value{
+    font-size:2.5rem;
+    font-weight:700;
+    line-height:1;
+}
+
+.summary-card.total .summary-value{
+    color:#3b82f6;
+}
+
+.summary-card.dispatched .summary-value{
+    color:#10b981;
+}
+
+.summary-card.removed .summary-value{
+    color:#ef4444;
+}
+
+.summary-description{
+    font-size:0.85rem;
+    color:#6b7280;
+    margin-top:0.5rem;
 }
 
 /* FILTER SECTION */
@@ -173,7 +301,6 @@ body{
     overflow:hidden;
 }
 
-/* Table responsive wrapper */
 .table-responsive{
     width:100%;
     overflow-x:auto;
@@ -252,14 +379,37 @@ tbody tr:hover{
     opacity:0.3;
 }
 
-/* ========================================
-   RESPONSIVE DESIGN - ALL DEVICES
-   ======================================== */
+/* STATUS BADGE */
+.status-badge{
+    padding:0.4rem 0.8rem;
+    border-radius:20px;
+    font-size:0.8rem;
+    font-weight:500;
+    display:inline-block;
+}
 
-/* Tablet (768px - 1024px) */
+.status-badge.dispatched{
+    background:#d1fae5;
+    color:#065f46;
+}
+
+.status-badge.pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-badge.removed{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* RESPONSIVE DESIGN */
 @media screen and (max-width: 1024px) {
-    .container{
-        padding:1.5rem;
+    .container{padding:1.5rem;}
+    
+    .summary-section{
+        grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+        gap:1rem;
     }
 
     .filter-form{
@@ -271,34 +421,31 @@ tbody tr:hover{
         grid-column:1 / -1;
         justify-content:center;
     }
-
-    table{
-        min-width:700px;
-    }
 }
 
-/* Mobile Large (481px - 768px) */
 @media screen and (max-width: 768px) {
-    .container{
-        padding:1rem;
+    .container{padding:1rem;}
+    
+    .page-header h1{font-size:1.5rem;}
+    
+    .summary-section{
+        grid-template-columns:1fr;
+        gap:1rem;
+    }
+    
+    .summary-card{
+        padding:1.25rem;
+    }
+    
+    .summary-value{
+        font-size:2rem;
     }
 
-    .filter-section{
-        padding:1rem;
-    }
+    .filter-section{padding:1rem;}
 
     .filter-form{
         grid-template-columns:1fr;
         gap:0.75rem;
-    }
-
-    .form-group label{
-        font-size:0.8rem;
-    }
-
-    .form-control{
-        padding:0.6rem 0.8rem;
-        font-size:0.9rem;
     }
 
     .button-group{
@@ -313,7 +460,6 @@ tbody tr:hover{
         font-size:0.9rem;
     }
 
-    /* Table responsive */
     .table-responsive{
         margin:0 -1rem;
         padding:0 1rem;
@@ -329,51 +475,32 @@ tbody tr:hover{
         font-size:0.75rem;
     }
 
-    td{
-        padding:0.75rem 0.5rem;
-    }
+    td{padding:0.75rem 0.5rem;}
 
     .driver-pic,
     .driver-placeholder{
         width:35px;
         height:35px;
     }
-
-    .driver-info{
-        gap:0.5rem;
-        font-size:0.85rem;
-    }
 }
 
-/* Mobile Small (321px - 480px) */
 @media screen and (max-width: 480px) {
-    .container{
-        padding:0.75rem;
+    .container{padding:0.75rem;}
+    
+    .page-header{margin-bottom:1.5rem;}
+    .page-header h1{font-size:1.25rem;}
+    
+    .summary-section{gap:0.75rem;}
+    
+    .summary-card{padding:1rem;}
+    
+    .summary-icon{
+        width:40px;
+        height:40px;
+        font-size:1.25rem;
     }
-
-    .filter-section{
-        padding:0.75rem;
-        margin-bottom:1rem;
-    }
-
-    .filter-form{
-        gap:0.5rem;
-    }
-
-    .form-control{
-        padding:0.5rem 0.7rem;
-        font-size:0.85rem;
-    }
-
-    .btn{
-        padding:0.5rem 0.8rem;
-        font-size:0.85rem;
-    }
-
-    .table-responsive{
-        margin:0 -0.75rem;
-        padding:0 0.75rem;
-    }
+    
+    .summary-value{font-size:1.75rem;}
 
     table{
         font-size:0.75rem;
@@ -385,9 +512,7 @@ tbody tr:hover{
         font-size:0.7rem;
     }
 
-    td{
-        padding:0.6rem 0.4rem;
-    }
+    td{padding:0.6rem 0.4rem;}
 
     .driver-pic,
     .driver-placeholder{
@@ -395,86 +520,17 @@ tbody tr:hover{
         height:30px;
         font-size:0.75rem;
     }
-
-    .driver-info{
-        gap:0.4rem;
-        font-size:0.75rem;
-    }
-
-    .no-records{
-        padding:2rem 1rem;
-    }
-
-    .no-records i{
-        font-size:2rem;
-    }
-}
-
-/* Extra Small (< 321px) */
-@media screen and (max-width: 320px) {
-    .container{
-        padding:0.5rem;
-    }
-
-    .filter-section{
-        padding:0.5rem;
-    }
-
-    table{
-        font-size:0.7rem;
-        min-width:550px;
-    }
-
-    th, td{
-        padding:0.5rem 0.3rem;
-    }
-
-    .driver-pic,
-    .driver-placeholder{
-        width:28px;
-        height:28px;
-    }
-}
-
-/* Landscape Mode */
-@media screen and (max-height: 500px) and (orientation: landscape) {
-    .container{
-        padding:1rem;
-    }
-
-    .filter-section{
-        padding:1rem;
-    }
-
-    .filter-form{
-        grid-template-columns:repeat(4, 1fr);
-    }
-
-    .button-group{
-        grid-column:auto;
-    }
-}
-
-/* Touch Devices */
-@media (hover: none) and (pointer: coarse) {
-    .btn{
-        min-height:44px;
-    }
-
-    .table-responsive{
-        -webkit-overflow-scrolling:touch;
-    }
 }
 
 /* PRINT MODE */
 @media print {
     body { background:white; }
-    nav, .filter-section, .btn, .button-group { display:none !important; }
+    nav, .filter-section, .btn, .button-group, .summary-section { display:none !important; }
     .container { max-width:100%; padding:0; margin:0; }
-    .table-section { box-shadow:none; border:none; }
+    .page-header { margin-bottom:1rem; }
+    .table-section { box-shadow:none; border:1px solid #e5e7eb; margin-top:0; }
     table { font-size:0.9rem; min-width:auto; }
     th { background:#10b981 !important; color:white !important; }
-    th:first-child, td:first-child { display:none; }
     @page { margin:1cm; }
 }
   </style>
@@ -483,6 +539,43 @@ tbody tr:hover{
 <?php include('../../assets/components/navbar.php'); ?>
 
 <div class="container">
+
+    <!-- Summary Cards -->
+    <div class="summary-section">
+        <div class="summary-card total">
+            <div class="summary-card-header">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-list"></i>
+                </div>
+                <div class="summary-label">Total Queued</div>
+            </div>
+            <div class="summary-value"><?= number_format($summary['total_queued'] ?? 0); ?></div>
+            <div class="summary-description">Drivers for <?= date('M d, Y', strtotime($filterDate)); ?></div>
+        </div>
+
+        <div class="summary-card dispatched">
+            <div class="summary-card-header">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-check-circle"></i>
+                </div>
+                <div class="summary-label">Dispatched</div>
+            </div>
+            <div class="summary-value"><?= number_format($summary['total_dispatched'] ?? 0); ?></div>
+            <div class="summary-description">Successfully dispatched</div>
+        </div>
+
+        <div class="summary-card removed">
+            <div class="summary-card-header">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-user-xmark"></i>
+                </div>
+                <div class="summary-label">Removed</div>
+            </div>
+            <div class="summary-value"><?= number_format($summary['total_removed'] ?? 0); ?></div>
+            <div class="summary-description">Forgot to dispatch</div>
+        </div>
+    </div>
+
     <!-- Filter Section -->
     <div class="filter-section">
         <form class="filter-form" method="GET" action="reports.php">
@@ -506,7 +599,7 @@ tbody tr:hover{
         </form>
     </div>
 
-    <!-- Table Section with responsive wrapper -->
+    <!-- Table Section -->
     <div class="table-section">
         <div class="table-responsive">
             <table id="reportsTable">
@@ -517,6 +610,7 @@ tbody tr:hover{
                         <th>Plate Number</th>
                         <th>Queue Time</th>
                         <th>Dispatch Time</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -537,25 +631,36 @@ tbody tr:hover{
                                     </div>
                                 </td>
                                 <td><?= htmlspecialchars($row['tricycle_number']); ?></td>
-                                <td>
-                                    <span>
-                                        Queue <?= date('M d, Y h:i A', strtotime($row['queued_at'])); ?>
-                                    </span>
-                                </td>
+                                <td><?= date('M d, Y h:i A', strtotime($row['queued_at'])); ?></td>
                                 <td>
                                     <?php if ($row['status'] === 'Dispatched' && !empty($row['dispatch_at'])): ?>
-                                        <span>
-                                           Dispatch <?= date('M d, Y h:i A', strtotime($row['dispatch_at'])); ?>
+                                        <?= date('M d, Y h:i A', strtotime($row['dispatch_at'])); ?>
+                                    <?php elseif ($row['status'] === 'Removed' && !empty($row['dispatch_at'])): ?>
+                                        <?= date('M d, Y h:i A', strtotime($row['dispatch_at'])); ?>
+                                    <?php else: ?>
+                                        <span style="color:#9ca3af;">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($row['status'] === 'Dispatched'): ?>
+                                        <span class="status-badge dispatched">
+                                            <i class="fa-solid fa-check"></i> Dispatched
+                                        </span>
+                                    <?php elseif ($row['status'] === 'Removed'): ?>
+                                        <span class="status-badge removed">
+                                            <i class="fa-solid fa-xmark"></i> Removed
                                         </span>
                                     <?php else: ?>
-                                        <span>—</span>
+                                        <span class="status-badge pending">
+                                            <i class="fa-solid fa-clock"></i> Queued
+                                        </span>
                                     <?php endif; ?>
                                 </td>
                             </tr>   
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="no-records">
+                            <td colspan="6" class="no-records">
                                 <i class="fa-solid fa-inbox"></i><br>No records found for selected filters
                             </td>
                         </tr>
