@@ -12,4 +12,9 @@ gunicorn face_recognition_system:app --bind 0.0.0.0:5000 --timeout 120 --log-lev
 
 # Start Apache in foreground
 echo "Starting Apache..."
+echo "Ensuring a single Apache MPM is enabled (mpm_prefork)..."
+a2dismod mpm_event >/dev/null 2>&1 || true
+a2dismod mpm_worker >/dev/null 2>&1 || true
+a2enmod mpm_prefork >/dev/null 2>&1 || true
+apache2ctl -t
 apache2-foreground
