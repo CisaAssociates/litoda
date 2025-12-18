@@ -384,7 +384,17 @@ ORDER BY queue_number ASC;
 ALTER TABLE `login_logs`
   ADD CONSTRAINT `login_logs_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE SET NULL;
 COMMIT;
+SELECT * FROM dispatch_system.queue;-- Add the date column
+ALTER TABLE queue ADD COLUMN queue_date DATE AFTER queue_number;
 
+-- Remove old unique constraint (if exists)
+ALTER TABLE queue DROP INDEX IF EXISTS queue_number;
+
+-- Add new composite unique constraint (queue_number + date)
+ALTER TABLE queue ADD UNIQUE KEY unique_queue_per_day (queue_number, queue_date);
+
+-- Update existing records with their dates
+UPDATE queue SET queue_date = DATE(queued_at) WHERE queue_date IS NULL;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
