@@ -1,19 +1,32 @@
 #!/bin/bash
 
-PORT=${PORT:-80}
+# Get port from Railway (defaults to 8080 if not set)
+PORT=${PORT:-8080}
 
-# Update Apache port to Railway port
+echo "🔧 Configuring Apache for port $PORT..."
+
+# Update Apache to listen on Railway's port
 sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf
-sed -i "s/:80/:$PORT/" /etc/apache2/sites-available/000-default.conf
+sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/" /etc/apache2/sites-available/000-default.conf
 
-echo "🚀 Starting Python Face Recognition API..."
+echo "🚀 Starting Python Face Recognition API on port 5000..."
+
+# Activate virtual environment and start gunicorn in background
+. /opt/venv/bin/activate && \
 gunicorn face_recognition_system:app \
   --bind 0.0.0.0:5000 \
   --timeout 180 \
   --workers 1 \
-  --log-level debug \
+  --threads 2 \
+  --log-level info \
   --access-logfile - \
   --error-logfile - &
 
-echo "🌐 Starting Apache Web Server..."
+# Wait a bit for Python to start
+sleep 3
+
+echo "✅ Python API started"
+echo "🌐 Starting Apache Web Server on port $PORT..."
+
+# Start Apache in foreground
 apache2-foreground
