@@ -462,7 +462,21 @@
         let currentRemoverDriver = null;
         let isProcessing = false;
         let cameraStream = null;
-         let isRemoveButtonVisible = false;
+        let isRemoveButtonVisible = false;
+
+        function toggleRemoveButton() {
+            isRemoveButtonVisible = !isRemoveButtonVisible;
+            const removeBtn = document.getElementById('removeBtn');
+            const toggleIcon = document.getElementById('toggleRemoveBtn');
+            
+            if (isRemoveButtonVisible) {
+                removeBtn.classList.add('show');
+                toggleIcon.classList.add('active');
+            } else {
+                removeBtn.classList.remove('show');
+                toggleIcon.classList.remove('active');
+            }
+        }
 
         console.log('🎥 Driver Recognition System Initialized');
         console.log('📡 API URL:', API_URL);
@@ -504,8 +518,6 @@
                     setTimeout(() => reject(new Error('Camera timeout')), 10000);
                 });
 
-                // Hide loading indicator
-                cameraLoading.style.display = 'none';
                 statusOverlay.textContent = 'Camera ready. Click Inqueue, Dispatch, or Remove.';
                 statusOverlay.style.background = 'linear-gradient(to bottom, rgba(16,185,129,0.8), transparent)';
                 
@@ -513,15 +525,6 @@
 
             } catch (err) {
                 console.error('❌ Camera error:', err);
-                cameraLoading.innerHTML = `
-                    <svg fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
-                        <circle cx="32" cy="32" r="30"/>
-                        <line x1="20" y1="44" x2="44" y2="20"/>
-                        <line x1="20" y1="20" x2="44" y2="44"/>
-                    </svg>
-                    <p style="color: #ef4444;">Camera Error</p>
-                    <p style="font-size: 12px; margin-top: 8px;">${err.message || 'Cannot access camera'}</p>
-                `;
                 statusOverlay.textContent = 'Camera access denied or unavailable';
                 statusOverlay.style.background = 'rgba(239, 68, 68, 0.9)';
                 
@@ -729,7 +732,7 @@
             }
         });
 
-     removeBtn.addEventListener('click', async () => {
+        removeBtn.addEventListener('click', async () => {
             if (isProcessing) return;
             isProcessing = true;
             removeBtn.disabled = true;
