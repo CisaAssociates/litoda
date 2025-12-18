@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            background: linear-gradient(135deg, #ffff 0%, #ffff 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -40,11 +40,16 @@
             font-weight: 700;
         }
 
-        .logs-icon {
+        .header-icons {
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
             background: rgba(255,255,255,0.2);
             border: 2px solid white;
             color: white;
@@ -58,20 +63,20 @@
             transition: all 0.3s;
         }
 
-        .logs-icon:hover {
+        .icon-btn:hover {
             background: white;
             color: #10b981;
         }
 
+        .icon-btn.active {
+            background: white;
+            color: #ef4444;
+        }
+
         .video-container {
             position: relative;
-            background: #1a1a1a;
-            width: 100%;
-            height: 400px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #000;
+            aspect-ratio: 4/3;
         }
 
         #video { 
@@ -79,7 +84,6 @@
             height: 100%; 
             object-fit: cover;
             transform: scaleX(-1);
-            display: block;
         }
         
         #canvas { display: none; }
@@ -90,35 +94,10 @@
             left: 0;
             right: 0;
             padding: 15px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
             color: white;
             text-align: center;
             font-size: 14px;
-            font-weight: 500;
-            z-index: 10;
-        }
-
-        .camera-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: #9ca3af;
-            z-index: 5;
-        }
-
-        .camera-loading svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
         }
 
         .driver-info {
@@ -180,6 +159,10 @@
             padding: 25px 30px 30px;
         }
 
+        .button-container.has-remove {
+            grid-template-columns: 1fr 1fr;
+        }
+
         .action-btn {
             padding: 15px;
             border: none;
@@ -216,6 +199,12 @@
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             box-shadow: 0 4px 15px rgba(239,68,68,0.4);
             grid-column: 1 / -1;
+            display: none;
+        }
+
+        .remove-btn.show {
+            display: block;
+            animation: slideDown 0.3s;
         }
 
         .remove-btn:hover:not(:disabled) {
@@ -376,27 +365,29 @@
     <div class="recognition-card">
         <div class="card-header">
             <h1>Driver Recognition</h1>
-            <div class="logs-icon" onclick="openLogsModal()" title="View Removal Logs">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                </svg>
+            <div class="header-icons">
+                <div class="icon-btn" id="toggleRemoveBtn" onclick="toggleRemoveButton()" title="Show/Hide Remove Button">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="icon-btn" onclick="openLogsModal()" title="View Removal Logs">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
             </div>
         </div>
         
         <div class="video-container">
-            <video id="video" autoplay playsinline muted></video>
+            <video id="video" autoplay playsinline></video>
             <canvas id="canvas"></canvas>
-            <div class="camera-loading" id="cameraLoading">
-                <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
-                    <path d="M23 19a4 4 0 0 1 8 0M9 23h46c2.2 0 4 1.8 4 4v28c0 2.2-1.8 4-4 4H9c-2.2 0-4-1.8-4-4V27c0-2.2 1.8-4 4-4z"/>
-                    <circle cx="32" cy="40" r="8"/>
-                </svg>
-                <p>Starting camera...</p>
-            </div>
             <div class="status-overlay" id="statusOverlay">Initializing camera...</div>
         </div>
         
@@ -421,7 +412,7 @@
             <div class="status-message" id="driverMessage"></div>
         </div>
         
-        <div class="button-container">
+        <div class="button-container" id="buttonContainer">
             <button class="action-btn inqueue-btn" id="inqueueBt">Inqueue</button>
             <button class="action-btn dispatch-btn" id="dispatchBtn">Dispatch</button>
             <button class="action-btn remove-btn" id="removeBtn">Remove Now Serving</button>
@@ -436,7 +427,7 @@
             </div>
             <div class="modal-body" id="logsBody">
                 <div class="empty-logs">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="32" cy="32" r="30"/>
                         <path d="M32 16v16m0 4h.01"/>
                     </svg>
@@ -445,7 +436,6 @@
             </div>
         </div>
     </div>
-    
     <script>
         // Configuration - UPDATE THIS WITH YOUR API URL
         const API_URL = typeof FLASK_API_URL !== 'undefined' ? FLASK_API_URL : 'http://localhost:5000';
@@ -466,11 +456,13 @@
         const removeBtn = document.getElementById('removeBtn');
         const logsModal = document.getElementById('logsModal');
         const logsBody = document.getElementById('logsBody');
+        const toggleRemoveBtnIcon = document.getElementById('toggleRemoveBtn');
         
         let currentDriver = null;
         let currentRemoverDriver = null;
         let isProcessing = false;
         let cameraStream = null;
+         let isRemoveButtonVisible = false;
 
         console.log('🎥 Driver Recognition System Initialized');
         console.log('📡 API URL:', API_URL);
@@ -737,13 +729,8 @@
             }
         });
 
-        removeBtn.addEventListener('click', async () => {
+     removeBtn.addEventListener('click', async () => {
             if (isProcessing) return;
-            if (!video.srcObject) {
-                updateDriverMessage('Camera not initialized. Please refresh the page.', 'error');
-                return;
-            }
-            
             isProcessing = true;
             removeBtn.disabled = true;
             removeBtn.innerHTML = '<span class="loading-spinner"></span>Authenticating...';
@@ -780,7 +767,6 @@
                     driverStatusValue.textContent = 'Removal Successful';
                     updateDriverMessage(`${removeData.removed_driver_name || 'Driver'} removed from Now Serving by ${currentRemoverDriver.name}`, 'success');
                     statusOverlay.textContent = 'Removed successfully!';
-                    statusOverlay.style.background = 'rgba(16, 185, 129, 0.9)';
                     
                     setTimeout(() => {
                         statusOverlay.textContent = 'Auto reload...';
@@ -808,7 +794,7 @@
             logsModal.classList.add('show');
             logsBody.innerHTML = `
                 <div class="empty-logs">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="32" cy="32" r="30"/>
                         <path d="M32 16v16m0 4h.01"/>
                     </svg>
@@ -840,7 +826,7 @@
                 } else {
                     logsBody.innerHTML = `
                         <div class="empty-logs">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="32" cy="32" r="30"/>
                                 <line x1="20" y1="44" x2="44" y2="20"/>
                             </svg>
@@ -852,7 +838,7 @@
                 console.error('Error loading logs:', error);
                 logsBody.innerHTML = `
                     <div class="empty-logs">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 64 64">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="32" cy="32" r="30"/>
                             <path d="M32 16v16m0 4h.01"/>
                         </svg>
