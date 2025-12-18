@@ -66,7 +66,9 @@
         .video-container {
             position: relative;
             background: #000;
-            aspect-ratio: 4/3;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
         }
 
         #video { 
@@ -74,6 +76,7 @@
             height: 100%; 
             object-fit: cover;
             transform: scaleX(-1);
+            display: block;
         }
         
         #canvas { display: none; }
