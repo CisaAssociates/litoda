@@ -1,32 +1,15 @@
 #!/bin/bash
-
-# Get port from Railway (defaults to 8080 if not set)
-PORT=${PORT:-8080}
-
-echo "🔧 Configuring Apache for port $PORT..."
-
-# Update Apache to listen on Railway's port
+# Use PORT environment variable provided by Railway, default to 80
+PORT=${PORT:-80}
+# Configure Apache to listen on the correct port
 sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf
-sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/" /etc/apache2/sites-available/000-default.conf
-
-echo "🚀 Starting Python Face Recognition API on port 5000..."
-
-# Activate virtual environment and start gunicorn in background
-. /opt/venv/bin/activate && \
-gunicorn face_recognition_system:app \
-  --bind 0.0.0.0:5000 \
-  --timeout 180 \
-  --workers 1 \
-  --threads 2 \
-  --log-level info \
-  --access-logfile - \
-  --error-logfile - &
-
-# Wait a bit for Python to start
-sleep 3
-
-echo "✅ Python API started"
-echo "🌐 Starting Apache Web Server on port $PORT..."
+sed -i "s/:80/:$PORT/" /etc/apache2/sites-available/000-default.conf
+# Start Python backend in background
+# We bind to 0.0.0.0:5000 to ensure it listens on all interfaces (internal localhost communication still works)
+# We remove --daemon to keep logs visible in Railway console (using & to run in background)
+echo "Starting Python Face Recognition System..."
+gunicorn face_recognition_system:app --bind 0.0.0.0:5000 --timeout 120 --log-level debug --access-logfile - --error-logfile - &
 
 # Start Apache in foreground
+echo "Starting Apache..."
 apache2-foreground
