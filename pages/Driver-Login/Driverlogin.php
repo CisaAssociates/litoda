@@ -438,7 +438,7 @@
     </div>
     <script>
         // Configuration - UPDATE THIS WITH YOUR API URL
-        const API_URL = typeof FLASK_API_URL !== 'undefined' ? FLASK_API_URL : 'http://localhost:5000';
+        const API_URL = typeof FLASK_API_URL !== 'https://litoda-production.up.railway.app' ? FLASK_API_URL : 'http://localhost:5000';
         
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
