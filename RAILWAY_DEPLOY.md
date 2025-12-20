@@ -46,13 +46,12 @@ Since the app stores driver photos and face data, you must create a Volume so da
 5.  Click **Add**.
     *   This ensures that all images and the `face_data.json` (which is now stored in `uploads/`) are saved permanently.
 
-## Step 5: Run Database Migration
-1.  Once the app is deployed and "Active", click on the **Service URL** (e.g., `https://your-app.up.railway.app`).
-2.  You should be redirected to the Login page.
-3.  **Initialize the Database**:
-    *   Go to: `https://your-app.up.railway.app/database/migrate.php`
-    *   You should see "Migration completed successfully".
-    *   *Security Tip: After migration, you can delete `database/migrate.php` from your repo and redeploy.*
+## Step 5: Database Migration
+Migrations are now set to run automatically when the application starts.
+
+However, if you need to run them manually:
+1.  Go to: `https://your-app.up.railway.app/database/migrate.php`
+2.  You should see "Migration completed successfully".
 
 ## Step 6: Verify
 1.  Go back to the Login page.

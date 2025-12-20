@@ -185,7 +185,7 @@ CREATE TABLE `queue` (
 -- Table structure for table `removal_logs`
 --
 
-CREATE TABLE IF NOT EXISTS `removal_logs` (
+CREATE TABLE `removal_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `driver_id` int(11) DEFAULT NULL,
   `driver_name` varchar(255) DEFAULT NULL,
