@@ -822,4 +822,51 @@
                     `).join('');
                 } else {
                     logsBody.innerHTML = `
-                        <div
+                        <div class="empty-logs">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="32" cy="32" r="30"/>
+                            <path d="M32 16v16m0 4h.01"/>
+                        </svg>
+                        <p>Error loading logs</p>
+                    </div>
+                `;
+            }
+        }
+
+        function closeLogsModal() {
+            logsModal.classList.remove('show');
+        }
+
+        function formatDateTime(datetime) {
+            const date = new Date(datetime);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        // Close modal when clicking outside
+        logsModal.addEventListener('click', (e) => {
+            if (e.target === logsModal) closeLogsModal();
+        });
+
+        // Initialize camera on page load
+        window.addEventListener('load', () => {
+            console.log('🚀 Page loaded, starting camera...');
+            startCamera();
+        });
+
+        // Cleanup camera stream on page unload
+        window.addEventListener('beforeunload', () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                console.log('🛑 Camera stream stopped');
+            }
+        });
+    </script>
+</body>
+</html>
