@@ -159,10 +159,6 @@
             padding: 25px 30px 30px;
         }
 
-        .button-container.has-remove {
-            grid-template-columns: 1fr 1fr;
-        }
-
         .action-btn {
             padding: 15px;
             border: none;
@@ -455,7 +451,6 @@
         const removeBtn = document.getElementById('removeBtn');
         const logsModal = document.getElementById('logsModal');
         const logsBody = document.getElementById('logsBody');
-        const toggleRemoveBtnIcon = document.getElementById('toggleRemoveBtn');
         
         let currentDriver = null;
         let currentRemoverDriver = null;
@@ -823,8 +818,8 @@
                 } else {
                     logsBody.innerHTML = `
                         <div class="empty-logs">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="32" cy="32" r="30"/>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="32" cy="32" r="30"/>
                             <path d="M32 16v16m0 4h.01"/>
                         </svg>
                         <p>Error loading logs</p>
