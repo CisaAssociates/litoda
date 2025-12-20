@@ -436,9 +436,10 @@
             </div>
         </div>
     </div>
+    <script src="../../assets/js/config.js.php"></script>
     <script>
         // Configuration - UPDATE THIS WITH YOUR API URL
-        const API_URL = typeof FLASK_API_URL !== 'undefined' ? FLASK_API_URL : '/py-ap';
+        const API_URL = typeof FLASK_API_URL !== 'undefined' ? FLASK_API_URL : '/py-api';
         
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
