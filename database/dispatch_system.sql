@@ -58,8 +58,8 @@ CREATE TABLE `drivers` (
   `middlename` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `tricycle_number` varchar(255) DEFAULT NULL,
-  `registered_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `contact_no` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `contact_no` varchar(20) DEFAULT NULL,
   `profile_pic` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -67,13 +67,9 @@ CREATE TABLE `drivers` (
 -- Dumping data for table `drivers`
 --
 
-INSERT INTO `drivers` (`id`, `firstname`, `middlename`, `lastname`, `tricycle_number`, `registered_at`, `contact_no`, `profile_pic`) VALUES
-(6, 'Vicente', 'C', 'Gumahob', 'D-45', '2025-11-26 02:34:13', '', 'uploads/Vicente_Gumahob/profile_692667256ad71_1764124453.jpg'),
-(7, 'Pacifico', 'C', 'Igsolo', 'D-38', '2025-11-26 02:35:37', '', 'uploads/Pacifico_Igsolo/profile_6926677935246_1764124537.jpg'),
-(8, 'Ferdinand', 'A', 'Cadavos', 'D-39', '2025-11-26 02:40:37', '09619147012', 'uploads/Ferdinand_Cadavos/profile_692668a550285_1764124837.jpg'),
-(9, 'Anthony', 'A', 'Gerong', 'D-34', '2025-11-26 02:42:53', '09087664637', 'uploads/Anthony_Gerong/profile_6926692d32aa1_1764124973.jpg'),
-(10, 'Leo', 'D', 'Sajonia', 'D-65', '2025-11-26 02:45:26', '09565467323', 'uploads/Leo_Sajonia/profile_692669c61b26e_1764125126.jpg'),
-(12, 'Jhonriel', 'C', 'Padecio', 'D-27', '2025-11-26 11:13:39', '09630718267', 'uploads/Jhonriel_Padecio/profile_6926e0e347181_1764155619.jpg'),
+INSERT INTO `drivers` (`id`, `firstname`, `middlename`, `lastname`, `tricycle_number`, `created_at`, `contact_no`, `profile_pic`) VALUES
+(12, 'Jhonriel', 'C', 'Padecio', 'D-27', '2025-11-28 07:10:04', '09518342203', 'uploads/Jhonriel_Padecio/profile_69295a6435c4a_1764326500.jpg'),
+(18, 'Justine Kaye', 'G.', 'Aves', 'D-01', '2025-11-29 09:37:05', '09123456789', 'uploads/JustineKaye_Aves/profile_692abeb124c88_1764409009.jpg'),
 (19, 'Alexandra', 'F.', 'Relente', 'D-40', '2025-11-29 10:37:47', '09639123921', 'uploads/Alexandra_Relente/profile_692accfba1ab9_1764412667.jpg'),
 (24, 'Justine Kaye', 'G', 'Aves', 'D-01', '2025-11-29 12:42:42', '09876754325', 'uploads/Justinekaye_Aves/profile_692aea420f311_1764420162.jpg');
 
@@ -141,107 +137,6 @@ CREATE TABLE `login_logs` (
 --
 
 INSERT INTO `login_logs` (`id`, `admin_id`, `username`, `email`, `status`, `ip_address`, `user_agent`, `login_time`, `failure_reason`) VALUES
-(1, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-19 15:46:13', NULL),
-(2, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-19 15:48:40', NULL),
-(3, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-19 20:27:01', NULL),
-(4, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-19 21:21:50', NULL),
-(5, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-19 23:48:18', NULL),
-(6, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 01:20:42', NULL),
-(7, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 08:13:19', NULL),
-(8, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 08:13:48', NULL),
-(9, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 20:39:36', NULL),
-(10, 1, 'admin', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 20:59:16', 'Invalid password'),
-(11, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 20:59:24', NULL),
-(12, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-20 21:57:34', NULL),
-(13, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 09:04:55', NULL),
-(14, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 09:27:24', NULL),
-(15, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 10:27:41', NULL),
-(16, NULL, 'asjdbabcdkhfk', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 10:35:32', 'User not found'),
-(17, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 10:37:43', NULL),
-(18, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-21 15:31:15', NULL),
-(19, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-22 23:27:08', NULL),
-(20, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-23 00:39:18', NULL),
-(21, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-23 00:41:11', NULL),
-(22, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-23 00:51:45', NULL),
-(23, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-25 15:30:29', NULL),
-(24, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-25 16:31:27', NULL),
-(25, 1, 'admin', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 10:29:52', 'Invalid password'),
-(26, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 10:29:58', NULL),
-(27, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 10:37:43', NULL),
-(28, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 14:46:11', NULL),
-(29, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 19:05:15', NULL),
-(30, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-26 21:59:21', NULL),
-(31, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-27 00:02:15', NULL),
-(32, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-27 14:58:15', NULL),
-(33, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-27 22:14:03', NULL),
-(34, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-27 22:51:14', NULL),
-(35, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 07:27:18', NULL),
-(36, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 13:06:19', NULL),
-(37, NULL, 'admin123', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 13:35:56', 'User not found'),
-(38, NULL, 'admin123', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 13:36:08', 'User not found'),
-(39, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 13:36:28', NULL),
-(40, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 14:02:57', NULL),
-(41, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 19:28:03', NULL),
-(42, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-28 23:15:18', NULL),
-(43, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:45:07', NULL),
-(44, NULL, '501@', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:56:49', 'User not found'),
-(45, 1, 'admin', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:57:02', 'Invalid password'),
-(46, NULL, '1', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:57:16', 'User not found'),
-(47, NULL, '1', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:57:22', 'User not found'),
-(48, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 07:59:52', 'User not found'),
-(49, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:00:31', 'User not found'),
-(50, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:02:14', 'User not found'),
-(51, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:02:26', 'User not found'),
-(52, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:07:26', 'User not found'),
-(53, NULL, '12', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:07:31', 'User not found'),
-(54, NULL, '123', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:07:47', 'User not found'),
-(55, NULL, '123', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:15:19', 'User not found'),
-(56, 1, 'admin', NULL, 'Failed', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:18:01', 'Invalid password'),
-(57, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 08:19:01', NULL),
-(58, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 14:10:22', NULL),
-(59, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 17:51:01', NULL),
-(60, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 18:03:51', NULL),
-(61, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 18:06:54', NULL),
-(62, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 18:42:02', NULL),
-(63, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 18:50:41', NULL),
-(64, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 18:54:43', NULL),
-(65, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 19:02:16', NULL),
-(66, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 19:04:26', NULL),
-(67, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 19:07:46', NULL),
-(68, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 19:56:40', NULL),
-(69, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 20:00:19', NULL),
-(70, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 20:05:21', NULL),
-(71, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 20:07:05', NULL),
-(72, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 20:09:39', NULL),
-(73, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-29 20:41:59', NULL),
-(74, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-30 13:08:33', NULL),
-(75, 1, 'admin', NULL, 'Success', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', '2025-11-30 13:20:44', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `queue`
---
-
-CREATE TABLE `queue` (
-  `id` int(11) NOT NULL,
-  `driver_id` varchar(255) DEFAULT NULL,
-  `driver_name` varchar(255) DEFAULT NULL,
-  `tricycle_number` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `queued_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `dispatch_at` timestamp NULL DEFAULT NULL,
-  `queue_number` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `queue`
---
-
-INSERT INTO `queue` (`id`, `driver_id`, `driver_name`, `tricycle_number`, `status`, `queued_at`, `dispatch_at`, `queue_number`) VALUES
-(49, '12', 'Jhonriel Padecio', 'D-27', 'Dispatched', '2025-11-28 23:46:58', '2025-11-28 23:48:58', NULL),
-(50, '18', 'Justine Kaye Aves', 'D-01', 'Dispatched', '2025-11-29 10:08:43', '2025-11-29 10:50:58', NULL),
-(51, '19', 'Alexandra Relente', 'D-40', 'Dispatched', '2025-11-29 10:38:31', '2025-11-29 10:46:21', NULL),
 (52, '20', 'Justine Kaye Aves', 'D-01', 'Dispatched', '2025-11-29 10:45:38', '2025-11-29 10:46:50', NULL),
 (53, '21', 'Justine Kaye Aves', 'D-01', 'Dispatched', '2025-11-29 11:05:54', '2025-11-29 11:56:51', NULL),
 (54, '23', 'Justine Kaye Aves', 'D-01', 'Dispatched', '2025-11-29 12:10:39', '2025-11-29 12:36:32', NULL),
@@ -267,6 +162,42 @@ CREATE TABLE `sms_logs` (
   `sent_at` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `queue`
+--
+
+CREATE TABLE `queue` (
+  `id` int(11) NOT NULL,
+  `driver_id` int(11) DEFAULT NULL,
+  `status` enum('Onqueue','Dispatched','Cancelled','Removed') DEFAULT 'Onqueue',
+  `queued_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `dispatched_at` timestamp NULL DEFAULT NULL,
+  `queue_number` int(11) DEFAULT NULL,
+  `queue_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `removal_logs`
+--
+
+CREATE TABLE IF NOT EXISTS `removal_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `driver_id` int(11) DEFAULT NULL,
+  `driver_name` varchar(255) DEFAULT NULL,
+  `tricycle_number` varchar(50) DEFAULT NULL,
+  `queue_number` int(11) DEFAULT NULL,
+  `remover_driver_id` int(11) DEFAULT NULL,
+  `remover_driver_name` varchar(255) DEFAULT NULL,
+  `removed_at` datetime DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Indexes for dumped tables
@@ -305,7 +236,8 @@ ALTER TABLE `login_logs`
 --
 ALTER TABLE `queue`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `queue_number` (`queue_number`);
+  ADD UNIQUE KEY `unique_queue_per_day` (`queue_number`,`queue_date`),
+  ADD KEY `idx_queue_number` (`queue_number`);
 
 --
 -- Indexes for table `sms_logs`
@@ -359,25 +291,7 @@ ALTER TABLE `sms_logs`
 --
 -- Constraints for dumped tables
 --
--- Add queue_number column to queue table
-ALTER TABLE queue 
-ADD COLUMN queue_number INT DEFAULT NULL AFTER driver_id;
 
--- Add index for better performance
-CREATE INDEX idx_queue_number ON queue(queue_number);
-
--- Update existing records with sequential numbers (if you have existing data today)
-SET @num := 0;
-UPDATE queue 
-SET queue_number = (@num := @num + 1)
-WHERE DATE(queued_at) = CURDATE()
-ORDER BY queued_at ASC;
-
--- Verify the changes
-SELECT id, driver_id, queue_number, status, queued_at 
-FROM queue 
-WHERE DATE(queued_at) = CURDATE()
-ORDER BY queue_number ASC;
 --
 -- Constraints for table `login_logs`
 --
@@ -385,16 +299,6 @@ ALTER TABLE `login_logs`
   ADD CONSTRAINT `login_logs_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE SET NULL;
 COMMIT;
 
-ALTER TABLE queue ADD COLUMN queue_date DATE AFTER queue_number;
-
--- Remove old unique constraint (if exists)
-ALTER TABLE queue DROP INDEX IF EXISTS queue_number;
-
--- Add new composite unique constraint (queue_number + date)
-ALTER TABLE queue ADD UNIQUE KEY unique_queue_per_day (queue_number, queue_date);
-
--- Update existing records with their dates
-UPDATE queue SET queue_date = DATE(queued_at) WHERE queue_date IS NULL;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
