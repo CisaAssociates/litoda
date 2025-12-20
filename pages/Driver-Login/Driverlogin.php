@@ -437,14 +437,13 @@
         </div>
     </div>
     <script>
-        // Configuration - UPDATE THIS WITH YOUR API URL
-        const API_URL = typeof FLASK_API_URL !== 'undefined' ? FLASK_API_URL : 'https://litoda-production.up.railway.app';
+        // Configuration - API URL
+        const API_URL = (typeof FLASK_API_URL !== 'undefined') ? FLASK_API_URL : '/py-api';
         
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const statusOverlay = document.getElementById('statusOverlay');
-        const cameraLoading = document.getElementById('cameraLoading');
         const driverInfo = document.getElementById('driverInfo');
         const driverName = document.getElementById('driverName');
         const driverTricycle = document.getElementById('driverTricycle');
@@ -485,7 +484,6 @@
             console.log('📷 Attempting to start camera...');
             
             try {
-                // Request camera permissions
                 const constraints = {
                     video: {
                         width: { ideal: 1280, max: 1920 },
@@ -501,7 +499,6 @@
                 console.log('✅ Camera access granted');
                 video.srcObject = cameraStream;
                 
-                // Wait for video to be ready
                 await new Promise((resolve, reject) => {
                     video.onloadedmetadata = () => {
                         console.log('📹 Video metadata loaded');
@@ -513,8 +510,6 @@
                             .catch(reject);
                     };
                     video.onerror = reject;
-                    
-                    // Timeout after 10 seconds
                     setTimeout(() => reject(new Error('Camera timeout')), 10000);
                 });
 
@@ -528,7 +523,6 @@
                 statusOverlay.textContent = 'Camera access denied or unavailable';
                 statusOverlay.style.background = 'rgba(239, 68, 68, 0.9)';
                 
-                // Show detailed error
                 if (err.name === 'NotAllowedError') {
                     console.log('💡 User denied camera permission');
                 } else if (err.name === 'NotFoundError') {
@@ -828,63 +822,4 @@
                     `).join('');
                 } else {
                     logsBody.innerHTML = `
-                        <div class="empty-logs">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="32" cy="32" r="30"/>
-                                <line x1="20" y1="44" x2="44" y2="20"/>
-                            </svg>
-                            <p>No removal logs found</p>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error loading logs:', error);
-                logsBody.innerHTML = `
-                    <div class="empty-logs">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="32" cy="32" r="30"/>
-                            <path d="M32 16v16m0 4h.01"/>
-                        </svg>
-                        <p>Error loading logs</p>
-                    </div>
-                `;
-            }
-        }
-
-        function closeLogsModal() {
-            logsModal.classList.remove('show');
-        }
-
-        function formatDateTime(datetime) {
-            const date = new Date(datetime);
-            return date.toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-
-        // Close modal when clicking outside
-        logsModal.addEventListener('click', (e) => {
-            if (e.target === logsModal) closeLogsModal();
-        });
-
-        // Initialize camera on page load
-        window.addEventListener('load', () => {
-            console.log('🚀 Page loaded, starting camera...');
-            startCamera();
-        });
-
-        // Cleanup camera stream on page unload
-        window.addEventListener('beforeunload', () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                console.log('🛑 Camera stream stopped');
-            }
-        });
-    </script>
-</body>
-</html>
+                        <div
