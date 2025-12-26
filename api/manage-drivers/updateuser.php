@@ -134,8 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // ---------------------------------------------------------------
-            // 5A: VALIDATE SINGLE FACE
+            // 5A: VALIDATE SINGLE FACE (Skip if already validated in JS)
             // ---------------------------------------------------------------
+            // Note: Face validation already done in JavaScript before submission
+            // This is a backup validation in case JS is bypassed
             $flask_validate_url = $flask_api_url . "/validate_single_face";
             $validate_payload = json_encode([
                 "image" => "data:image/jpeg;base64," . base64_encode($base64_image_data)
@@ -145,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             curl_setopt($ch_validate, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch_validate, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
             curl_setopt($ch_validate, CURLOPT_POSTFIELDS, $validate_payload);
-            curl_setopt($ch_validate, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch_validate, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch_validate, CURLOPT_TIMEOUT, 10); // ✅ Reduced from 30 to 10
+            curl_setopt($ch_validate, CURLOPT_CONNECTTIMEOUT, 5); // ✅ Reduced from 10 to 5
             $validate_response = curl_exec($ch_validate);
             $validate_http_code = curl_getinfo($ch_validate, CURLINFO_HTTP_CODE);
             $validate_error = curl_error($ch_validate);
@@ -197,8 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 curl_setopt($ch_match, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch_match, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
                 curl_setopt($ch_match, CURLOPT_POSTFIELDS, $payload);
-                curl_setopt($ch_match, CURLOPT_TIMEOUT, 30);
-                curl_setopt($ch_match, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($ch_match, CURLOPT_TIMEOUT, 10); // ✅ Reduced from 30 to 10
+                curl_setopt($ch_match, CURLOPT_CONNECTTIMEOUT, 5); // ✅ Reduced from 10 to 5
                 $match_response = curl_exec($ch_match);
                 $match_http_code = curl_getinfo($ch_match, CURLINFO_HTTP_CODE);
                 $match_error = curl_error($ch_match);
