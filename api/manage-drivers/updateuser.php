@@ -1,10 +1,34 @@
 <?php
+// ============================================
+// COMPLETE UPDATE USER PHP WITH FIXES
+// ============================================
+
 // ✅ Set Philippine timezone
 date_default_timezone_set('Asia/Manila');
+
+// ✅ Start session to track submissions
+session_start();
 
 require_once '../../database/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    // ====================================================================
+    // PREVENT DUPLICATE SUBMISSIONS
+    // ====================================================================
+    $submission_token = $_POST['submission_token'] ?? '';
+    
+    if (!empty($submission_token)) {
+        // Check if this token was already processed
+        if (isset($_SESSION['last_update_token']) && $_SESSION['last_update_token'] === $submission_token) {
+            // This is a duplicate submission - redirect to avoid reprocessing
+            header("Location: ../../pages/manage-drivers/managedrivers.php?error=duplicate_submission");
+            exit();
+        }
+        // Store the token
+        $_SESSION['last_update_token'] = $submission_token;
+    }
+    
     $driver_id = intval($_POST['driver_id']);
     $firstname = trim($_POST['firstname']);
     $middlename = trim($_POST['middlename']);
@@ -33,8 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // ✅ FIX: Store original contact value for duplicate check, but prepare NULL-safe version for bind_param
-    $contact_original = $contact;
+    // Convert empty contact to NULL for database
     $contact = !empty($contact) ? $contact : null;
 
     // ====================================================================
@@ -48,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         AND id != ?
     ");
     if ($duplicateNameCheck === false) {
-        error_log("Database prepare failed (duplicate name check): " . $conn->error);
         header("Location: ../../pages/manage-drivers/managedrivers.php?error=database_error");
         exit();
     }
@@ -66,16 +88,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // ====================================================================
     // STEP 4: CHECK FOR DUPLICATE CONTACT NUMBER (exclude current driver, only if contact is provided)
     // ====================================================================
-    if (!empty($contact_original)) {
+    if (!empty($contact)) {
         $duplicateContactCheck = $conn->prepare("
             SELECT id FROM drivers WHERE contact_no = ? AND id != ?
         ");
         if ($duplicateContactCheck === false) {
-            error_log("Database prepare failed (duplicate contact check): " . $conn->error);
             header("Location: ../../pages/manage-drivers/managedrivers.php?error=database_error");
             exit();
         }
-        $duplicateContactCheck->bind_param("si", $contact_original, $driver_id);
+        $duplicateContactCheck->bind_param("si", $contact, $driver_id);
         $duplicateContactCheck->execute();
         $duplicateContactResult = $duplicateContactCheck->get_result();
         if ($duplicateContactResult && $duplicateContactResult->num_rows > 0) {
@@ -99,7 +120,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (preg_match('/^data:image\/(\w+);base64,/', $base64_image, $type)) {
             $image_type = strtolower($type[1]);
             if (!in_array($image_type, ['jpg', 'jpeg', 'png'])) {
-                error_log("Invalid image type: " . $image_type);
                 header("Location: ../../pages/manage-drivers/managedrivers.php?error=invalid_image_type");
                 exit();
             }
@@ -109,7 +129,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $base64_image_data = base64_decode($base64_image);
 
             if ($base64_image_data === false) {
-                error_log("Base64 decode failed");
                 header("Location: ../../pages/manage-drivers/managedrivers.php?error=invalid_image_data");
                 exit();
             }
@@ -134,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             curl_close($ch_validate);
 
             if ($validate_response === false || $validate_http_code != 200) {
-                error_log("Flask validation failed: " . $validate_error . " (HTTP: " . $validate_http_code . ")");
+                error_log("Flask validation failed: " . $validate_error);
                 header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_validation_failed");
                 exit();
             }
@@ -142,9 +161,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $validateResult = json_decode($validate_response, true);
 
             if (!isset($validateResult["valid"]) || $validateResult["valid"] !== true) {
-                $error_message = isset($validateResult["message"]) ? $validateResult["message"] : "invalid_face";
-                error_log("Face validation failed: " . $error_message);
-                header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_validation&message=" . urlencode($error_message));
+                $error_message = isset($validateResult["message"]) ? urlencode($validateResult["message"]) : "invalid_face";
+                header("Location: ../../pages/manage-drivers/managedrivers.php?error=face_validation&message=" . $error_message);
                 exit();
             }
 
@@ -213,9 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // ---------------------------------------------------------------
             // Delete old image
             if (!empty($existing_image) && file_exists('../../' . $existing_image)) {
-                if (!unlink('../../' . $existing_image)) {
-                    error_log("Failed to delete old image: " . $existing_image);
-                }
+                unlink('../../' . $existing_image);
             }
 
             // Create upload directory
@@ -223,11 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $folder_name = preg_replace('/[^a-zA-Z0-9_-]/', '', $folder_name);
             $upload_dir = '../../uploads/' . $folder_name . '/';
             if (!is_dir($upload_dir)) {
-                if (!mkdir($upload_dir, 0755, true)) {
-                    error_log("Failed to create directory: " . $upload_dir);
-                    header("Location: ../../pages/manage-drivers/managedrivers.php?error=file_upload_failed");
-                    exit();
-                }
+                mkdir($upload_dir, 0755, true);
             }
 
             // Save new image
@@ -236,14 +248,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (file_put_contents($file_path, $base64_image_data)) {
                 $profile_picture_path = 'uploads/' . $folder_name . '/' . $filename;
-                error_log("Image saved successfully: " . $profile_picture_path);
             } else {
-                error_log("Failed to save image to: " . $file_path);
                 header("Location: ../../pages/manage-drivers/managedrivers.php?error=file_upload_failed");
                 exit();
             }
         } else {
-            error_log("Invalid image format - missing data:image header");
             header("Location: ../../pages/manage-drivers/managedrivers.php?error=invalid_image_data");
             exit();
         }
@@ -252,49 +261,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // ====================================================================
     // STEP 6: UPDATE DRIVER IN DATABASE
     // ====================================================================
+    $stmt = $conn->prepare("
+        UPDATE drivers 
+        SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=?, profile_pic=? 
+        WHERE id=?
+    ");
     
-    // ✅ FIX: Use separate queries based on whether contact is NULL or not
-    if ($contact !== null) {
-        $stmt = $conn->prepare("
-            UPDATE drivers 
-            SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=?, profile_pic=? 
-            WHERE id=?
-        ");
-        
-        if ($stmt === false) {
-            error_log("Database prepare failed: " . $conn->error);
-            header("Location: ../../pages/manage-drivers/managedrivers.php?error=database_error");
-            exit();
-        }
-
-        $stmt->bind_param("ssssssi", $firstname, $middlename, $lastname, $platenumber, $contact, $profile_picture_path, $driver_id);
-    } else {
-        // ✅ When contact is NULL, use a different query
-        $stmt = $conn->prepare("
-            UPDATE drivers 
-            SET firstname=?, middlename=?, lastname=?, tricycle_number=?, contact_no=NULL, profile_pic=? 
-            WHERE id=?
-        ");
-        
-        if ($stmt === false) {
-            error_log("Database prepare failed: " . $conn->error);
-            header("Location: ../../pages/manage-drivers/managedrivers.php?error=database_error");
-            exit();
-        }
-
-        $stmt->bind_param("sssssi", $firstname, $middlename, $lastname, $platenumber, $profile_picture_path, $driver_id);
+    if ($stmt === false) {
+        error_log("Database prepare failed: " . $conn->error);
+        header("Location: ../../pages/manage-drivers/managedrivers.php?error=database_error");
+        exit();
     }
 
+    $stmt->bind_param("ssssssi", $firstname, $middlename, $lastname, $platenumber, $contact, $profile_picture_path, $driver_id);
+
     if ($stmt->execute()) {
-        error_log("✅ Driver updated successfully: ID=" . $driver_id);
         $stmt->close();
         $conn->close();
+        
+        // ✅ Clear the submission token after successful update
+        unset($_SESSION['last_update_token']);
+        
         header("Location: ../../pages/manage-drivers/managedrivers.php?success=user_updated");
     } else {
-        error_log("❌ Database update failed: " . $stmt->error);
-        error_log("❌ MySQL Error: " . $conn->error);
-        error_log("❌ Driver ID: " . $driver_id);
-        error_log("❌ Values: firstname=$firstname, middlename=$middlename, lastname=$lastname, plate=$platenumber, contact=$contact, pic=$profile_picture_path");
+        error_log("Database update failed: " . $stmt->error);
         $stmt->close();
         $conn->close();
         header("Location: ../../pages/manage-drivers/managedrivers.php?error=update_failed");
