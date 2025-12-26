@@ -634,10 +634,8 @@ if (editUserForm) {
         })
         .then(response => response.text())
         .then(text => {
-            // Force reload to show updated data
-            setTimeout(() => {
-                window.location.href = window.location.pathname + '?success=user_updated';
-            }, 800);
+            // Immediately reload page to show updated data
+            window.location.href = window.location.pathname + '?success=user_updated';
         })
         .catch(error => {
             console.error('Error:', error);
