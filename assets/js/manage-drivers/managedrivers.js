@@ -601,6 +601,8 @@ function showEditStatus(message, type) {
     }
 }
 
+// Replace the editUserForm.onsubmit function with this fixed version:
+
 if (editUserForm) {
     editUserForm.onsubmit = function(e) {
         e.preventDefault();
@@ -622,20 +624,36 @@ if (editUserForm) {
         editSubmitBtn.disabled = true;
         editSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
         
-        // Close modal immediately and show success
-        editModal.classList.remove("show");
+        // Show loading status
         showGlobalStatus("Saving changes...", "info");
         
-        // Submit form in background
+        // Submit form
         const formData = new FormData(editUserForm);
         fetch('../../api/manage-drivers/updateuser.php', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.text())
+        .then(response => {
+            // Check if response is ok
+            if (!response.ok) {
+                throw new Error('Server responded with ' + response.status);
+            }
+            return response.text();
+        })
         .then(text => {
-            // Immediately reload page to show updated data
-            window.location.href = window.location.pathname + '?success=user_updated';
+            // Parse response to check for errors
+            console.log('Server response:', text);
+            
+            // Close modal immediately
+            editModal.classList.remove("show");
+            
+            // Show success message
+            showGlobalStatus('Driver updated successfully!', 'success');
+            
+            // Wait a bit for the database to complete, then reload
+            setTimeout(() => {
+                window.location.href = window.location.pathname + '?success=user_updated';
+            }, 500);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -643,7 +661,7 @@ if (editUserForm) {
             isSubmittingEdit = false;
             editSubmitBtn.disabled = false;
             editSubmitBtn.innerHTML = '<i class="fas fa-save"></i> Update User';
-            editModal.classList.add("show");
+            // Don't close modal on error so user can try again
         });
         
         return false;
