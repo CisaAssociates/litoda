@@ -233,14 +233,20 @@ if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     }
 }
 
-// Enhanced notification function
+// Enhanced notification function with FontAwesome icons
 function showGlobalStatus(message, type) {
     const existing = document.querySelectorAll('.global-notification');
     existing.forEach(el => el.remove());
     
     const globalStatus = document.createElement('div');
     globalStatus.className = `global-notification status-${type}`;
-    globalStatus.innerHTML = `<div>${message}</div>`;
+    globalStatus.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" 
+               style="font-size: 20px;"></i>
+            <span style="flex: 1;">${message}</span>
+        </div>
+    `;
     document.body.appendChild(globalStatus);
     
     setTimeout(() => {
@@ -632,7 +638,7 @@ function closeEditCameraModal() {
     editVideo.srcObject = null;
 }
 
-// ✅ FIXED: Only allow same-person face updates
+// ✅ IMPROVED: Enhanced captureEditPhoto with better structure from second code
 async function captureEditPhoto() {
     const context = editCanvas.getContext('2d');
     editCanvas.width = editVideo.videoWidth;
@@ -641,79 +647,115 @@ async function captureEditPhoto() {
     
     const imageData = editCanvas.toDataURL('image/jpeg', 0.8);
     
-    // Validate face count before confirming capture
+    // UI update
     showEditStatus("Validating face...", "info");
-    editCaptureBtn.disabled = true;
-    editCaptureBtn.textContent = "Validating...";
+    setEditCaptureButtonState(true, "Validating...");
     
     try {
-        // Step 1: Validate single face
-        const response = await fetch(`${API_BASE_URL}/validate_single_face`, {
+        // ------------------------------------------------
+        // 1️⃣ VALIDATE SINGLE FACE
+        // ------------------------------------------------
+        const validateRes = await fetch(`${API_BASE_URL}/validate_single_face`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: imageData })
         });
         
-        const result = await response.json();
+        const validateData = await validateRes.json();
         
-        if (result.valid) {
-            // Step 2: Check if this is the same person as the existing profile
-            const existingPath = document.getElementById('existingImagePath').value;
-            
-            if (existingPath) {
-                showEditStatus("Verifying face match...", "info");
-                
-                const matchResponse = await fetch(`${API_BASE_URL}/check_face_match`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        existing_image_path: existingPath,
-                        new_image: imageData
-                    })
-                });
-                
-                const matchResult = await matchResponse.json();
-                
-                if (matchResult.same_face) {
-                    // ✅ Same person - allow update
-                    editVideo.style.display = 'none';
-                    editCanvas.style.display = 'block';
-                    editCaptureBtn.style.display = 'none';
-                    editRetakeBtn.style.display = 'inline-block';
-                    editConfirmBtn.style.display = 'inline-block';
-                    editCapturedImageData = imageData;
-                    showEditStatus("✓ Same person detected! Face verified successfully.", "success");
-                    showGlobalStatus("✓ Face matched! This is the same person. You can proceed with the update.", "success");
-                } else {
-                    // ❌ Different person - REJECT (don't allow any updates)
-                    showEditStatus("This is not the same person as the registered driver!", "error");
-                    showGlobalStatus("❌ Face mismatch! The new photo must be of the same registered driver. Update blocked.", "error");
-                    editCaptureBtn.disabled = false;
-                    editCaptureBtn.textContent = "Capture";
-                }
-            } else {
-                // No existing image, just proceed
-                editVideo.style.display = 'none';
-                editCanvas.style.display = 'block';
-                editCaptureBtn.style.display = 'none';
-                editRetakeBtn.style.display = 'inline-block';
-                editConfirmBtn.style.display = 'inline-block';
-                editCapturedImageData = imageData;
-                showEditStatus("Face validated successfully!", "success");
-            }
-        } else {
-            showEditStatus(result.message || "Invalid face capture", "error");
-            showGlobalStatus(result.message || "Invalid face capture", "error");
-            editCaptureBtn.disabled = false;
-            editCaptureBtn.textContent = "Capture";
+        if (!validateData.valid) {
+            handleEditError(validateData.message || "No valid face detected.");
+            return;
         }
-    } catch (err) {
-        console.error("Face validation error:", err);
-        showEditStatus("Error validating face. Please try again.", "error");
-        showGlobalStatus("Cannot connect to face recognition system. Please ensure the Python server is running.", "error");
-        editCaptureBtn.disabled = false;
-        editCaptureBtn.textContent = "Capture";
+        
+        // ------------------------------------------------
+        // 2️⃣ CHECK IF SAME PERSON USING EXISTING PROFILE
+        // ------------------------------------------------
+        const existingPath = document.getElementById("existingImagePath").value;
+        
+        if (existingPath) {
+            showEditStatus("Verifying if same person...", "info");
+            
+            const matchRes = await fetch(`${API_BASE_URL}/check_face_match`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    existing_image_path: existingPath,
+                    new_image: imageData
+                })
+            });
+            
+            const matchData = await matchRes.json();
+            
+            if (!matchData.same_face) {
+                // ❌ INVALID – NOT SAME PERSON
+                handleEditError("This is NOT the same registered driver!");
+                showGlobalStatus("❌ Face mismatch. Update blocked.", "error");
+                return;
+            }
+            
+            // ✔ SAME PERSON → ACCEPT UPDATE
+            editCapturedImageData = imageData;
+            editVideo.style.display = "none";
+            editCanvas.style.display = "block";
+            
+            editCaptureBtn.style.display = "none";
+            editRetakeBtn.style.display = "inline-block";
+            editConfirmBtn.style.display = "inline-block";
+            
+            showEditStatus("✓ Same person verified!", "success");
+            showGlobalStatus("✓ Face match confirmed. You can update the profile.", "success");
+            
+        } else {
+            // ------------------------------------------------
+            // 3️⃣ NO EXISTING IMAGE → JUST ACCEPT
+            // ------------------------------------------------
+            editCapturedImageData = imageData;
+            
+            editVideo.style.display = "none";
+            editCanvas.style.display = "block";
+            
+            editCaptureBtn.style.display = "none";
+            editRetakeBtn.style.display = "inline-block";
+            editConfirmBtn.style.display = "inline-block";
+            
+            showEditStatus("Face validated successfully!", "success");
+        }
+        
+    } catch (error) {
+        console.error("Edit Photo Validation Error:", error);
+        handleEditError("Cannot connect to face recognition server.");
+    } finally {
+        setEditCaptureButtonState(false, "Capture");
     }
+}
+
+// ---------------------------------------------------------
+// HELPER FUNCTION: Handle errors
+// ---------------------------------------------------------
+function handleEditError(message) {
+    showEditStatus(message, "error");
+    showGlobalStatus(message, "error");
+    
+    // Reset UI
+    editCanvas.style.display = "none";
+    editVideo.style.display = "block";
+    
+    editCaptureBtn.style.display = "inline-block";
+    editRetakeBtn.style.display = "none";
+    editConfirmBtn.style.display = "none";
+    
+    editCapturedImageData = null;
+    
+    setEditCaptureButtonState(false, "Capture");
+}
+
+// ---------------------------------------------------------
+// HELPER FUNCTION: Button state helper
+// ---------------------------------------------------------
+function setEditCaptureButtonState(isDisabled, text) {
+    editCaptureBtn.disabled = isDisabled;
+    editCaptureBtn.textContent = text;
 }
 
 function retakeEditPhoto() {
@@ -745,7 +787,7 @@ function showEditStatus(message, type) {
         
         if (type === 'success') {
             setTimeout(() => {
-                editStatusMessage.style.display = 'none';
+                editStatusMessage.style.display = editStatusMessage.style.display = 'none';
             }, 3000);
         }
     }
