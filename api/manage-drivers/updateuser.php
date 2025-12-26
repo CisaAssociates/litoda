@@ -33,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Convert empty contact to NULL for database
-    $contact = !empty($contact) ? $contact : null;
+    // Convert empty contact to empty string for database (NULL causes bind_param issues)
+    $contact = !empty($contact) ? $contact : '';
 
     // ====================================================================
     // STEP 3: CHECK FOR DUPLICATE FULL NAME (exclude current driver)
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // ====================================================================
     // STEP 4: CHECK FOR DUPLICATE CONTACT NUMBER (exclude current driver, only if contact is provided)
     // ====================================================================
-    if (!empty($contact)) {
+    if (!empty($contact) && $contact !== '') {
         $duplicateContactCheck = $conn->prepare("
             SELECT id FROM drivers WHERE contact_no = ? AND id != ?
         ");
