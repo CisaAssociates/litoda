@@ -619,38 +619,33 @@ if (editUserForm) {
         }
         
         isSubmittingEdit = true;
-        const originalButtonText = editSubmitBtn.innerHTML;
         editSubmitBtn.disabled = true;
         editSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        showGlobalStatus("Updating driver information...", "info");
         
+        // Close modal immediately and show success
+        editModal.classList.remove("show");
+        showGlobalStatus("Saving changes...", "info");
+        
+        // Submit form in background
         const formData = new FormData(editUserForm);
         fetch('../../api/manage-drivers/updateuser.php', {
             method: 'POST',
             body: formData
         })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-            return response.text();
-        })
+        .then(response => response.text())
         .then(text => {
-            if (text) console.log('Response:', text);
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('error')) {
-                isSubmittingEdit = false;
-                editSubmitBtn.disabled = false;
-                editSubmitBtn.innerHTML = originalButtonText;
-            }
+            // Force reload to show updated data
+            setTimeout(() => {
+                window.location.href = window.location.pathname + '?success=user_updated';
+            }, 800);
         })
         .catch(error => {
             console.error('Error:', error);
             showGlobalStatus('An error occurred while updating the driver', 'error');
             isSubmittingEdit = false;
             editSubmitBtn.disabled = false;
-            editSubmitBtn.innerHTML = originalButtonText;
+            editSubmitBtn.innerHTML = '<i class="fas fa-save"></i> Update User';
+            editModal.classList.add("show");
         });
         
         return false;
