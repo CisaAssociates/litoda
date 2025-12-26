@@ -601,48 +601,49 @@ function showEditStatus(message, type) {
     }
 }
 
-// Replace the editUserForm.onsubmit function with this fixed version:
+// ---------------------------------------------------------
+// COMPLETE FIX: Edit form submission with proper waiting
+// ---------------------------------------------------------
 
 if (editUserForm) {
     editUserForm.onsubmit = function(e) {
-        e.preventDefault();
-        
-        if (isSubmittingEdit) {
-            console.log('Form already submitting');
-            return false;
-        }
+        e.preventDefault(); // Prevent default form submission
         
         const editContactInput = document.getElementById('edit_contact');
-        if (editContactInput && editContactInput.value.length > 0 && editContactInput.value.length !== 11) {
-            showEditStatus("Contact number must be exactly 11 digits if provided", "error");
+
+        // Validate contact number if provided
+        if (editContactInput && editContactInput.value.length > 0 &&
+            editContactInput.value.length !== 11) {
+            showEditStatus("Contact number must be 11 digits.", "error");
             showGlobalStatus("Contact number must be exactly 11 digits if provided", "error");
             editContactInput.focus();
             return false;
         }
-        
-        isSubmittingEdit = true;
-        editSubmitBtn.disabled = true;
-        editSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        
-        // Show loading status
+
+        // Disable submit button to prevent double submission
+        if (editSubmitBtn) {
+            editSubmitBtn.disabled = true;
+            editSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        }
+
+        // Show loading notification
         showGlobalStatus("Saving changes...", "info");
-        
-        // Submit form
+
+        // Create FormData and submit via fetch
         const formData = new FormData(editUserForm);
+
         fetch('../../api/manage-drivers/updateuser.php', {
             method: 'POST',
             body: formData
         })
         .then(response => {
-            // Check if response is ok
             if (!response.ok) {
-                throw new Error('Server responded with ' + response.status);
+                throw new Error('Server error: ' + response.status);
             }
             return response.text();
         })
-        .then(text => {
-            // Parse response to check for errors
-            console.log('Server response:', text);
+        .then(responseText => {
+            console.log('Update response:', responseText);
             
             // Close modal immediately
             editModal.classList.remove("show");
@@ -650,20 +651,24 @@ if (editUserForm) {
             // Show success message
             showGlobalStatus('Driver updated successfully!', 'success');
             
-            // Wait a bit for the database to complete, then reload
+            // Wait for database to fully commit, then reload
             setTimeout(() => {
                 window.location.href = window.location.pathname + '?success=user_updated';
-            }, 500);
+            }, 800);
         })
         .catch(error => {
-            console.error('Error:', error);
-            showGlobalStatus('An error occurred while updating the driver', 'error');
-            isSubmittingEdit = false;
-            editSubmitBtn.disabled = false;
-            editSubmitBtn.innerHTML = '<i class="fas fa-save"></i> Update User';
-            // Don't close modal on error so user can try again
+            console.error('Update error:', error);
+            
+            // Show error and re-enable form
+            showGlobalStatus('Failed to update driver. Please try again.', 'error');
+            showEditStatus('An error occurred. Please try again.', 'error');
+            
+            if (editSubmitBtn) {
+                editSubmitBtn.disabled = false;
+                editSubmitBtn.innerHTML = '<i class="fas fa-save"></i> Update User';
+            }
         });
-        
+
         return false;
     };
 }
